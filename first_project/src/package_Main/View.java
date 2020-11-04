@@ -148,6 +148,8 @@ public class View {
 //////////////////////////////////////////검색///////////////////////////////////////////////	
 	/**
 	 * 도서검색
+	 * @author 송지은
+	 * @도서명 or 장르 검색 창으로 이동
 	 */
    void bookSearchView() {
       
@@ -182,48 +184,95 @@ public class View {
    }
    
    /**
-    *  도서 이름으로 검색
-    */
-   void bookNameSearchView() {
+	 * 도서명으로 검색
+	 * @author 송지은
+	 * @return input(검색명)
+	 */
+   String bookNameSearchView() {
       String input = "";
       showBanner("도서명 검색");
       System.out.println("<뒤로(Q/q)>");
       System.out.println("도서명: ");
-
-      while (!input.toLowerCase().equals("q")) {
-         try {
-        	 input = sc.next();
-        	 //도서명 검색
-         } catch (Exception e) {
-        	 System.out.println("잘못된 입력입니다.");
-             return;
-         }
-      }
       
+      input = sc.next();
+      //List<BookVO> bookList();
+      return input;
    }
    
    /**
-    * 장르별 검색
-    */
-   void genreSearchView() {
-      String input = "";
-      showBanner("장르별 검색");
-      System.out.println("<뒤로(Q/q)>"); 
-      System.out.println("장르명: ");
-      
-      while (!input.toLowerCase().equals("q")) {
-         try {
-        	 input = sc.next();
-             switch (Integer.parseInt(input)) {
-             
-             }
-         } catch (Exception e) {
-        	 System.out.println("잘못된 입력입니다.");
-             return;
-         }
-      }
-   }
+	 * 도서명 검색 후 목록
+	 * @author 송지은
+	 * BookVO List형 출력
+	 */
+	void bookNameCheckView(){
+		// 도서 검색 후 목록에서 [1]~[?] 입력시 도서 상세 보기 페이지
+		showBanner("도서 검색 리스트");
+		int input = 0;
+		try {
+			input = sc.nextInt();
+		} catch (Exception e) {
+			System.out.println("다시 입력해주세요");
+			return;
+		}
+		
+		switch (input) {
+		case 1:
+			
+			break;
+
+		default:
+			break;
+		}
+	}
    
+	/**
+	 * 장르별 검색
+	 * @author 송지은 
+	 * @return book_theme List형변환
+	 */
+	void genreSearchView() {
+		showBanner("장르별 검색");
+	
+		int input = 0;
+		// sql
+		List<BookLGUVO> bookLGUList = null;
+//		bookLGUList = is.bookLGUList();
+
+		// 카테고리 리스트 출력
+		for (int i = 0; i < bookLGUList.size(); i++) {
+			System.out.println("\t\t\t[" + i + "] "
+					+ bookLGUList.get(i).getBook_theme());
+		}
+		
+		System.out.println("<뒤로(Q/q)>");
+		System.out.println("───────────────────────────────────────────────────────");
+	}
+	
+	/**
+	 * 장르별 책 목록
+	 * @author 송지은 
+	 * @return book_theme List형변환
+	 */
+	void genreSearchListView(){
+		//선택한 장르에 맞는 리스트 목록 출력
+		showBanner("장르별 책 목록");
+		System.out.println("<뒤로(Q/q)>");
+	}
+	
+	/**
+	 * 도서 상세 페이지
+	 * @author 송지은
+	 * 전체 BookVO List형 출력
+	 */
+	void bookDetaView(){
+		showBanner("도서 상세 페이지");
+		System.out.println("<뒤로(Q/q)>");
+	}
+	
+	
+	
+	
+	
 /////////////////////////////게시판//////////////////////////////////   
    /**
     * 게시판메서드

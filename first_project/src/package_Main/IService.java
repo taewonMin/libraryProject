@@ -32,6 +32,30 @@ public interface IService {
 	 */
 	void deleteMember(MemberVO mv);
 	
+	
+	
+////////////////////////검색/////////////////////////////
+	/**
+	 * 도서명 검색 후 출력
+	 * 및 도서 상세 메서드
+	 * @author 송지은
+	 * @param 도서명(String)
+	 * @return BookVO List형 반환
+	 */
+	List<BookVO> bookList();
+	
+	/**
+	 * 장르별 검색 메서드
+	 * @author 송지은
+	 * @param 장르명(int)
+	 * @return  BookLGUVO List형 반환
+	 */
+	List<BookLGUVO> bookLGUList();
+	
+	
+	
+	
+	
 ///////////////////마이페이지///////////////////////////
 	/**
 	 * 내 정보 출력 메서드(아이디,이름,생년월일,이메일,전화번호,대출횟수)
