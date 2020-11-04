@@ -77,22 +77,41 @@ public interface IService {
 	 */
 	void withdrawal(MemberVO mv);
 	
+	/**
+	 * 회원의 대출도서리스트 출력 메서드
+	 * @param mem_id 조회할 회원의 아이디
+	 * @author 민태원
+	 * @since 2020.11.04
+	 */
+	void printRentalList(String mem_id);
 	
-	
-	
+	/**
+	 * 도서반납 메서드 			
+	 * 출력 : "반납하시겠습니까? (y/n)" => y면 반납 / n면 return
+	 * @param book_id 반납할 도서의 아이디
+	 * @author 민태원
+	 * @since 2020.11.04
+	 */
+	void returnBook(String book_id);
 	
 	
 	/**
-	 * 반납 메서드
+	 * 예약도서 리스트 출력 메서드
+	 * @param mem_id 조회할 회원의 아이디
 	 * @author 민태원
+	 * @since 2020.11.04
 	 */
-	void returnBook(BookVO book_id);
+	void printBookList(String mem_id);
+	
 	
 	/**
-	 * 예약 취소 메서드
+	 * 예약 취소 메서드 
+	 * 출력: "취소하시겠습니까? (y/n)" => y면 예약취소 / n면 return
+	 * @param book_id 예약된 도서의 아이디
 	 * @author 민태원
+	 * @since 2020.11.04
 	 */
-	void rsvCancel();
+	void rsvCancel(String book_id);
 	
 	
 	

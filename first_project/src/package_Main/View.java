@@ -456,11 +456,11 @@ public class View {
 	 */
 	private void rentalListView() {
 		while(true) {
-			System.out.println("대출책순번, 정보, 반납");
 			//대출도서리스트 출력 메서드
-			System.out.println("<뒤로(Q/q)>");
-
+			//void printRentalList(String mem_id);
+			System.out.println("<뒤로(0)>");
 			System.out.println("반납할 도서를 선택해 주세요.");
+			
 			int input = 0;
 			try {
 				input = sc.nextInt();
@@ -469,12 +469,9 @@ public class View {
 				continue;
 			}
 			
-			//해당 도서가 내 대출리스트에 있는지 체크
-			//dataBase
-			//boolean selectBook(String book_id)
-			
+			//입력한 번호가 유효한 번호인지 체크
 			//도서번호입력받아 반납 메서드
-			//반납하시겠습니까? y/n
+			//void returnBook(String book_id);
 			switch(input) {
 			case 0:
 				return;		//뒤로가기
@@ -492,9 +489,9 @@ public class View {
 	 */
 	private void rsvLsitView() {
 		while(true) {
-			System.out.println("예약책순번, 정보, 예약취소");
 			//예약 도서 목록 출력
-			System.out.println("<뒤로(Q/q)>");
+			//void printBookList(String mem_id);
+			System.out.println("<뒤로(0)>");
 			
 			int input = 0;
 			try {
@@ -504,16 +501,10 @@ public class View {
 				continue;
 			}
 			
-			//해당 도서가 내 예약리스트에 있는지 체크
-			//dataBase
-			//boolean selectBook(String book_id)
-			
+			//입력한 번호가 유효한 번호인지 체크
 			//도서번호입력받아 예약취소 메서드
-			//취소하시겠습니까? y/n
+			//void rsvCancel(String book_id);
 			switch(input) {
-//			case 10:
-//					rsvCancel();	//예약취소
-//				break;
 			case 0:
 				return;		//뒤로가기
 			default : 
