@@ -567,9 +567,12 @@ public class View {
 
 /////////////////////////////////////////////관리자 페이지//////////////////////////////////////////////////
 	/**
-	 * 관리자 로그인화면
+	 * 관리자메인 메서드
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
 	 */
-	public void startAdminView() {
+	public void adminView() {
 		while (true) {
 			System.out.println("\t관\t리\t자");
 			System.out.println("======================");
@@ -590,20 +593,33 @@ public class View {
 			
 			switch (num) {
 			case 0: {
-				startMethod();// 로그인화면
+				/**
+				 * 로그아웃하면 로그인화면으로 돌아가기위한 메소드
+				 */
+				startMethod();
 				break;
 			}
 			case 1: {
-//					adminMethod();// 게시판 관리 메소드
+				/**
+				 * 게시관 관리view을 보여주는 메소드
+				 */
+				noiceMainView();
 				return;
 			}
 			case 2: {
-//					bookMethod();// 책 등록 메소드
+				/**
+				 * 책 관리 view을 보여주는 메소드
+				 */
+				bookView();
 				return;
 			}
 			case 3: {
-//					memberMethod();// 회원 리스트 메소드
+				/**
+				 * 회원관리view을 보여주는 메소드
+				 */
+				memberView();
 				return;
+
 			}
 			default:
 				System.out.println("잘못입력하였습니다");
@@ -612,73 +628,44 @@ public class View {
 	}
 
 	/**
-	 * 게시판 관리창 출력
+	 * 게시관 관리 메서드
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
 	 */
-	public void adminMethod() {
+	public void noiceMainView() {
 		while (true) {
-			System.out.println("[1]\t 공지관리입니까?");
-			System.out.println("[2]\t 희망도서관리입니까?");
-			System.out.println("[0]\t 관리자 화면");
+			System.out.println("[1]\t 공지사항");
+			System.out.println("[2]\t 희망도서목록");
+			System.out.println("[0]\t 종료");
 			System.out.print("번호를 입력하시오 : ");
-			
-			int num=0;
+			int num = 0;
 			try {
 				num = sc.nextInt();
 			} catch (Exception e) {
 				System.out.println("잘못입력하였습니다");
 				continue;
 			}
-			
 			switch (num) {
 			case 0: {
-				startAdminView();// 관리자 화면
+				/**
+				 * 관리자view을 보여주는 메소드
+				 */
+				adminView();
 				break;
 			}
 			case 1: {
-				noiceMethod();// 공지관리
+				/**
+				 * 공지사항view을 보여주는 메소드
+				 */
+				noiceView();
 				return;
 			}
 			case 2: {
-				hopeBookMethod();// 희망도서관리
-				return;
-			}
-			default:
-				System.out.println("잘못입력하였습니다");
-				return;
-			}
-		}
-	}
-
-	/**
-	 * 공지관리창 출력
-	 */
-	public void noiceMethod() {
-		while (true) {
-//			noiceListMethod();// 게시판 리스트 출력
-			System.out.println("[1]\t 공지를 추가하시겠습니까?");// 0번은 고정설정
-			System.out.println("[2]\t 공지를 삭제하시겠습니까?");// 임의로 1번으로 지정 나중에 리스트 번호에 맞게 출력
-			System.out.println("[0]\t 관리자 화면");
-			System.out.print("번호를 입력하시오 : ");
-			
-			int num=0;
-			try {
-				num = sc.nextInt();
-			} catch (Exception e) {
-				System.out.println("잘못입력하였습니다");
-				continue;
-			}
-			
-			switch (num) {
-			case 0: {
-				startAdminView();// 관리자 화면
-				break;
-			}
-			case 1: {
-//				noiceAddMethod();// 공지 추가
-				return;
-			}
-			case 2: {
-//				noiceDeltleMethod();// 공지 삭제
+				/**
+				 * 희망도서목록view을 보여주는 메소드
+				 */
+				hopeBookView();
 				return;
 			}
 			default:
@@ -689,35 +676,143 @@ public class View {
 	}
 
 	/**
-	 * 희망도서 관리창 출력
+	 * 공지사항 관리
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
 	 */
-	public void hopeBookMethod() {
+	public void noiceView() {
 		while (true) {
-//			noiceListMethod();// 희망도서 리스트 출력
-			System.out.println("[1]\t 승인 하시겠습니까?");// 0번은 고정설정
-			System.out.println("[2]\t 부결 하시겠습니까?");// 임의로 1번으로 지정 나중에 리스트 번호에 맞게 출력
-			System.out.println("[0]\t 관리자 화면");
+			/**
+			 * 공지리스트 띄워주는 메소드
+			 */
+			noiceMainView();
+
+			System.out.println("[1]\t 공지 추가");
+			System.out.println("[2]\t 공지 추가");
+			System.out.println("[3]\t 공지 삭제");
+			System.out.println("[0]\t 종료");
 			System.out.print("번호를 입력하시오 : ");
-			
-			int num=0;
+			int num = 0;
 			try {
 				num = sc.nextInt();
 			} catch (Exception e) {
 				System.out.println("잘못입력하였습니다");
 				continue;
 			}
-			
 			switch (num) {
 			case 0: {
-				startAdminView();// 관리자 화면
+				/**
+				 * 게시판view을 보여주는 메소드
+				 */
+				noiceMainView();
 				break;
 			}
 			case 1: {
-//				hopeBookAddMethod();// 희망도서 추가
+				/**
+				 * 공지읽은 리스트의 번호를 받아서 출력하는 메소드
+				 */
+				System.out.print("읽을 공지의 번호 : ");
+				int num2 = 0;
+				try {
+					num2 = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("잘못입력하였습니다");
+					continue;
+				}
+//				noiceReadMethod(num2);
 				return;
 			}
 			case 2: {
-//				hopeBookeDeltleMethod();// 희망도서 삭제
+				/**
+				 * 공지추가 메소드
+				 */
+//				noiceAddMethod();
+				return;
+			}
+			case 3: {
+				/**
+				 * 공지삭제 메소드 삭제할 공지의 번호를 받아서 공지를 판단
+				 */
+				System.out.print("삭제할 공지의 번호 : ");
+				int num3 = 0;
+				try {
+					num3 = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("잘못입력하였습니다");
+					continue;
+				}
+//				noiceDeltleMethod(num3);
+				return;
+			}
+			default:
+				System.out.println("잘못입력하였습니다");
+				return;
+
+			}
+		}
+	}
+
+	/**
+	 * 희망 도서 목록 관리 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
+	 */
+	public void hopeBookView() {
+		while (true) {
+			/**
+			 * 희망 도서 메소드 번호,책이름,저자,출판사 등을 보여준다
+			 */
+			noiceMainView();
+
+			System.out.println("[1]\t 희망도서 승인 ");
+			System.out.println("[2]\t 희망도서 부결 ");
+			System.out.println("[0]\t 관리자 화면");
+			System.out.print("번호를 입력하시오 : ");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				continue;
+			}
+			switch (num) {
+			case 0: {
+				/**
+				 * 게시판 관리로 되돌아 가기 메소드
+				 */
+				noiceMainView();
+				break;
+			}
+			case 1: {
+				/**
+				 * 도서 승인 메소드 승인 도서의 번호 번호를 받아 메소드안에서 추가한다
+				 */
+				System.out.print("승인 도서의 번호 : ");
+				int num2 = 0;
+				try {
+					num2 = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("잘못입력하였습니다");
+					continue;
+				}
+//				hopeBookAddMethod(num2);
+				return;
+			}
+			case 2: {
+				/**
+				 * 도서 부결 메소드 부결 도서의 번호를 받아서 메소드안에서 리스트를삭제
+				 */
+				System.out.print("부결 도서의 번호 : ");
+				int num2 = 0;
+				try {
+					num2 = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("잘못입력하였습니다");
+					continue;
+				}
+//				hopeBookeDeltleMethod(num2);
 				return;
 			}
 			default:
@@ -727,40 +822,54 @@ public class View {
 		}
 	}
 	
-	
 	/**
-	 * 도서관리 출력
+	 * 도서 관리 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
 	 */
-	public void bookView() { // 서창
-	  while (true) {
-	     System.out.println("[1]\t 도서리스트 확인");// 0번은 고정설정
-	     System.out.println("[2]\t 등록");// 임의로 1번으로 지정 나중에 리스트 번호에 맞게 출력
-	     System.out.println("[Q,q]\t 관리자 화면");
-	     System.out.print("번호를 입력하시오 : ");
+	public void bookView() {
+		while (true) {
+			System.out.println("[1]\t 전체 도서리스트 확인");
+			System.out.println("[2]\t 등록");
+			System.out.println("[0]\t 관리자 화면");
+			System.out.print("번호를 입력하시오 : ");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				continue;
+			}
+			switch (num) {
 
-	     int input=0;
-		 try {
-			 input = sc.nextInt();
-    	 } catch (Exception e) {
-			 System.out.println("잘못입력하였습니다");
-			 continue;
-		 }
-	     
-	     switch (input) {
-	     case 1:
-	        bookListMethod();// 도서리스트 출력
-	        return;
-	     case 2:
-	        bookMethod();// 도서 등록
-	        return;
-	     case 0:
-	    	 startAdminView();// 관리자 로그인 화면
-	    	 break;
-	     default:
-	        System.out.println("잘못입력하였습니다");
-	        return;
-	     }
-	  }
+			case 0: {
+				/**
+				 * 관리자 메인 화면 메소드 관리자 메인 화면 메소드 돌아가기
+				 */
+				adminView();
+				break;
+			}
+			case 1: {
+				/**
+				 * 전체 도서리스트 출력 메소드
+				 */
+				bookListMethod();
+				return;
+			}
+			case 2: {
+				/**
+				 * 도서 등록 메소드
+				 */
+//				bookAddMethod();
+				System.out.println("책이 등록되었습니다");
+				return;
+			}
+			default:
+				System.out.println("잘못입력하였습니다");
+				return;
+			}
+		}
 	}
 
 	/**
@@ -779,33 +888,46 @@ public class View {
 	
 // 회원리스트
 	/**
-	 * 회원관리창 출력
+	  * 회원 관리 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
 	 */
-	public void memberMethod() { 
+	public void memberView() {
 		while (true) {
-			System.out.println("[1]\t 회원리스트 확인");// 0번은 고정설정
-			System.out.println("[2]\t 블랙리스트 확인");// 임의로 1번으로 지정 나중에 리스트 번호에 맞게 출력
+			System.out.println("[1]\t 회원리스트 확인");
+			System.out.println("[2]\t 블랙리스트 확인");
 			System.out.println("[0]\t 관리자 화면");
 			System.out.print("번호를 입력하시오 : ");
-			
-			int input=0;
+			int num = 0;
 			try {
-				 input = sc.nextInt();
-	    	} catch (Exception e) {
-				 System.out.println("잘못입력하였습니다");
-				 continue;
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				continue;
 			}
-			 
-			switch (input) {
-			case 0:
-				startAdminView();// 관리자 화면
+			switch (num) {
+			case 0: {
+				/**
+				 * 관리자 메인 화면 메소드 관리자 메인 화면 메소드 돌아가기
+				 */
+				adminView();
 				break;
-			case 1:
-				memberListMethod();// 회원리스트 출력
+			}
+			case 1: {
+				/**
+				 * 전체 회원리스트 뷰 메소드
+				 */
+				memberListView();
 				return;
-			case 2:
-				blackListMethod();// 블랙리스트관리
+			}
+			case 2: {
+				/**
+				 * 전체 블랙리스트 뷰 메소드
+				 */
+				blackListView();
 				return;
+			}
 			default:
 				System.out.println("잘못입력하였습니다");
 				return;
@@ -815,57 +937,111 @@ public class View {
 	}
 
 	/**
-	 * 회원리스트 출력
-	 * @author pc19
+	 * 회원 리스트 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
 	 */
-	public void memberListMethod() { 
-		// 리스트출력
-		System.out.println("[1]\t 회원관리창 ");
-		System.out.println("[2]\t 블랙리스트 등록");
-		System.out.println("[0]\t 관리자 화면");
+	public void memberListView() {
+		/**
+		 * 전체 회원리스트 출력 메소드
+		 */
+//		memberListMethod();
+
+		System.out.println("[1]\t 블랙리스트 등록 ");
+		System.out.println("[0]\t 돌아가기");
 		System.out.print("번호를 입력하시오 : ");
-		int input=0;
+		int num = 0;
 		try {
-			 input = sc.nextInt();
-    	} catch (Exception e) {
-			 System.out.println("잘못입력하였습니다");
-			 return;
+			num = sc.nextInt();
+		} catch (Exception e) {
+			System.out.println("잘못입력하였습니다");
+			return;
 		}
-		
-		switch (input) {
+		switch (num) {
 		case 0: {
-			startAdminView();// 관리자 화면
+			/**
+			 * 회원 관리 화면 돌아가기
+			 */
+			memberView();
 			break;
 		}
 		case 1: {
-			memberMethod();// 회원관리창
-			break;
-		}
-		case 2: {
-//			blackAddMethod();// 블랙리스트 등록
+			/**
+			 * 블랙리스트에 추가 메소드
+			 */
+
+			System.out.print("블랙 리스트에 추가될 회원 번호 : ");
+			int num2 = 0;
+			try {
+				num2 = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				return;
+			}
+//			blackAddMethod(num2);
 			return;
 		}
+
 		default:
 			System.out.println("잘못입력하였습니다");
 			return;
 		}
+
 	}
 
 	/**
-	 * 블랙리스트 출력
+	 * 블랙 리스트 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
 	 */
-	public void blackListMethod() {
+
+	public void blackListView() {
 		while (true) {
 
-			// 블랙리스트 출력
-			System.out.print("삭제할 블랙리스트의 번호를 입력하시오( 0번은 관리자화면 ) : ");
-			int num = sc.nextInt();
-			if (num == 0) {
-				startAdminView();
+			/**
+			 * 블랙리스트 리스트 출력 메소드
+			 */
+//			blackListReadView();
+
+			System.out.println("[1]\t 블랙리스트 등록 ");
+			System.out.println("[0]\t 돌아가기");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				continue;
+			}
+			switch (num) {
+			case 0: {
+				/**
+				 * 회원 관리 화면 돌아가기
+				 */
+				memberView();
 				break;
-			} else
-//				blackDeltleMethod(num);// 블랙리스트(삭제)
-			return;
+			}
+			case 1: {
+				/**
+				 * 블랙리스트에 추가 메소드
+				 */
+				System.out.print("삭제할 블랙리스트의 번호 : ");
+				int num2 = 0;
+				try {
+					num2 = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("잘못입력하였습니다");
+					continue;
+				}
+//				blackDeltleMethod(num2);// 블랙리스트(삭제)
+				return;
+			}
+
+			default:
+				System.out.println("잘못입력하였습니다");
+				return;
+			}
 		}
 	}
 }
