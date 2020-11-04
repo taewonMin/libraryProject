@@ -5,28 +5,22 @@ import java.util.*;
 import package_VO.*;
 
 public class Database {
-	private List<AdminVO> 		adminList 		= new ArrayList<AdminVO>();
-	private List<MemberVO> 		memberList		= new ArrayList<MemberVO>();
-	private List<BookVO>        bookList      	= new ArrayList<BookVO>();
-	private List<BookLGUVO>     bookLGUList     = new ArrayList<BookLGUVO>();
-	private List<NoticeVO> 		noticeList 		= new ArrayList<NoticeVO>();
-	private List<BlackListVO>	backlist 		= new ArrayList<BlackListVO>();
-	private List<HopeVO> 		hopeList 		= new ArrayList<HopeVO>();
-	private List<RentalVO> 		rentalList 		= new ArrayList<RentalVO>();
+	private AdminVO admin = new AdminVO();	// 관리자계정	
+	private List<MemberVO> 		memberList		= new ArrayList<MemberVO>();	//회원 목록
+	private List<BookLGUVO>     bookLGUList     = new ArrayList<BookLGUVO>();	//도서분류 목록
+	private List<BookVO>        bookList      	= new ArrayList<BookVO>();		//도서 목록
+	private List<NoticeVO> 		noticeList 		= new ArrayList<NoticeVO>();	//공지글 목록
+	private List<BlackListVO>	backlist 		= new ArrayList<BlackListVO>();	//블랙리스트 목록
+	private List<HopeVO> 		hopeList 		= new ArrayList<HopeVO>();		//희망도서 목록
+	private List<RentalVO> 		rentalList 		= new ArrayList<RentalVO>();	//대여도서 목록
+	private List<ReserveVO> 	reserveList 	= new ArrayList<ReserveVO>();	//예약도서 목록
 	
 	
-	private static Database database = new Database();
 	
-	public static Database getDatabase() {
-		return database;
-	}
-	
-	// 관리자 목록 초기화
+	// 관리자 초기화
 	{
-		AdminVO admin = new AdminVO();
 		admin.setadmin_id("admin");
 		admin.setadmin_pw("a1234");
-		adminList.add(admin);
 	}
 		
 	// 회원정보 목록 초기화
@@ -132,8 +126,6 @@ public class Database {
       memberList.add(member10);
    }
 	
-	
-	   
 	//도서분류 목록 초기화
    {
 	   BookLGUVO bl1 = new BookLGUVO();
@@ -187,13 +179,12 @@ public class Database {
 	   bookLGUList.add(bl10);
    }
    
-// 도서정보 초기화
+   // 도서정보 초기화
    {
 	   BookVO bv1 = new BookVO();
 	   bv1.setBook_id("1");
 	   bv1.setBook_name("달러구트 꿈 백화점");
 	   bv1.setBook_author("이미예");
-	   bv1.setBook_theme("판타지");
 	   bv1.setBook_LGU("NO");
 	   bv1.setBook_publisher("팩토리나인");
 	   bv1.setBook_summary("주문하신 꿈은 매진입니다.");
@@ -203,7 +194,6 @@ public class Database {
 	   bv2.setBook_id("2");
 	   bv2.setBook_name("나의 하루는 4시 30분에 시작된다");
 	   bv2.setBook_author("김유진");
-	   bv2.setBook_theme("자기계발");
 	   bv2.setBook_LGU("IM");
 	   bv2.setBook_publisher("토네이도");
 	   bv2.setBook_summary("하루를 두 배로 사는 단 하나의 습관");
@@ -213,7 +203,6 @@ public class Database {
 	   bv3.setBook_id("3");
 	   bv3.setBook_name("어떻게 말해줘야 할까");
 	   bv3.setBook_author("오은영");
-	   bv3.setBook_theme("가정");
 	   bv3.setBook_LGU("ES");
 	   bv3.setBook_publisher("김영사");
 	   bv3.setBook_summary("버럭하지 않고 분명하게 알려주는 방법");
@@ -223,7 +212,6 @@ public class Database {
 	   bv4.setBook_id("4");
 	   bv4.setBook_name("트렌드 코리아 2021");
 	   bv4.setBook_author("김난도");
-	   bv4.setBook_theme("경제");
 	   bv4.setBook_LGU("EC");
 	   bv4.setBook_publisher("미래의 창");
 	   bv4.setBook_summary("설명이 필요없는 '트렌드서'의 대명사");
@@ -233,7 +221,6 @@ public class Database {
 	   bv5.setBook_id("5");
 	   bv5.setBook_name("아우슈비츠의 치과의사");
 	   bv5.setBook_author("벤저민 제이콥스");
-	   bv5.setBook_theme("역사");
 	   bv5.setBook_LGU("HE");
 	   bv5.setBook_publisher("서해문집");
 	   bv5.setBook_summary("나는 유대인이고, 141129번 수용자였으며, 수용소 내 치과의사였다.");
@@ -243,7 +230,6 @@ public class Database {
 	   bv6.setBook_id("6");
 	   bv6.setBook_name("마음챙김의 시");
 	   bv6.setBook_author("류시화");
-	   bv6.setBook_theme("시");
 	   bv6.setBook_LGU("PO");
 	   bv6.setBook_publisher("수오서재");
 	   bv6.setBook_summary("사회적 거리두기와 삶에 대한 성찰이 어느 때보다 필요한 지금, 손대신 시를 건내는 것은 어떤가");
@@ -253,7 +239,6 @@ public class Database {
 	   bv7.setBook_id("7");
 	   bv7.setBook_name("트루 리버럴리즘");
 	   bv7.setBook_author("디드러 낸슨 매클로스키");
-	   bv7.setBook_theme("정치");
 	   bv7.setBook_LGU("PL");
 	   bv7.setBook_publisher("7분의 언덕");
 	   bv7.setBook_summary("자유주의가 더 정의롭고 더 번영하는 세상을 만드는 이유");
@@ -263,7 +248,6 @@ public class Database {
 	   bv8.setBook_id("8");
 	   bv8.setBook_name("나의 작은 정원");
 	   bv8.setBook_author("차유정");
-	   bv8.setBook_theme("예술");
 	   bv8.setBook_LGU("AR");
 	   bv8.setBook_publisher("동양북스");
 	   bv8.setBook_summary("12색 물감으로 완성하는 수채화 컬러링 북");
@@ -273,7 +257,6 @@ public class Database {
 	   bv9.setBook_id("9");
 	   bv9.setBook_name("내게 다가온 수학의 시간들");
 	   bv9.setBook_author("장우석");
-	   bv9.setBook_theme("과학");
 	   bv9.setBook_LGU("SI");
 	   bv9.setBook_publisher("한권의 책");
 	   bv9.setBook_summary("아름답고 고통스러웠던 어느 수학 교사의 자전적 이야기");
@@ -283,7 +266,6 @@ public class Database {
 	   bv10.setBook_id("10");
 	   bv10.setBook_name("너무 외로운 사람들을 위한 책");
 	   bv10.setBook_author("오시마 노부요리");
-	   bv10.setBook_theme("자기계발");
 	   bv10.setBook_LGU("IM");
 	   bv10.setBook_publisher("메이트북스");
 	   bv10.setBook_summary("함께 있어도 외로운 당신을 위한 심리처방전");
@@ -296,60 +278,70 @@ public class Database {
 		notice.setNotice_no(1);
 		notice.setNotice_title("제목");
 		notice.setNotice_content("내용");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice1 = new NoticeVO();
 		notice.setNotice_no(2);
 		notice.setNotice_title("제목1");
 		notice.setNotice_content("내용1");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice2 = new NoticeVO();
 		notice.setNotice_no(3);
 		notice.setNotice_title("제목2");
 		notice.setNotice_content("내용2");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice3 = new NoticeVO();
 		notice.setNotice_no(4);
 		notice.setNotice_title("제목3");
 		notice.setNotice_content("내용3");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice4 = new NoticeVO();
 		notice.setNotice_no(5);
 		notice.setNotice_title("제목4");
 		notice.setNotice_content("내용4");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice5 = new NoticeVO();
 		notice.setNotice_no(6);
 		notice.setNotice_title("제목5");
 		notice.setNotice_content("내용5");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice6 = new NoticeVO();
 		notice.setNotice_no(7);
 		notice.setNotice_title("제목6");
 		notice.setNotice_content("내용6");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice7 = new NoticeVO();
 		notice.setNotice_no(8);
 		notice.setNotice_title("제목7");
 		notice.setNotice_content("내용7");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice8 = new NoticeVO();
 		notice.setNotice_no(9);
 		notice.setNotice_title("제목8");
 		notice.setNotice_content("내용8");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 		
 		NoticeVO notice9 = new NoticeVO();
 		notice.setNotice_no(10);
 		notice.setNotice_title("제목9");
 		notice.setNotice_content("내용9");
+		notice.setNotice_date("2020-11-01");
 		noticeList.add(notice);
 	}
 }
