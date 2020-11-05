@@ -1,23 +1,27 @@
 package package_Main;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 import package_VO.*;
 
 public class View {
 	private MemberVO nowMember = null;
+	IServiceImpl is = new IServiceImpl();
 	
 	Scanner sc = new Scanner(System.in);
 	
 	/**
 	 * 시작 메서드
+	 * @author 민태원
+	 * @since 2020.11.05
 	 */
 	void startMethod() {
 		//로그인,회원가입
 		while(true) {
-			System.out.println("1. 로그인");
-			System.out.println("2. 회원가입");
-			System.out.println("3. 종료");
+			System.out.println("[1]로그인");
+			System.out.println("[2]회원가입");
+			System.out.println("[3]종료");
 			
 			int input = 0;
 			try {
@@ -29,7 +33,8 @@ public class View {
 			
 			switch(input) {
 			case 1:
-				loginSessionView();
+//				loginSessionView();
+				homeView();
 				break;
 			case 2:
 				joinMemberView();
@@ -45,6 +50,8 @@ public class View {
 	
 	/**
     * 시작배너
+    * @author 민태원
+    * @since 2020.11.04
     */
    private void showBanner(String str) { 
       System.out.println();
@@ -58,54 +65,119 @@ public class View {
 
    /**
     * 종료메서드
+    * @author 민태원
+    * @since 2020.11.04
     */
    private void endProgram(){
       showBanner("\n\t프로그램을 종료합니다. 이용해 주셔서 감사합니다.\n");
       System.exit(0);
    }
 	
+   
+   
    /**
-    * 로그인 메서드 
+    * 로그인 메서드 - 아이디와 비밀번호값을 받아 database와 비교 후 true이면 homeView로
     * @author 조애슬
+    * @since 2020-11-04
     */
    private void loginSessionView(){ 
-      System.out.println("아이디를 입력하세요");
-      String mem_id = sc.next();
-      System.out.println("패스워드를 입력하세요");
-      String mem_pw = sc.next();
-      showBanner("로그인 성공");
-      homeView();
+      Map<String, String> login = new HashMap<>();//id 와 pw를 묶을 Map 생성
+      
+//      String mem_id = is.scanID(); //아이디입력, 올바른 값인지 검사 후 반환
+//      String mem_pw = is.scanPW(); //비밀번호입력,  올바른 값인지 검사 후 반환
+//      login.put(mem_id, mem_pw); //입력받은 id,pw Map에 넣음
+//      if(is.loginMatch(login)){ //id와 pw값을 db로 넘겨서 회원확인
+//    	  homeView();
+//      }else{
+//    	  System.out.println("아이디나 비밀번호가 틀렸습니다.");
+//      }
+      
   }
 	
-	/**
+   /**
     * 회원가입 메서드(ex1) ->MemberVO
     * @author 조애슬
+    * @param 스캐너로 MemberVO정보 입력
+    * @return boolean
+    * @since 2020-11-05
     */
    private void joinMemberView(){
-      showBanner("회원가입");
-      
-      System.out.println("아이디를 입력하세요");
-//      String mem_id = inputId();
-      System.out.println("패스워드를 입력하세요");
-      String mem_pw = sc.next();
-      System.out.println("이름을 입력하세요");
-      String mem_name = sc.next();
-      System.out.println("생년월일을 입력하세요");
-      String mem_bir = sc.next();
-      System.out.println("핸드폰번호를 입력하세요");
-      String mem_tel = sc.next();
-      System.out.println("이메일을 입력하세요");
-      String mem_email = sc.next();
-      
-      //DataBase
-      // boolean createMember(MemberVO mv);
-      
-      showBanner("회원가입 성공");
-  }
+ 	  showBanner("회원가입");
+ 	  MemberVO params = new MemberVO(); //묶어서 저장할 MemberVO params 생성
+ 	  
+ 	  
+// 	  String mem_id = is.scanID(); //아이디, 패스워드등을 입력받는 메서드들을 통해 변수에넣음
+// 	  String mem_pw = is.scanPW();
+// 	  String mem_name = is.scanNM();
+// 	  String mem_bir = is.scanBIR();
+// 	  String mem_tel = is.scanTel();
+// 	  String mem_email = is.scanEM();
+ 	  String mem_id = "check";
+ 	  String mem_pw = "asdf";
+ 	  String mem_name = "네임";
+ 	  String mem_bir = "111.11.11";
+ 	  String mem_tel = "010-2020-5215";
+ 	  String mem_email = "awet@awet.ewa";
+ 	  
+ 	  //boolean idUnique = is.idUniqCheck(mem_id); //아이디 중복체크
+ 	 // if(idUnique==false){//중복아니면
+	  params.setMem_id(mem_id);//memberVO멤버에 다 값을 넣고
+	  params.setMem_pw(mem_pw);
+	  params.setMem_name(mem_name);
+	  params.setMem_bir(mem_bir);
+	  params.setMem_tel(mem_tel);
+	  params.setMem_email(mem_email);
+	  
+	  if(is.createMember(params)){;
+	  	System.out.println("회원가입성공");//입력한 한회원의모든정보(MemberVO)DB로넘겨줌
+	  	System.out.println();
+	  }else{//중복이면
+		  System.out.println("회원가입 실패");
+	  }	  
+   }
 
+   /**아이디입력
+    * @author 조애슬
+    * @return String mem_id
+    */
+   String scanID(){ return null;};//아이디 입력받음
+   
+   
+   /**패스워드입력
+    * @author 조애슬
+    * @return String mem_pw
+    */
+   String scanPW(){return null;};//패스워드 입력받음
+   
+   
+   /**이름입력
+    * @author 조애슬
+    * @return String mem_name
+    */
+   String scanNM(){return null;};//이름 입력받음
+   
+   /**이메일입력
+    * @author 조애슬
+    * @return String mem_email
+    */
+   String scanEM(){return null;};//이메일 입력받음
+   
+   /**전화번호입력
+    * @author 조애슬
+    * @return String mem_tel
+    */
+   String scanTel(){return null;};//전화번호 입력받음
+   
+   /**생일입력
+    * @author 조애슬
+    * @return String mem_bir
+    */
+   String scanBIR(){return null;};//생일 입력받음
 	
 	/**
 	 * 메인화면 - 검색, 게시판, 마이페이지, 반납
+	 * @author 민태원
+	 * @since 2020.11.04
 	 */
 	private void homeView() {
 		while(true) {
@@ -113,7 +185,7 @@ public class View {
 		    System.out.println("[2]게시판");
 		    System.out.println("[3]마이페이지");
 		    System.out.println("[4]반납");
-		    System.out.println("<로그아웃(Q/q)>");
+		    System.out.println("[0]로그아웃");
 		    
 		    int input = 0;
 			try {
@@ -277,6 +349,7 @@ public class View {
    /**
     * 게시판메서드
     * @author 조애슬
+    * @since 2020-11-04
     */
    private void boardView(){
       while(true){
@@ -318,89 +391,95 @@ public class View {
    /**
     * 공지사항 메서드
     * @author 조애슬
+    * @since 2020-11-05
     */
    private void noticeView(){
-      showBanner("공지사항");
-      System.out.println("No"+"\t제목"+"\t내용");
-      System.out.println("1" + "\t휴관안내"+"\t2020.10.5-2020.10.31 도서관 휴관합니다.");
-      System.out.println("2" + "\t행사안내"+"\t2020.11.3 문화축제 소식을 알립니다.");
-      System.out.println("3" + "\t유의사항"+"\t도서관에서는 항상 조용히 걸어주세요");
+	   	showBanner("공지사항");
+
+//	   	if(is.noticeList()){ // 공지사항 출력
+	   	//출력성공
+//	   	}
       
-      int input = 0;
-      while(true){
-         System.out.println("=============================");
-         System.out.println("<뒤로(Q/q)>");
-         System.out.println("=============================");
-         try{
-            input = sc.nextInt();
-         }catch(Exception e){
-            System.out.println("숫자를 입력해주세요.");
-            continue;
-         }
-         
-         switch(input){
-            case 0 :
-               return;
-         default : 
-        	 System.out.println("다시 입력해주세요");
-        	 break;
-         }
+	   	while(true){
+	   		System.out.println("=============================");
+	   		System.out.println("<뒤로(Q/q)>");
+	   		System.out.println("=============================");
+	   		int input = 0;
+			try{
+			   input = sc.nextInt();
+			}catch(Exception e){
+			   System.out.println("숫자를 입력해주세요.");
+			   continue;
+			}
+			switch(input){
+			case 1 : case 2: case 3: case 4: case 5:
+//				is.openNoDetail(input); 	//공지사항의 글번호를 누르면 그값을 가지고 공지상세보기 메서드로
+			case 0 :
+				return;
+			default : 
+				System.out.println("다시 입력해주세요");
+				break;
+			}
       }
    }
+   
+   /**
+    * 공지사항 상세페이지
+    * @author 조애슬
+    * @since 2020-11-05
+    */
+   private void noticeDetailView(){}
 
    /**
     * 희망도서목록 메서드
     * @author 조애슬
+    * @since 2020.11.05
     */
    private void hopeView(){
-      
-      showBanner("희망도서");
-      System.out.println("No"+"\t제목"+"\t\t저자"+"\t출판사");
-      System.out.println("1" + "\t비행운"+"\t\t김애란"+"\t나무출판사");
-      System.out.println("2" + "\t아몬드"+"\t\t박떙땡"+"\t작은창출판사");
-      System.out.println("3" + "\t우울할떈 뇌과학"+"\t엘릭스코드"+"\t한강출판사");
-      
-      while(true){
-         System.out.println("=============================");
-         System.out.println("글등록:1 \t 뒤로 : <Q/q>");
-         System.out.println("=============================");
-         
-         int input = 0;
-         try{
-            input = sc.nextInt();
-         }catch(Exception e){
-            System.out.println("숫자를 입력해주세요.");
-            continue;
-         }
-         
-         switch(input){
-            case 0 :
-               return;
-         case 1 :
-        	 hopeRegiView();
-        	 break;
-         default : 
-        	 System.out.println("다시 입력해주세요");
-         }
-      }
-   }
-
+     
+//	  if(is.hopeList()){//도서출력성공} // 희망도서목록출력
+     
+	      while(true){
+	         System.out.println("=============================");
+	         System.out.println("글등록:1 \t 뒤로 : <Q/q>");
+	         System.out.println("=============================");
+	         int input = 0;
+	         try{
+	           input = sc.nextInt();
+	         }
+	         catch(Exception e){
+	            System.out.println("숫자를 입력해주세요.");
+	            continue;
+	         }
+	         switch(input){
+	         case 0 :
+	        	 return;
+	         case 1 :
+	        	 hopeRegiView();
+	        	 break;
+	         default : 
+	        	 System.out.println("다시 입력해주세요");
+	         }
+	      }
+	  }
+//   }
+   
    /**
     * 희망도서등록메서드
     * @author 조애슬
+    * @since 2020.11.05
     */
    private void hopeRegiView(){
-      showBanner("희망도서 등록");
-      System.out.println("도서제목을 입력해주세요");
-      String hope_title = sc.next();
-      System.out.println("저자를 입력해주세요");
-      String hope_author = sc.next();
-      System.out.println("출판사를 입력해주세요");
-      String hope_publisher = sc.next();
-      showBanner("희망도서등록 성공");
+      
+	  showBanner("희망도서 등록");
+//      if(is.hopeListAdd()){
+    	  //등록성공
+//      }//희망도서등록메서드
+      
       System.out.println("메인메뉴로 돌아갑니다.");
-//      mainView();
+      homeView();
    }
+
 
 ////////////////////////////////////////////마이페이지//////////////////////////////////////////////////
 	/**
@@ -410,10 +489,10 @@ public class View {
 	 */
 	private void myPageView() {
 		while(true) {
-			System.out.println("1. 정보수정");
-			System.out.println("2. 대출도서목록");
-			System.out.println("3. 예약도서목록");
-			System.out.println("<뒤로(Q/q)>");
+			System.out.println("[1]정보수정");
+			System.out.println("[2]대출도서목록");
+			System.out.println("[3]예약도서목록");
+			System.out.println("[0]뒤로");
 			
 			int input = 0;
 			try {
@@ -443,7 +522,6 @@ public class View {
 		}
 	}
 	
-	
 	/**
 	 * 내 정보 수정 페이지
 	 * @author 민태원
@@ -452,9 +530,14 @@ public class View {
 	private void updateInfoView() {
 		while(true) {
 			//내 정보 출력 메서드
-			//void printProfile(MemberVO mv);
+			MemberVO mv = is.printProfile(nowMember.getMem_id());
+			System.out.println("성명 : "+mv.getMem_name());
+			System.out.println("ID : "+mv.getMem_id());
+			System.out.println("생년월일 : "+mv.getMem_bir());
+			System.out.println("전화번호 : "+mv.getMem_tel());
+			System.out.println("이메일 : "+mv.getMem_email());
 			System.out.println("바꿀 정보 선택");
-			System.out.println("비밀번호(1) 이메일(2) 전화번호(3) 탈퇴하기(9) 뒤로가기(0)");
+			System.out.println("비밀번호(1) 전화번호(2) 이메일(3) 탈퇴하기(9) 뒤로가기(0)");
 			
 			int input = 0;
 			try {
@@ -463,20 +546,19 @@ public class View {
 				System.out.println("잘못된 입력입니다.");
 				continue;
 			}
-			
-
+			Map<String, String> myInfo = new HashMap<>();
 			switch(input) {
 			case 1:
 				//비밀번호
-				//String updatePW();
+				myInfo.put("mem_id", updatePW());
 				break;
 			case 2:
 				//이메일
-				//String updateEmail();
+				myInfo.put("mem_email", updateEmail());
 				break;
 			case 3:
 				//전화번호
-				//String updatePhone();
+				myInfo.put("mem_tel", updatePhone());
 				break;
 			case 9:
 				//탈퇴 메서드
@@ -488,13 +570,66 @@ public class View {
 	        	 System.out.println("다시 입력해주세요");
 	        	 continue;
 			}
-			
-			//회원정보 갱신
-			//database
-			//void updateMember(MemberVO mv);
-			
 		}
 	}
+	
+	/**
+	 * 비밀번호 변경 메서드 
+	 * 출력 : "새로운 비밀번호를 입력하세요"
+	 * @return 비밀번호 확인되면 새로운 비밀번호 반환, 아니면 기존의 비밀번호 반환
+	 * @author 민태원
+	 * @since 2020.11.05
+	 */
+	private String updatePW(){
+		System.out.print("새로운 비밀번호를 입력하세요 : ");
+		String pw1 = sc.next();
+		System.out.print("한번더 입력하세요 : ");
+		String pw2 = sc.next();
+		if(pw1.equals(pw2)){
+			return pw1;
+		}
+		System.out.println("비밀번호가 다릅니다.");
+		return nowMember.getMem_pw();
+	}
+	
+	/**
+	 * 이메일 변경 메서드
+	 * 출력 : "새로운 이메일을 입력하세요"
+	 * @return 형식에 맞는 이메일이면 이메일이 저장된 문자열 반환, 아니면 기존 이메일 반환
+	 * @author 민태원
+	 * @since 2020.11.05
+	 */
+	private String updateEmail(){
+		String email = sc.next();
+		String checkEmail = "^[a-zA-Z](\\w|-|_|\\\\|\\.)*@\\w{1,7}\\.[a-zA-Z]{2,3}(\\.kr)?";
+		if(Pattern.matches(checkEmail, email)){
+			return email;
+		}
+		return nowMember.getMem_email();
+	}
+	
+	/**
+	 * 전화번호 변경 메서드
+	 * 출력 : "새로운 전화번호를 입력하세요"
+	 * @return 형식에 맞는 전화번호이면 전화번호가 저장된 문자열 반환, 아니면 기존의 전화번호 반환
+	 * @author 민태원
+	 * @since 2020.11.05
+	 */
+	private String updatePhone(){
+		String tel = sc.next();
+		String checkTel = "01[016-9]-[1-9]\\d{3}-\\d{4}";
+		if(Pattern.matches(checkTel, tel)){
+			return tel;
+		}
+		return nowMember.getMem_tel();
+	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
@@ -562,7 +697,16 @@ public class View {
 		}
 	}
 	
-	
+	/**
+	 * 예약 취소 메서드 
+	 * 출력: "취소하시겠습니까? (y/n)" => y면 예약취소 / n면 return
+	 * @param book_id 예약된 도서의 아이디
+	 * @author 민태원
+	 * @since 2020.11.04
+	 */
+	void rsvCancel(String book_id){
+		
+	}
 	
 
 /////////////////////////////////////////////관리자 페이지//////////////////////////////////////////////////
@@ -688,7 +832,7 @@ public class View {
 			 */
 			noiceMainView();
 
-			System.out.println("[1]\t 공지 추가");
+			System.out.println("[1]\t 공지 조회");
 			System.out.println("[2]\t 공지 추가");
 			System.out.println("[3]\t 공지 삭제");
 			System.out.println("[0]\t 종료");
@@ -874,22 +1018,24 @@ public class View {
 
 	/**
 	 * 책리스트 출력  
+	 * @author 김태규
+	 * @since 2020.11.05
 	 */
 	public void bookListMethod() { 
 		System.out.println("리스트 출력");
     }
 	/**
 	 * 책 등록
+	 * @author 김태규
+	 * @since 2020.11.05
 	 */
 	public void bookMethod() { 
 		System.out.println("책이 등록되었습니다");
     }
-
 	
 // 회원리스트
 	/**
-	  * 회원 관리 뷰
-	 * 
+	 * 회원 관리 뷰
 	 * @author 김태규
 	 * @since 2020.11.04
 	 */
@@ -938,7 +1084,6 @@ public class View {
 
 	/**
 	 * 회원 리스트 뷰
-	 * 
 	 * @author 김태규
 	 * @since 2020.11.04
 	 */
@@ -982,21 +1127,17 @@ public class View {
 //			blackAddMethod(num2);
 			return;
 		}
-
 		default:
 			System.out.println("잘못입력하였습니다");
 			return;
 		}
-
 	}
 
 	/**
 	 * 블랙 리스트 뷰
-	 * 
 	 * @author 김태규
 	 * @since 2020.11.04
 	 */
-
 	public void blackListView() {
 		while (true) {
 

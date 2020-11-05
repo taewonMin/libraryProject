@@ -15,6 +15,246 @@ public class Database {
 	private List<RentalVO> 		rentalList 		= new ArrayList<RentalVO>();	//대여도서 목록
 	private List<ReserveVO> 	reserveList 	= new ArrayList<ReserveVO>();	//예약도서 목록
 	
+	private static Database database = new Database();
+	
+	public static Database getDatabase() {
+		return database;
+	}
+	
+//회원 CRUD
+	/**
+    * 회원가입을 위한 메서드
+    * @param params 멤버 한명의 모든 정보
+    * @return 추가에 성공하였으면 true 그렇지 않으면 false
+    * @author 조애슬
+    * @since 2020.11.04
+    */
+   public boolean createMember(MemberVO params){
+      if(memberList.add(params)){//멤버리스트(db)에 가입한 회원의 정보 넣고 성공시 true
+         return true;
+      }
+      return false;
+   }
+   
+   /**
+    * 회원정보 조회 메서드
+    * @param mem_id 조회할 회원의 아이디
+    * @return 조회할 회원의 모든 정보 반환
+    * @author 민태원
+    * @since 2020.11.05
+    */
+   	public MemberVO readMember(String mem_id){
+   		MemberVO mv = null;
+   		for(MemberVO temp : memberList){
+   			if(temp.getMem_id().equals(mem_id)){
+   				mv = temp;
+   			}
+   		}
+   		return mv;
+   	}
+   	
+   /**
+    * 회원정보 갱신 메서드
+    * @param mv 갱신할 멤버의 모든 정보
+    * @return 갱신 성공하면 1, 아니면 0
+    * @author 민태원
+    * @since 2020.11.04
+    */
+   	int updateMember(MemberVO mv){
+	   if (memberList.contains(mv.getMem_id())) {
+		   	(memberList.get(memberList.indexOf(mv.getMem_id()))).setMem_pw(mv.getMem_pw());
+         	(memberList.get(memberList.indexOf(mv.getMem_id()))).setMem_pw(mv.getMem_pw());
+         	(memberList.get(memberList.indexOf(mv.getMem_id()))).setMem_pw(mv.getMem_pw());
+         	(memberList.get(memberList.indexOf(mv.getMem_id()))).setMem_pw(mv.getMem_pw());
+         	return 1;
+	   }
+	   return 0;
+   	}
+   
+   /**
+    * 회원정보 삭제 메서드
+    * @param mv 탈퇴할 멤버의 모든 정보
+    * @author 민태원
+    * @since 2020.11.04
+    */
+   	void deleteMember(MemberVO mv){
+	   if (memberList.contains(mv)) {
+    	  mv.setActivate(false);
+      	}
+   	}
+
+///공지 CRUD
+   	/**
+   	 * 공지 추가 메서드
+   	 * @param nv 저장할 공지의 모든 정보
+   	 * @return 추가에 성공하였으면 true 그렇지 않으면 false
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	public boolean createNotice(NoticeVO nv){
+        if(noticeList.add(nv)){
+           return true;
+        }
+        return false;
+     }
+   	
+   	/**
+   	 * 공지 조회 메서드 
+   	 * @param nv 조회할 공지의 모든 정보
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	public void readNotice(NoticeVO nv){
+   		System.out.println(nv.getNotice_no());
+   		System.out.println(nv.getNotice_title());
+   		System.out.println(nv.getNotice_date());
+	}
+   	
+   	/**
+   	 * 공지 삭제 메서드
+   	 * @param nv 삭제할 공지의 모든 정보
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	void deleteNotice(NoticeVO nv){
+ 	   if (noticeList.remove(nv)) {
+       }
+	}
+   	
+//대여 CRUD
+   	/**
+   	 * 나의 대여목록에 추가하기
+   	 * @param rv 저장할 대여 정보
+   	 * @return 추가에 성공하였으면 true 그렇지 않으면 false
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	public boolean createRental(RentalVO rv){
+        if(rentalList.add(rv)){
+           return true;
+        }
+        return false;
+     }
+   	
+   	/**
+   	 * 내가 대여한 도서 조회하기
+   	 * @param rv 조회할 대여 정보
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	public void readRental(RentalVO rv){
+   		System.out.println(rv.getRental_id());
+   		System.out.println(rv.getMem_id());
+   		System.out.println(rv.getBook_id());
+   		System.out.println(rv.getRental_start());
+   		System.out.println(rv.getRental_end());
+	}
+   	
+   	/**
+   	 * 나의 대여목록에서 삭제하기
+   	 * @param nv 삭제할 대여목록의 대여 정보
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	void deleteRental(RentalVO rv){
+ 	   if (rentalList.remove(rv)) {
+       }
+	}
+
+//예약 CRUD
+   	/**
+   	 * 내 예약목록에 추가하기
+   	 * @param rv 예약목록에 추가할 예약정보
+   	 * @return 추가에 성공하였으면 true 그렇지 않으면 false
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	public boolean createReserve(ReserveVO rv){
+        if(reserveList.add(rv)){
+           return true;
+        }
+        return false;
+     }
+   	
+   	/**
+   	 * 나의 예약 목록 조회하기
+   	 * @param rv 조회할 예약정보
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	public void readReserve(ReserveVO rv){
+   		System.out.println(rv.getRsv_no());
+   		System.out.println(rv.getMem_id());
+   		System.out.println(rv.getBook_id());
+	}
+   	
+   	/**
+   	 * 나의 예약목록에서 삭제하기
+   	 * @param nv 삭제할 대여목록의 대여 정보
+   	 * @author 민태원
+   	 * @since 2020.11.05
+   	 */
+   	void deleteReserve(ReserveVO rv){
+ 	   if (reserveList.remove(rv)) {
+       }
+	}
+   	
+   	
+   	
+   	
+   	
+	/**
+	 * 로그인 정보 확인 
+	 * @return 회원정보 있을 시 true반환
+	 * @author 조애슬
+	 * @since 2020-11-04
+	 */
+	public boolean loginMatch(Map<String, String> params){
+		/*for(MemberVO dbmember : memberList){
+			if(dbmember.getMem_id().equals(params.get()) && 
+				dbmember.getMem_pw().equals()){
+					return true;
+				}
+		}*/
+		return true;
+	}
+	
+	/**
+	 * 공지사항 게시판을 출력한다.
+	 * @author 조애슬
+	 * @param	
+	 * @return	NoticeList를 반환
+	 */
+	//public List<NoticeVO> noticeList(){return noticeList;}
+	public boolean noticeList(){
+		
+		return true;
+	}
+	
+	/**
+	 * 희망도서목록을 출력한다
+	 * @author 조애슬
+	 * @return 
+	 * @since 2020-11-05
+	 */
+	public boolean hopeList(){
+		return true;
+	}
+	
+	/**
+	 * 희망도서를 db에 등록하고 정상등록되면  true를 리턴
+	 * @author 조애슬
+	 * @since 2020-11-05
+	 */
+	public boolean hopeListAdd(HopeVO hv){
+		if(hopeList.add(hv)){
+			System.out.println("희망도서가 정상적으로 등록되었습니다.");
+			return true;
+		}
+		return false;
+	}
+	
+	
 	
 	
 	// 관리자 초기화

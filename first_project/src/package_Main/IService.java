@@ -7,90 +7,108 @@ import package_VO.*;
 
 public interface IService {
 	
+	
+/////////////////////////로그인&회원가입///////////////////////////////
+		   
 	/**
-	 * 회원가입을 위한 메서드
-	 * @param mv 멤버 한명의 모든 정보
-	 * @return 추가에 성공하였으면 true 그렇지 않으면 false
-	 * @author 민태원
-	 * @since 2020.11.04
-	 */
+	* 아이디중복체크
+	*@param mem_id 멤버 한명의 아이디
+	*@return boolean 일치하는 사람이 있으면 true를 없으면 false를 반환
+	*@author 조애슬
+	*/
+	int idUniqCheck(String mem_id); //반환 타입 int (count로 세려고)
+
+	//SELECT count(mem_id)//boolean으로 하는것보다 count트로 0이면 중복아님 1이상이면 중복임으로 하기
+	//FROM  MEMBER
+	//WHERE MEM_ID = 'a001'
+		
+	
+	/**
+	* 회원가입 받은거 db에 저장. 성공하면 true리턴
+	* @param mv
+	* @return boolean
+	* @author 조애슬
+	*/
 	boolean createMember(MemberVO mv);
 	
 	/**
-	 * 회원정보 갱신 메서드
-	 * @param mv 갱신할 멤버의 모든 정보
-	 * @author 민태원
-	 * @since 2020.11.04
-	 */
-	void updateMember(MemberVO mv);
+	* 로그인 입력받은거 db와 비교
+	* @param Map<> in, Map<> pw
+	* @return MemberVO //MemberVO nowmember를 null에서 로그인한 회원으로 바꿔주기위해
+	* @since 2020-11-04
+	*/
+	MemberVO loginMatch(Map<Integer, String> id, Map<Integer , String> pw); // 반환타입 MemberVO, String
+	
+
+
+/////////////////////////////////공지사항///////////////////////////////////////   
+	/**
+	* 공지사항 보기
+	* @author 조애슬
+	* @return List<NoticeVO>
+	* @since 2020-11-05
+	*/
+	List<NoticeVO> noticeList(); // 반환타입 List<NoticeVO> 
+	
 	
 	/**
-	 * 회원정보 삭제 메서드
-	 * @param mv 탈퇴할 멤버의 모든 정보
-	 * @author 민태원
-	 * @since 2020.11.04
-	 */
-	void deleteMember(MemberVO mv);
+	* 공지사항의 글번호를 가지고 해당하는 글 상세보기\
+	* @param input
+	* @return NoticeVO //글 하나니까
+	* @author 조애슬
+	* @since 2020-11-05
+	*/
+	NoticeVO openNoDetail(int input); // 매개변수 PK, 반환타입 NoticeVO 글 전체가 아니라 글 하나니까 List가 아니다
 	
+	/**
+	* 희망도서리스트출력
+	* @return List
+	* @author 조애슬
+	* @since 2020-11-05
+	*/
+	List<NoticeVO> hopeList(); //반환타입
 	
-	
+	/**
+	* 희망도서등록 , 등록성공하면 true
+	* @param HopeVO 
+	*@return boolean 
+	* @author 조애슬
+	* @since 2020-11-05
+	*/
+	boolean hopeListAdd(HopeVO hv); //매개변수 HopeVO
+
 ////////////////////////검색/////////////////////////////
-	/**
-	 * 도서명 검색 후 출력
-	 * 및 도서 상세 메서드
-	 * @author 송지은
-	 * @param 도서명(String)
-	 * @return BookVO List형 반환
-	 */
-	List<BookVO> bookList();
+  /**
+    * 도서명 검색 후 출력
+    * 및 도서 상세 메서드
+    * @author 송지은
+    * @param 도서명(String)
+    * @return BookVO List형 반환
+    * 검색 조건: 도서명을 받고 일치하는 도서목록을 보여준다
+    */
+	List<BookVO> bookList(); // 매개변수
 	
-	/**
-	 * 장르별 검색 메서드
-	 * @author 송지은
-	 * @param 장르명(int)
-	 * @return  BookLGUVO List형 반환
-	 */
+  /**
+    * 장르 검색 메서드
+    * @author 송지은
+    * @param 장르명
+    * @return  BookLGUVO List형 반환
+    * 검색 조건: 장르 목록 리스트를 보고 해당 숫자 입력시 이동 후 리스트 출력(BookList)
+    */
 	List<BookLGUVO> bookLGUList();
-	
-	
+
 	
 	
 	
 ///////////////////마이페이지///////////////////////////
 	/**
 	 * 내 정보 출력 메서드(아이디,이름,생년월일,이메일,전화번호,대출횟수)
-	 * @param mv 멤버 한명의 모든 정보
+	 * @param mem_id 나의 아이디
 	 * @author 민태원
 	 * @since 2020.11.04
+	 * @return 회원정보 반환
 	 */
-	void printProfile(MemberVO mv);
-	
-	/**
-	 * 비밀번호 변경 메서드 
-	 * 출력 : "새로운 비밀번호를 입력하세요"
-	 * @return 형식에 맞는 비밀번호면 비밀번호가 저장된 문자열 반환
-	 * @author 민태원
-	 * @since 2020.11.04
-	 */
-	String updatePW();
-	
-	/**
-	 * 이메일 변경 메서드
-	 * 출력 : "새로운 이메일을 입력하세요"
-	 * @return 형식에 맞는 이메일이면 이메일이 저장된 문자열 반환
-	 * @author 민태원
-	 * @since 2020.11.04
-	 */
-	String updateEmail();
-	
-	/**
-	 * 전화번호 변경 메서드
-	 * 출력 : "새로운 전화번호를 입력하세요"
-	 * @return 형식에 맞는 전화번호이면 전화번호가 저장된 문자열 반환
-	 * @author 민태원
-	 * @since 2020.11.04
-	 */
-	String updatePhone();
+	MemberVO printProfile(String mem_id); //매개변수  : 나의 아이디 String, 반화타입 : 나의 정보 MemberVO
 	
 	/**
 	 * 회원 탈퇴 메서드 -> 회원정보 삭제 메서드 호출
@@ -106,8 +124,9 @@ public interface IService {
 	 * @param mem_id 조회할 회원의 아이디
 	 * @author 민태원
 	 * @since 2020.11.04
+	 * @return 대출도서목록 반환
 	 */
-	void printRentalList(String mem_id);
+	List<RentalVO> printRentalList(String mem_id);
 	
 	/**
 	 * 도서반납 메서드 			
@@ -120,77 +139,103 @@ public interface IService {
 	
 	
 	/**
-	 * 예약도서 리스트 출력 메서드
+	 * 나의 예약도서 리스트 출력 메서드
 	 * @param mem_id 조회할 회원의 아이디
 	 * @author 민태원
 	 * @since 2020.11.04
+	 * @return 예약도서 목록 반환
 	 */
-	void printBookList(String mem_id);
+	List<ReserveVO> printBookList(String mem_id); //반환타입 
 	
 	
+	
+	
+	
+////////////////////관리자//////////////////////////////
 	/**
-	 * 예약 취소 메서드 
-	 * 출력: "취소하시겠습니까? (y/n)" => y면 예약취소 / n면 return
-	 * @param book_id 예약된 도서의 아이디
-	 * @author 민태원
-	 * @since 2020.11.04
+	 * 읽을 공지 출력 메소드
+	 * @param nv
+	 * 출력할 공지정보
+	 * @author 김태규
 	 */
-	void rsvCancel(String book_id);
-	
-	
-	
-	
-	
-	
-	
-	
-	
-// 공지목록
-	/**
-	 * 공지목록 리스트출력
-	 */
-	void noiceListMethod();
-	/*
-	SELECT *
-	FROM   MEMBER
-	WHERE  MEM_ID = 'a001'
-	AND    MEM_PW = 'asdfasdf';
-	
-	매개변수가 vo거의 일치해 => VO
-	매개변수로 2개~4개 => Map
-	MemberVO logIn(String mem_id, String mem_pw);
-	
-	Map<String,String> params = new HashMap<>();
-	params.put("mem_id","a001");
-	params.put("mem_pw","asdfasdf");
-	MemberVO logIn(Map<String,String> params);
-	
-	*/
+	void noiceReadMethod(NoticeVO nv);
 
 	/**
-	 * 공지 등록
+	 * 공지 추가 메서드
+	 * @param nv
+	 * 추가할 공지정보
+	 * @author 김태규
 	 */
-	void noiceAddMethod();
+	String noiceAddMethod(NoticeVO nv);
 
 	/**
-	 * 공지 삭제
+	 * 공지 삭제 메소드 공지
+	 * @param nv
+	 * 삭제할 공지정보 
+	 * @author 김태규
 	 */
-	void noiceDeltleMethod();
-
-// 희망도서
-	/**
-	 * 희망도서 등록
-	 */
-	void hopeBookAddMethod();
+	void noiceDeltleMethod(NoticeVO nv);
 
 	/**
-	 * 희망도서 삭제
+	 * 도서 승인 메소드
+	 * @param nv
+	 * 승인할 희망도서  정보
+	 * @author 김태규
 	 */
-	void hopeBookeDeltleMethod();
+	void hopeBookAddMethod(HopeVO hv);
 
-// 책등록
 	/**
-	 * 책등록
+	 * 부결 도서 메소드
+	 * @param nv
+	 * 리스트에 삭제할 희망도서 정보 
+	 * @author 김태규
 	 */
-	void bookMethod();
+	void hopeBookeDeltleMethod(HopeVO hv);
+
+	/**
+	 * 전체 도서리스트 출력 메소드
+	 * * @param nv
+	 * 출력할 도서 정보
+	 * @author 김태규
+	 */
+	void bookListMethod(BookVO bv);
+
+	/**
+	 * 도서 등록 메소드
+	 * @param nv
+	 * 추가할 공지정보
+	 * @author 김태규
+	 */
+	void bookAddMethod(BookVO bv);
+
+	/**
+	 * 회원리스트 출력 메소드
+	 * @param nv
+	 * 출력할 회원 정보 
+	 * @author 김태규
+	 */
+	void memberListMethod(MemberVO mv);
+
+	/**
+	 * 블랙리스트 등록 메소드
+	 * @param nv
+	 * 등록할 블랙리스트정보 
+	 * return BlackListVO
+	 * @author 김태규
+	 */
+	void blackAddMethod(BlackListVO bv);
+
+	/**
+	 * 블랙리스트 리스트 출력 메소드
+	 * 블랙리스트의 전체의 정보  
+	 * @author 김태규
+	 */
+	void blackListReadView(BlackListVO bv);
+
+	/**
+	 * 블랙리스트 리스트 삭제 메소드
+	 * 삭제할 블랙리스트정보 
+	 * @author 김태규
+	 */
+	void blackDeltleMethod(BlackListVO bv);
 }
