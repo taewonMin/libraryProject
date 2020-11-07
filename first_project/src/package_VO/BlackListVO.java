@@ -1,13 +1,13 @@
 package package_VO;
 
 public class BlackListVO {
-	private String black_id;	//블랙리스트ID(PK)
+	private int black_id;	//블랙리스트ID(PK)
     private String mem_id;		//회원ID(FK)
     private String black_day;	//블랙리스트 등록일
     private String black_end;	//블랙리스트 종료일
     
     //get
-    public String getBlack_id() {
+    public int getBlack_id() {
 		return black_id;
 	}
     public String getMem_id() {
@@ -21,7 +21,7 @@ public class BlackListVO {
     }
  
     //set
-   	public void setBlack_id(String black_id) {
+   	public void setBlack_id(int black_id) {
    		this.black_id = black_id;
 	}
    	public void setMem_id(String mem_id) {

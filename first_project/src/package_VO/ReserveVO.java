@@ -1,9 +1,15 @@
 package package_VO;
 
 public class ReserveVO {
-	private int rsv_no;			//예약번호(PK)
+	private int rsv_no;			//예약번호(PK) - 시퀀스
 	private String book_id;		//도서ID(FK)
 	private String mem_id;		//회원ID(FK)
+	
+	private static int reserv_sq = 1;
+	{
+		rsv_no = reserv_sq;
+		this.reserv_sq++;
+	}
 	
 	//get
 	public int getRsv_no() {

@@ -73,31 +73,32 @@ public interface IService {
      boolean adminMatch(Map<String,String> params);
 
 /////////////////////////////////공지사항///////////////////////////////////////   
-	/**
-	* 공지사항 보기
-	* @author 조애슬
-	* @return List<NoticeVO>
-	* @since 2020-11-05
-	*/
-	List<NoticeVO> noticeList(); // 반환타입 List<NoticeVO> 
+     /**
+ 	* 공지사항 보기
+ 	* @author 조애슬
+ 	* @return List<NoticeVO>
+ 	* @since 2020-11-05
+ 	*/
+ 	
+// 	   List<NoticeVO> noticeList(); // 반환타입 List<NoticeVO> 
+ 	   boolean noticeList(); // 반환타입 List<NoticeVO> 
+ 	
+ 	/**
+ 	* 공지사항의 글번호를 가지고 해당하는 글 상세보기\
+ 	* @param input
+ 	* @return NoticeVO //글 하나니까
+ 	* @author 조애슬
+ 	* @since 2020-11-05
+ 	*/
+ 	boolean openNoDetail(int input); // 매개변수 PK, 반환타입 NoticeVO 글 전체가 아니라 글 하나니까 List가 아니다
 	
-	
-	/**
-	* 공지사항의 글번호를 가지고 해당하는 글 상세보기\
-	* @param input
-	* @return NoticeVO //글 하나니까
-	* @author 조애슬
-	* @since 2020-11-05
-	*/
-	NoticeVO openNoDetail(int input); // 매개변수 PK, 반환타입 NoticeVO 글 전체가 아니라 글 하나니까 List가 아니다
-	
-	/**
+ 	/**
 	* 희망도서리스트출력
 	* @return List
 	* @author 조애슬
 	* @since 2020-11-05
 	*/
-	List<HopeVO> hopeList(); //반환타입
+	boolean hopeList(); //반환타입
 	
 	/**
 	* 희망도서등록 , 등록성공하면 true
@@ -106,31 +107,108 @@ public interface IService {
 	* @author 조애슬
 	* @since 2020-11-05
 	*/
-	boolean hopeListAdd(HopeVO hv); //매개변수 HopeVO
+	boolean hopeListAdd(Map<String, String> params); //매개변수 HopeVO
+	
+	/**
+	 * 희망도서 상세보기
+	 * @author 조애슬
+	 * @since 2020-11-07
+	 */
+	boolean hopeDetailView(int hopeNo);
+	
+	/**
+	 * 희망도서 삭제하기
+	 * @author 조애슬
+	 * @since 2020-11-07
+	 */
+	boolean hopeRemoveView(String mem_id,int hopeNo);
 
 ////////////////////////검색/////////////////////////////
-  /**
-    * 도서명 검색 후 출력
-    * 및 도서 상세 메서드
-    * @author 송지은
-    * @param 도서명(String)
-    * @return BookVO List형 반환
-    * 검색 조건: 도서명을 받고 일치하는 도서목록을 보여준다
-    */
-	List<BookVO> bookList(); // 매개변수
-	
-  /**
-    * 장르 검색 메서드
-    * @author 송지은
-    * @param 장르명
-    * @return  BookLGUVO List형 반환
-    * 검색 조건: 장르 목록 리스트를 보고 해당 숫자 입력시 이동 후 리스트 출력(BookList)
-    */
-	List<BookLGUVO> bookLGUList();
+	/**
+	 * 도서명 검색 메서드
+	 * @param bo_name 도서 이름
+	 * @return 전체 도서명 List형으로 반환
+	 */
+	List<BookVO> bookNameListVer2(String bo_name);
 
+	/**
+	 * 도서 조회 메서드
+	 * @author 송지은
+	 * @param bo_id 도서 번호
+	 * @return 전체 BookVO List형 반환
+	 */
+	List<BookVO> bookNameListVer1(int bo_id);
 	
+	/**
+	 * 도서 분류 코드 조회 메서드
+	 * @author 송지은
+	 * @return
+	 */
+	List<BookLGUVO> bookLGUList();
 	
+	/**
+	 * 장르 선택  입출력 메서드
+	 * @author 송지은
+	 * @return
+	 */
+	int scanCID();
 	
+	/**
+	 * 도서 아이디 선택 메서드(int)
+	 * @author 송지은
+	 * @return bo_id반환
+	 */
+	
+	String inputBook();
+	/**
+	 * 도서 아이디 선택 메서드(String)
+	 * @author 송지은
+	 * @return bo_name 반환
+	 */
+	String inputBook2();
+	
+	/**
+	 * 도서 선택 메서드
+	 * @author 송지은
+	 * @return
+	 */
+	
+	List<BookVO> booklList(); 
+	
+	/**
+	 * 도서 상세 조회 메서드
+	 * @author 송지은
+	 * @param bookID
+	 * @return
+	 */
+	List<BookVO> booklList(String bookID);
+
+	/**
+	 * 도서 검색 메서드
+	 * @param book_id 도서의 아이디
+	 * @return 검색된 도서의 모든 정보를 반환
+	 * @author 민태원
+	 * @since 2020.11.07
+	 */
+	BookVO readBook(String book_id);
+//대여 및 예약	
+	/**
+	 * 대여시 대여테이블에 저장할 객체 생성 메서드
+	 * @param map 회원의아이디, 도서의 아이디
+	 * @return 객체 생성에 성공하면 객체 반환
+	 * @author 민태원
+	 * @since 2020.11.07
+	 */
+	RentalVO createRentalVO(Map<String, String> map);
+	
+	/**
+	 * 예약시 예약테이블에 저장할 객체를 생성하고 예약가능 일자 반환
+	 * @param map 회원의 아이디, 도서의 아이디
+	 * @return 예약할 도서를 빌려간 사람의 반납일자 반환
+	 * @author 민태원
+	 * @since 2020.11.07
+	 */
+	String createReserveVO(Map<String, String> map);
 ///////////////////마이페이지///////////////////////////
 	
 	/**
@@ -144,12 +222,12 @@ public interface IService {
 	
 	/**
 	 * 도서반납 메서드 			
-	 * @param map 회원의 아이디와 반납할 도서의 아이디
+	 * @param map 반납할 도서의 아이디
 	 * @return 반납에 성공하면 1, 아니면 0
 	 * @author 민태원
 	 * @since 2020.11.06
 	 */
-	int returnBook(Map<String,String> map);
+	int returnBook(String book_id);
 	
 	/**
 	 * 나의 예약도서 리스트 출력 메서드
@@ -177,7 +255,8 @@ public interface IService {
 	 * 출력할 공지정보
 	 * @author 김태규
 	 */
-	List<NoticeVO> noticList();
+	boolean noticList();
+	
 	/**
 	 * 선택된 공지 출력 메소드
 	 * @param nv
@@ -221,14 +300,6 @@ public interface IService {
 	void hopeBookeDeltleMethod(int num);
 
 	/**
-	 * 전체 도서리스트 출력 메소드
-	 * * @param nv
-	 * 출력할 도서 정보
-	 * @author 김태규
-	 */
-	List<BookVO> booklList();
-
-	/**
 	 * 도서 등록 메소드
 	 * @param nv
 	 * 추가할 공지정보
@@ -242,7 +313,7 @@ public interface IService {
 	 * 출력할 회원 정보 
 	 * @author 김태규
 	 */
-	List<MemberVO> memList();
+	boolean memList();
 
 	/**
 	 * 블랙리스트 등록 메소드
@@ -251,14 +322,14 @@ public interface IService {
 	 * return BlackListVO
 	 * @author 김태규
 	 */
-	void blackAddMethod(int num);
+	boolean createBlackList(String id);
 
 	/**
 	 * 블랙리스트 리스트 출력 메소드
 	 * 블랙리스트의 전체의 정보  
 	 * @author 김태규
 	 */
-	List<BlackListVO> blackList();
+	boolean readBlack();
 
 
 	/**
@@ -267,4 +338,18 @@ public interface IService {
 	 * @author 김태규
 	 */
 	void blackDeltleMethod(BlackListVO bv);
+
+	/**
+	 * 도서 리스트 출력 메소드
+	 * 삭제할 블랙리스트정보 
+	 * @author 김태규
+	 */
+	boolean bookListMethod();
+
+	/**
+	 * 도서 리스트 추가 메소드
+	 * 삭제할 블랙리스트정보 
+	 * @author 김태규
+	 */
+	void bookAddMethod();
 }

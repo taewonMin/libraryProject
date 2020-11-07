@@ -1,8 +1,11 @@
 package package_Main;
 
 import java.util.*;
+
 import package_VO.*;
 import package_Database.Database;
+
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 public class IServiceImpl implements IService{
@@ -74,44 +77,209 @@ public class IServiceImpl implements IService{
 	}
 
 	
+	/**
+	 * @author 조애슬
+	 */
+	@Override
+//	public List<NoticeVO> noticeList() {
+	public boolean noticeList() {
+		return db.noticeList();
+	}
 	
+	/**
+	 * @author 김태규
+	 */
+//	@Override
+//	public List<NoticeVO> noticeList() {
+//		
+//		return null;
+//	}
+
+	@Override
+	public boolean openNoDetail(int input) {
+		return db.openNoDetail(input);
+	}
+
+	/**
+	 * @author 조애슬
+	 */
+	@Override
+	public boolean hopeList() {
+		return db.hopeList();
+	}
 	
+	/**
+	 * @author 김태규
+	 */
+//	@Override
+//	public List<HopeVO> hopeList() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+
+	/**
+	 * @author 조애슬
+	 */
+	@Override
+	public boolean hopeListAdd(Map<String,String> params) {
+		return db.hopeListAdd(params);
+	}
+	
+	/**
+	 * @author 김태규
+	 */
+//	@Override
+//	public boolean hopeListAdd(HopeVO hv) {
+//		// TODO Auto-generated method stub
+//		return false;
+//	}
+	
+	/**
+	 * 희망도서 상세보기 
+	 * @author 조애슬
+	 */
+	@Override
+	public boolean hopeDetailView(int hopeNo) {
+		
+		return db.hopeDetailView(hopeNo);
+	}
+	
+	/**
+	 * 희망도서 삭제하기
+	 */
+	@Override
+	public boolean hopeRemoveView(String mem_id,int hopeNo) {
+		
+		return db.hopeRemoveView(mem_id,hopeNo);
+	}
+
+	@Override
+	public BookVO readBook(String book_id){
+		return db.readBook(book_id); 
+	}
+	
+////////////////////////검색///////////////////	
+	@Override
+	public List<BookVO> bookNameListVer2(String bo_name) {
+		return db.bookNameListVer2(bo_name);
+		
+	}
 	
 	@Override
-	public List<NoticeVO> noticeList() {
-		// TODO Auto-generated method stub
+	public List<BookVO> bookNameListVer1(int bo_id) {
+
+		return db.bookNameListVer1(bo_id);
+	}
+	@Override
+	public List<BookVO> booklList() {
+		
 		return null;
 	}
-
-	@Override
-	public NoticeVO openNoDetail(int input) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<HopeVO> hopeList() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean hopeListAdd(HopeVO hv) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public List<BookVO> bookList() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public List<BookLGUVO> bookLGUList() {
-		// TODO Auto-generated method stub
-		return null;
+
+		return db.bookLGUList();
 	}
+	@Override
+	public List<BookVO> booklList(String bookID) {
+		return db.BookListID(bookID);
+	}
+
+	/**
+	 * 장르 선택 메서드
+	 * @author 송지은
+	 */
+	@Override
+	public int scanCID() {
+		Scanner scn = new Scanner(System.in);
+		System.out.println("───────────────────────────────────────────────────────");
+		System.out.println("선택할 장르의 번호를 입력해주세요.");
+		while (true) {
+			try {
+				String input = scn.next();
+				if (RegEx.checkScanCID(input)) {
+					return Integer.parseInt(input);
+				}else {
+					System.out.println("숫자 1개만 입력 가능합니다.");
+					continue;
+				}
+			} catch (InputMismatchException e) {
+				System.out.println("숫자 1개만 입력 가능합니다.");
+			}
+		}
+	}
+	
+	/**
+	 * 도서 아이디 선택 메서드
+	 * @author 송지은
+	 */
+	@Override
+	public String inputBook() {
+		Scanner scn = new Scanner(System.in);
+		System.out.println("───────────────────────────────────────────────────────");
+		System.out.println("선택하실 도서 번호를 입력해주세요.");
+		while (true) {
+			try {
+				String bo_id = scn.next();
+				return bo_id;	
+			}catch (InputMismatchException e) {
+				System.out.println("숫자만 입력 가능합니다.");
+			}
+		
+		}
+		
+	}
+	/**
+	 * 도서 아이디 선택 메서드2
+	 * @author 송지은
+	 */
+	@Override
+	public String inputBook2() {
+		Scanner scn = new Scanner(System.in);
+		System.out.println("───────────────────────────────────────────────────────");
+		System.out.println("선택하실 도서 번호를 입력해주세요.");
+		while (true) {
+			try {
+				String bo_name = scn.next();
+				return bo_name;	
+			}catch (InputMismatchException e) {
+				System.out.println("숫자만 입력 가능합니다.");
+			}
+		
+		}
+		
+	}
+	
+//대여 및 예약	
+	@Override
+	public RentalVO createRentalVO(Map<String, String> map) {
+		RentalVO rv = new RentalVO();
+		rv.setMem_id(map.get("mem_id"));
+		rv.setBook_id(map.get("book_id"));
+		rv.setRental_start(db.getDate());
+		
+		//반납일 Map
+		Map<String, Object> dateInfo = new HashMap<>();
+		dateInfo.put("day", rv.getRental_start());
+		dateInfo.put("addDay", 14);
+		
+		rv.setRental_end(db.getEndDate(dateInfo));
+		db.createRental(rv);
+		return rv;
+	}
+	
+	@Override
+	public String createReserveVO(Map<String, String> map) {
+		ReserveVO rsv = new ReserveVO();
+		rsv.setMem_id(map.get("mem_id"));
+		rsv.setBook_id(map.get("book_id"));
+		db.createReserve(rsv);
+		
+		//해당 도서를 대여한 사람의 반납일자 받아오기
+		RentalVO rv = db.readRentalVO(map.get("book_id"));
+		return rv.getRental_end();
+	}
+	
 /////////////////////////////마이페이지//////////////////////////
 	
 	@Override
@@ -137,8 +305,8 @@ public class IServiceImpl implements IService{
 	}
 
 	@Override
-	public int returnBook(Map<String,String> map) {
-		RentalVO rv = db.readRentalVO(map);
+	public int returnBook(String book_id) {
+		RentalVO rv = db.readRentalVO(book_id);
 		return db.deleteRental(rv);
 	}
 
@@ -207,34 +375,31 @@ public class IServiceImpl implements IService{
 		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
-	public List<NoticeVO> noticList() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean bookListMethod() {
+		return db.bookListMethod();
 	}
 
 	@Override
-	public List<BookVO> booklList() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean noticList() {
+		return db.noticeList();
+		
+	}
+	@Override
+	public boolean memList() {
+		return db.memList();
 	}
 
 	@Override
-	public List<MemberVO> memList() {
-		// TODO Auto-generated method stub
-		return null;
+	public boolean readBlack() {
+		return db.blackList();
 	}
 
 	@Override
-	public List<BlackListVO> blackList() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public void blackAddMethod(int num) {
-				
+	public boolean createBlackList(String id) {
+		return db.createBlackList(id);
 	}
 
 	@Override
@@ -242,6 +407,9 @@ public class IServiceImpl implements IService{
 		// TODO Auto-generated method stub
 		
 	}
-
-
+	
+	@Override
+	public void bookAddMethod() {
+		// TODO Auto-generated method stub
+	}
 }

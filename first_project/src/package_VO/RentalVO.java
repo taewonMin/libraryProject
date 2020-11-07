@@ -7,6 +7,12 @@ public class RentalVO {
 	private String mem_id;				// (FK)회원ID
 	private String book_id;				// (FK)도서ID
 	
+	private static int rental_sq = 1;
+	{
+		rental_id = rental_sq;
+		this.rental_sq++;
+	}
+	
 	//get
 	public int getRental_id() {
 		return rental_id;
