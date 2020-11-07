@@ -1635,32 +1635,6 @@ public class View {
 		}
 	}
 
-	/**
-	 * 책리스트 출력
-	 * 
-	 * @author 김태규
-	 * @since 2020.11.05
-	 */
-	public void bookListMethod() {
-		// sql
-		List<BookVO> bookListView = null;
-//		bookListView = is.bookList();
-		// 책 출력
-		for (int i = 0; i < bookListView.size(); i++) {
-			System.out.println("\t\t\t[" + bookListView.get(i).getBook_id()
-					+ "]");
-			System.out.println("\t\t\t[" + bookListView.get(i).getBook_name()
-					+ "]");
-			System.out.println("\t\t\t[" + bookListView.get(i).getBook_author()
-					+ "]");
-			System.out.println("\t\t\t[" + bookListView.get(i).getBook_LGU()
-					+ "]");
-			System.out.println("\t\t\t["
-					+ bookListView.get(i).getBook_publisher() + "]");
-			System.out.println("\t\t\t["
-					+ bookListView.get(i).getBook_summary() + "]");
-		}
-	}
 
 	// 회원리스트
 	/**
