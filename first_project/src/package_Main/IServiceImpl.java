@@ -410,4 +410,10 @@ public class IServiceImpl implements IService{
 	public boolean bookAddMethod() {
 		return db.bookListMethod();
 	}
+
+	@Override
+	public boolean bookAdd(Map<String, String> params) {
+	
+		return bookAdd(params);
+	}
 }

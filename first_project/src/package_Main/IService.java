@@ -329,7 +329,7 @@ public interface IService {
 
 	/**
 	 * 블랙리스트 리스트 출력 메소드
-	 * 블랙리스트의 전체의 정보  
+	 *  
 	 * @author 김태규
 	 */
 	boolean blackListList();
@@ -340,19 +340,26 @@ public interface IService {
 	 * 삭제할 블랙리스트정보 
 	 * @author 김태규
 	 */
-	boolean blackDeltleMethod(String id, int num);
+	boolean blackDeltleMethod(String id,int num);
 
 	/**
 	 * 도서 리스트 출력 메소드
-	 * 삭제할 블랙리스트정보 
+	 * 
 	 * @author 김태규
 	 */
 	boolean bookListMethod();
 
 	/**
 	 * 도서 리스트 추가 메소드
-	 * 삭제할 블랙리스트정보 
+	 * 
 	 * @author 김태규
 	 */
 	boolean bookAddMethod();
+	
+	/**
+	 * 도서  추가 메소드
+	 * 
+	 * @author 김태규
+	 */
+	boolean bookAdd(Map<String, String> params);
 }

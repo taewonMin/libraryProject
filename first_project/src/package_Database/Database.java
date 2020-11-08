@@ -686,21 +686,20 @@ public class Database {
 
 ///////////////////////////////////////관리자////////////////////////////////
 	/**
-	 * 공지 조회 메서드
+	 * 공지 전체조회 메서드
 	 * 
-	 * @param nv
-	 *            삭제할 공지의 모든 정보
+	 * @param num
 	 * @author 김태규
 	 * @since 2020.11.05
 	 */
-	public boolean noticList() {
+	public boolean noiceReadMethod(int num) {
 		for (int i = 0; i < noticeList.size(); i++) {
 			allNoticList(noticeList.get(i));
 		}
 		return true;
 	}
 
-	public boolean allNoticList(NoticeVO  nv) {
+	public boolean allNoticList(NoticeVO nv) {
 		if (noticeList.contains(nv)) {
 			System.out.println("번호\t[" + nv.getNotice_no() + "]");
 			System.out.println("제목\t[" + nv.getNotice_title() + "]");
@@ -711,54 +710,139 @@ public class Database {
 		}
 		return true;
 	}
-	
+
+	/**
+	 * 공지 상세보기 메서드
+	 * 
+	 * @param num
+	 * @author 김태규
+	 * @since 2020.11.05
+	 */
+	public boolean noticList(int num) {
+		if (num <= noticeList.size()) {
+			allNoticList(noticeList.get(num - 1));
+			return true;
+		} else {
+			System.out.println("올바른 글번호를 입력해주세요");
+			return false;
+		}
+	}
+
+	/**
+	 * 공지 추가 메서드
+	 * 
+	 * @param params
+	 * @author 김태규
+	 * @since 2020.11.05
+	 */
+
+	public boolean noiceAddMethod(Map<String, String> params) {
+
+		Date time = new Date(); // 날짜를 구한다.
+		SimpleDateFormat fm = new SimpleDateFormat("yyyy-mm-dd");// 날짜 형식
+		String timeset = fm.format(time);
+
+		int notice_no = (noticeList.size() + 1);
+		String notice_title = params.get("notice_title");
+		String notice_content = params.get("notice_content");
+		String notice_date = params.get("notice_date");
+
+		NoticeVO nv = new NoticeVO();
+		nv.setNotice_no(notice_no);
+		nv.setNotice_title(notice_title);
+		nv.setNotice_content(notice_content);
+		nv.setNotice_date(timeset);
+		nv.setAdmin_id("admin");
+
+		noticeList.add(nv);
+
+		return true;
+	}
+
 	/**
 	 * 공지 삭제 메서드
 	 * 
-	 * @param nv
-	 *            삭제할 공지의 모든 정보
+	 * @param num
 	 * @author 김태규
 	 * @since 2020.11.05
 	 */
 	public boolean deleteNotice(int num) {
 		NoticeVO nv = null;
 		for (NoticeVO nv2 : noticeList) {
-			if (nv2.getNotice_no() == num) {
-				noticeList.remove(num);
+			if (noticeList.get(num - 1).getNotice_no() == num) {
+				noticeList.remove(num - 1);
+				return true;
+			}
+		}
+		return false;
+	}
+
+//////////////////////희망도서 ///////////////////////////
+	/**
+	 * 희망도서 승인
+	 * 
+	 * @param num
+	 * @author 김태규
+	 * @since 2020-11-05
+	 */
+	public boolean hopeBookAddMethod(int num) {
+		BookVO bv = new BookVO();
+		String num2 = num + "";
+		for (HopeVO hv : hopeList) {
+			if (hopeList.get(num - 1).getHope_id().equals(num2)) {
+				bv.setBook_id(hv.getHope_id());
+				bv.setBook_name(hv.getHope_name());
+				bv.setBook_author(hv.getHope_author());
+				bv.setBook_summary("줄거리");
+				bv.setBook_publisher(hv.getHope_publisher());
+				bv.setBook_LGU("분류");
+				bv.setActivate(true);
+				bookList.add(bv);
+				return true;
 			}
 		}
 		return false;
 	}
 
 	/**
-	 * 희망도서를 db에 삭제하고 정상삭제되면 true를 리턴
+	 * 희망도서 부결를 db에 삭제하고 정상삭제되면 true를 리턴
+	 * 
+	 * @param num
+	 * @author 김태규
+	 * @since 2020-11-05
+	 */
+	public boolean hopeBookeDeltleMethod(int num) {
+		String num2 = num + "";
+		for (HopeVO hv : hopeList) {
+			if (hopeList.get(num - 1).getHope_id().equals(num2)) {
+				hopeList.remove(num - 1);
+				return true;
+			}
+		}
+		return false;
+	}
+
+//////////////////////도서관리 CRUD///////////////////////////
+	/**
+	 * 전체도서 리스트
 	 * 
 	 * @author 김태규
 	 * @since 2020-11-05
 	 */
-	public void hopeBookeDeltleMethod(int num) {
-		NoticeVO nv = null;
-		for (NoticeVO nv2 : noticeList) {
-			if (nv2.getNotice_no() == num) {
-				noticeList.remove(num);
-			}
-		}
-	}
-	
-//////////////////////도서관리 CRUD///////////////////////////
-	/**
-	* 전체도서 리스트
-	* 
-	* @author 김태규
-	* @since 2020-11-05
-	*/
 	public boolean bookListMethod() {
 		for (int i = 0; i < bookList.size(); i++) {
 			bookList(bookList.get(i));
 		}
 		return true;
 	}
-	
+
+	/**
+	 * 전체도서 출력 리스트
+	 * 
+	 * @param BookVO
+	 * @author 김태규
+	 * @since 2020-11-05
+	 */
 	public boolean bookList(BookVO bv) {
 		if (bookList.contains(bv)) {
 			System.out.println("도서코드\t[" + bv.getBook_id() + "]");
@@ -769,22 +853,69 @@ public class Database {
 			System.out.println("도서분류\t[" + bv.getBook_LGU() + "]");
 			if (bv.isActivate() == true) {
 				System.out.println("대출가능");
-			}else{
+			} else {
 				System.out.println("대출불가능횟수");
 			}
 			System.out.println("==============================");
 		}
 		return true;
 	}
-	
-	
+
+	/**
+	 * 도서 추가
+	 * 
+	 * @author 김태규
+	 * @since 2020-11-05
+	 */
+	public boolean bookAdd(Map<String, String> params) {
+
+		int book_id = bookList.size() + 1;
+		String book_name = params.get("hope_name");
+		String book_author = params.get("book_author");
+		String book_summary = params.get("book_summary");
+		String book_publisher = params.get("book_publisher");
+		String book_LGU = params.get("book_LGU");
+		boolean book_state = true;
+		boolean isActivate = true;
+
+		BookVO bv = new BookVO();
+		bv.setBook_id(book_id + "");
+		bv.setBook_name(book_name);
+		bv.setBook_author(book_author);
+		bv.setBook_summary(book_summary);
+		bv.setBook_publisher(book_publisher);
+		bv.setBook_LGU(book_LGU);
+		bv.setBook_state(book_state);
+		bv.setActivate(isActivate);
+
+		bookList.add(bv);
+		return true;
+	}
+
 // /////////////////////회원리스트 CRUD////////////////////////
+	
+	/**
+	 * 회원전체리스트 출력 리스트
+	 * 
+	 *
+	 * @author 김태규
+	 * @since 2020-11-05
+	 */
+	
 	public boolean memList() {
 		for (int i = 0; i < memberList.size(); i++) {
 			readMemList(memberList.get(i));
 		}
 		return true;
 	}
+
+	/**
+	 * 회원전체 출력 리스트
+	 * 
+	 * @param mv
+	 * @author 김태규
+	 * @since 2020-11-05
+	 */
 	
 	public boolean readMemList(MemberVO mv) {
 		if (memberList.contains(mv)) {
@@ -799,12 +930,41 @@ public class Database {
 		}
 		return true;
 	}
-	
-///////////////////////블랙리스트 CRUD////////////////////////	
-	/**
-	 * 블랙리스트 추가
-	 */
 
+///////////////////////블랙리스트 CRUD////////////////////////
+
+
+	/**
+	 * 블랙리스트 출력 리스트
+	 * 
+	 * @param BookVO
+	 * @author 김태규
+	 * @since 2020-11-05
+	 */
+	public boolean blackListList() {
+		for (int i = 0; i < blackList.size(); i++) {
+			readvBlackList(blackList.get(i));
+		}
+		return true;
+	}
+
+	public boolean readvBlackList(BlackListVO bv) {
+		if (blackList.contains(bv)) {
+			System.out.println("[" + bv.getBlack_id() + "]");
+			System.out.println("회원ID\t[" + bv.getMem_id() + "]");
+			System.out.println("등록일\t[" + bv.getBlack_day() + "]");
+			System.out.println("종료일\t[" + bv.getBlack_end() + "]");
+			System.out.println("==============================");
+		}
+		return true;
+	}
+	/**
+	 * 블랙리스트 추가 리스트
+	 * 
+	 * @param id //추가할 회원의 아이디
+	 * @author 김태규
+	 * @since 2020-11-05
+	 */
 	public boolean createBlackList(String id) {
 		// 등록일을 현재 날짜로 입력 종료일은 +7일 더한 날짜를 입력
 		int black_id = blackList.size() + 1;
@@ -813,67 +973,49 @@ public class Database {
 		bv.setBlack_id(black_id);
 		bv.setMem_id(id);
 		bv.setBlack_day(getDate());
-		
-		//종료일 Map
+
+		// 종료일 Map
 		Map<String, Object> dayInfo = new HashMap<>();
 		dayInfo.put("day", bv.getBlack_day());
 		dayInfo.put("addDay", 7);
-		
+
 		bv.setBlack_end(getEndDate(dayInfo));
 
 		blackList.add(bv);
 		return true;
 	}
+//	/**
+//	 * 블랙리스트 갱신 메서드
+//	 */
+//	void updateBlackList(BlackListVO bv) {
+//		if (blackList.contains(bv.getMem_id())) {
+//			(blackList.get(blackList.indexOf(bv.getMem_id()))).setMem_id(bv
+//					.getMem_id());
+//			(blackList.get(blackList.indexOf(bv.getMem_id()))).setBlack_day(bv
+//					.getBlack_day());
+//			(blackList.get(blackList.indexOf(bv.getMem_id()))).setBlack_end(bv
+//					.getBlack_end());
+//		}
+//	}
 
 	/**
-	 * 블랙리스트 조회 메서드
-	 */
-	public boolean blackList() {
-		for (int i = 0; i < blackList.size(); i++) {
-			readvBlackList(blackList.get(i));
-		}
-		return true;
-	}
-
-	public boolean readvBlackList(BlackListVO bv) {
-		if (memberList.contains(bv)) {
-			System.out.println("[" + bv.getMem_id() + "]");
-			System.out.println("회원ID\t[" + bv.getMem_id() + "]");
-			System.out.println("등록일\t[" + bv.getBlack_day() + "]");
-			System.out.println("종료일\t[" + bv.getBlack_end() + "]");
-			System.out.println("==============================");
-		}
-		return true;
-	}
-
-	/**
-	 * 블랙리스트 갱신 메서드
-	 */
-	void updateBlackList(BlackListVO bv) {
-		if (blackList.contains(bv.getMem_id())) {
-			(blackList.get(blackList.indexOf(bv.getMem_id()))).setMem_id(bv
-					.getMem_id());
-			(blackList.get(blackList.indexOf(bv.getMem_id()))).setBlack_day(bv
-					.getBlack_day());
-			(blackList.get(blackList.indexOf(bv.getMem_id()))).setBlack_end(bv
-					.getBlack_end());
-		}
-	}
-
-	/**
-	 * 블랙리스트 삭제 메서드
+	 * 블랙리스트삭제 리스트
 	 * 
+	 * @param mem_id, Num 삭제할 회원 ID,리스트에 나오는 번호
+	 * @author 김태규
+	 * @since 2020-11-05
 	 */
-	public boolean blackDeltleMethod(String mem_id, int Num){
-		for(BlackListVO hv : blackList){
-			for(MemberVO mv : memberList){
-				if(blackList.get(Num-1).getMem_id().equals(mem_id)){
+	
+	public boolean blackDeltleMethod(String mem_id, int Num) {
+		for (BlackListVO hv : blackList) {
+			for (MemberVO mv : memberList) {
+				if (blackList.get(Num - 1).getMem_id().equals(mem_id)) {
 					mv.setActivate(false);
-					blackList.remove(Num-1);
+					blackList.remove(Num - 1);
 					return true;
 				}
-			}//memberlist
-		}//hopelist
+			} // memberlist
+		} // hopelist
 		return false;
 	}
 	
