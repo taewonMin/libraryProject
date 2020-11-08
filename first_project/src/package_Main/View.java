@@ -618,6 +618,10 @@ public class View {
 	 * @since 2020.11.09
 	 */
 	private int tryRental(String book_id){
+		if(!nowMember.isActivate()) {
+			System.out.println("회원님은 블랙리스트에 등록되어 대여/예약이 불가합니다.");
+			return 0;
+		}
 		BookVO bv = is.readBook(book_id);
 		if(bv.isBook_state()){	//true이면(대여가능한 상태이면)
 			System.out.println("해당 도서가 대여가능한 상태입니다.");
@@ -1311,13 +1315,11 @@ public class View {
 	 */
 	public void adminView() {
 		while (true) {
-			System.out.println("\t관\t리\t자");
-			System.out.println("======================");
-			System.out.println("[1]\t 게시판 관리");
-			System.out.println("[2]\t 도서 관리");
-			System.out.println("[3]\t 회원리스트");
-			System.out.println("[0]\t 로그아웃");
-			System.out.println("======================");
+			showBanner("관리자계정으로 접속하였습니다.");
+			System.out.println("[1] 게시판 관리");
+			System.out.println("[2] 도서 관리");
+			System.out.println("[3] 회원 관리");
+			System.out.println("[0] 로그아웃");
 			System.out.print("번호를 입력하시오 : ");
 
 			int num = 0;
@@ -1371,9 +1373,10 @@ public class View {
 	 */
 	public void noiceMainView() {
 		while (true) {
-			System.out.println("[1]\t 공지사항");
-			System.out.println("[2]\t 희망도서목록");
-			System.out.println("[0]\t 뒤로가기");
+			showBanner("게시판 관리");
+			System.out.println("[1] 공지사항");
+			System.out.println("[2] 희망도서목록");
+			System.out.println("[0] 뒤로가기");
 			System.out.print("번호를 입력하시오 : ");
 			int num = 0;
 			try {
@@ -1420,12 +1423,13 @@ public class View {
 			/**
 			 * 공지리스트 띄워주는 메소드
 			 */
+			showBanner("공지사항");
 			is.noticList();
 
-			System.out.println("[1]\t 공지 상세 조회");
-			System.out.println("[2]\t 공지 추가");
-			System.out.println("[3]\t 공지 삭제");
-			System.out.println("[0]\t 뒤로가기");
+			System.out.println("[1] 공지 상세 조회");
+			System.out.println("[2] 공지 추가");
+			System.out.println("[3] 공지 삭제");
+			System.out.println("[0] 뒤로가기");
 			System.out.print("번호를 입력하시오 : ");
 			int num = 0;
 			try {
@@ -1526,11 +1530,12 @@ public class View {
 			/**
 			 * 희망 도서 메소드 번호,책이름,저자,출판사 등을 보여준다
 			 */
+			showBanner("희망도서 목록");
 			is.hopeList();
 
-			System.out.println("[1]\t 희망도서 승인 ");
-			System.out.println("[2]\t 희망도서 부결 ");
-			System.out.println("[0]\t 뒤로가기");
+			System.out.println("[1] 희망도서 승인 ");
+			System.out.println("[2] 희망도서 부결 ");
+			System.out.println("[0] 뒤로가기");
 			System.out.print("번호를 입력하시오 : ");
 			int num = 0;
 			try {
@@ -1558,8 +1563,9 @@ public class View {
 					System.out.println("잘못입력하였습니다");
 					continue;
 				}
-				is.hopeBookAddMethod(num2);
-				is.hopeBookeDeltleMethod(num2);
+				if(is.hopeBookAddMethod(num2))
+					if(is.hopeBookeDeltleMethod(num2))
+						System.out.println("희망도서가 승인되었습니다.");
 				break;
 			}
 			case 2: {
@@ -1574,7 +1580,8 @@ public class View {
 					System.out.println("잘못입력하였습니다");
 					continue;
 				}
-				is.hopeBookeDeltleMethod(num2);
+				if(is.hopeBookeDeltleMethod(num2))
+					System.out.println("희망도서가 부결되었습니다.");
 				break;
 			}
 			default:
@@ -1592,9 +1599,10 @@ public class View {
 	 */
 	public void bookView() {
 		while (true) {
-			System.out.println("[1]\t 전체 도서리스트 확인");
-			System.out.println("[2]\t 도서 등록");
-			System.out.println("[0]\t 뒤로가기");
+			showBanner("도서 관리");
+			System.out.println("[1] 전체 도서리스트 확인");
+			System.out.println("[2] 도서 등록");
+			System.out.println("[0] 뒤로가기");
 			System.out.print("번호를 입력하시오 : ");
 			int num = 0;
 			try {
@@ -1615,6 +1623,7 @@ public class View {
 				/**
 				 * 전체 도서리스트 출력 메소드
 				 */
+				showBanner("도서 목록");
 				is.bookListMethod();
 				break;
 			}
@@ -1672,9 +1681,10 @@ public class View {
 	 */
 	public void memberView() {
 		while (true) {
-			System.out.println("[1]\t 회원리스트 확인");
-			System.out.println("[2]\t 블랙리스트 확인");
-			System.out.println("[0]\t 뒤로가기");
+			showBanner("회원 관리");
+			System.out.println("[1] 회원리스트 확인");
+			System.out.println("[2] 블랙리스트 확인");
+			System.out.println("[0] 뒤로가기");
 			System.out.print("번호를 입력하시오 : ");
 			int num = 0;
 			try {
@@ -1722,10 +1732,11 @@ public class View {
 			/**
 			 * 전체 회원리스트 출력 메소드
 			 */
+			showBanner("전체 회원 목록");
 			is.memList();
 
-			System.out.println("[1]\t 블랙리스트 등록 ");
-			System.out.println("[0]\t 뒤로가기");
+			System.out.println("[1] 블랙리스트 등록 ");
+			System.out.println("[0] 뒤로가기");
 			System.out.print("번호를 입력하시오 : ");
 			int num = 0;
 			try {
@@ -1754,8 +1765,12 @@ public class View {
 					System.out.println("잘못입력하였습니다");
 					continue;
 				}
-				is.createBlackList(id);
-				break;
+				if(is.createBlackList(id)) {
+					System.out.println("블랙리스트로 등록되었습니다.");
+				}else {
+					System.out.println("아이디가 잘못되었습니다.");
+				}
+				return;
 			}
 			default:
 				System.out.println("잘못입력하였습니다");
@@ -1772,11 +1787,11 @@ public class View {
 	 */
 	public void blackListView() {
 		while (true) {
-
+			showBanner("블랙리스트 목록");
 			is.blackListList();
 
-			System.out.println("[1]\t 블랙리스트 삭제 ");
-			System.out.println("[0]\t 뒤로가기");
+			System.out.println("[1] 블랙리스트 삭제 ");
+			System.out.println("[0] 뒤로가기");
 			int num = 0;
 			try {
 				num = sc.nextInt();
@@ -1804,19 +1819,22 @@ public class View {
 					System.out.println("잘못입력하였습니다");
 					continue;
 				}
-				System.out.print("삭제할 블랙리스트의 번호 : ");
-				int num2 = 0;
-				try {
-					num2 = sc.nextInt();
-
-				} catch (Exception e) {
-					System.out.println("잘못입력하였습니다");
-					continue;
+//				System.out.print("삭제할 블랙리스트의 번호 : ");
+//				int num2 = 0;
+//				try {
+//					num2 = sc.nextInt();
+//
+//				} catch (Exception e) {
+//					System.out.println("잘못입력하였습니다");
+//					continue;
+//				}
+				if(is.blackDeltleMethod(id)) {
+					System.out.println("블랙리스트에서 삭제되었습니다.");
+				}else {
+					System.out.println("아이디를 찾을 수 없습니다.");
 				}
-				is.blackDeltleMethod(id, num2);
 				break;
 			}
-
 			default:
 				System.out.println("잘못입력하였습니다");
 			}

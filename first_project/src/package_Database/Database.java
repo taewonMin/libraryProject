@@ -851,11 +851,17 @@ public class Database {
 			System.out.println("작가\t[" + bv.getBook_author() + "]");
 			System.out.println("줄거리\t[" + bv.getBook_summary() + "]");
 			System.out.println("출판사\t[" + bv.getBook_publisher() + "]");
-			System.out.println("도서분류\t[" + bv.getBook_LGU() + "]");
-			if (bv.isActivate() == true) {
+			String lgu = "";
+			for(BookLGUVO blgu : bookLGUList) {
+				if(blgu.getBook_LGU().equals(bv.getBook_LGU()))
+					lgu = blgu.getBook_theme();
+					break;
+			}
+			System.out.println("도서분류\t[" + lgu + "]");
+			if (bv.isBook_state() == true) {
 				System.out.println("대출가능");
 			} else {
-				System.out.println("대출불가능횟수");
+				System.out.println("대여중");
 			}
 			System.out.println("==============================");
 		}
@@ -967,23 +973,34 @@ public class Database {
 	 * @since 2020-11-05
 	 */
 	public boolean createBlackList(String id) {
-		// 등록일을 현재 날짜로 입력 종료일은 +7일 더한 날짜를 입력
-		int black_id = blackList.size() + 1;
-
-		BlackListVO bv = new BlackListVO();
-		bv.setBlack_id(black_id);
-		bv.setMem_id(id);
-		bv.setBlack_day(getDate());
-
-		// 종료일 Map
-		Map<String, Object> dayInfo = new HashMap<>();
-		dayInfo.put("day", bv.getBlack_day());
-		dayInfo.put("addDay", 7);
-
-		bv.setBlack_end(getEndDate(dayInfo));
-
-		blackList.add(bv);
-		return true;
+		boolean check = false;
+		for(BlackListVO blv : blackList) {
+			if(blv.getMem_id().equals(id)) {
+				check = true;
+				break;
+			}
+		}
+		if(check) {
+			// 등록일을 현재 날짜로 입력 종료일은 +7일 더한 날짜를 입력
+			int black_id = blackList.size() + 1;
+			
+			BlackListVO bv = new BlackListVO();
+			bv.setBlack_id(black_id);
+			bv.setMem_id(id);
+			bv.setBlack_day(getDate());
+			
+			// 종료일 Map
+			Map<String, Object> dayInfo = new HashMap<>();
+			dayInfo.put("day", bv.getBlack_day());
+			dayInfo.put("addDay", 7);
+			
+			bv.setBlack_end(getEndDate(dayInfo));
+			
+			readMember(id).setActivate(false);
+			
+			blackList.add(bv);
+		}
+		return check;
 	}
 //	/**
 //	 * 블랙리스트 갱신 메서드
@@ -1007,15 +1024,13 @@ public class Database {
 	 * @since 2020-11-05
 	 */
 	
-	public boolean blackDeltleMethod(String mem_id, int Num) {
+	public boolean blackDeltleMethod(String mem_id) {
 		for (BlackListVO hv : blackList) {
-			for (MemberVO mv : memberList) {
-				if (blackList.get(Num - 1).getMem_id().equals(mem_id)) {
-					mv.setActivate(false);
-					blackList.remove(Num - 1);
-					return true;
-				}
-			} // memberlist
+			if (hv.getMem_id().equals(mem_id)) {
+				readMember(mem_id).setActivate(true);
+				blackList.remove(hv);
+				return true;
+			}
 		} // hopelist
 		return false;
 	}
@@ -1100,6 +1115,7 @@ public class Database {
       member7.setMem_email("sum09054");
       member7.setMem_tel("010-4562-7893");
       member7.setRent_count(465);
+      member7.setActivate(false);
       memberList.add(member7);
       
       MemberVO member8 = new MemberVO();
@@ -1110,6 +1126,7 @@ public class Database {
       member8.setMem_email("han6666@naver.com");
       member8.setMem_tel("010-9635-1247");
       member8.setRent_count(400);
+      member8.setActivate(false);
       memberList.add(member8);
       
       MemberVO member9 = new MemberVO();
@@ -1120,6 +1137,7 @@ public class Database {
       member9.setMem_email("joa76@naver.com");
       member9.setMem_tel("010-4432-3391");
       member9.setRent_count(190);
+      member9.setActivate(false);
       memberList.add(member9);
       
       MemberVO member10 = new MemberVO();

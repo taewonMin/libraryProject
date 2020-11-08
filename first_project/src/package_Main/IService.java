@@ -350,7 +350,7 @@ public interface IService {
 	 * 삭제할 블랙리스트정보 
 	 * @author 김태규
 	 */
-	boolean blackDeltleMethod(String id,int num);
+	boolean blackDeltleMethod(String id);
 
 	/**
 	 * 도서 리스트 출력 메소드

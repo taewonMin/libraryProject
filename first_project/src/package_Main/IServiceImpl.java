@@ -416,8 +416,8 @@ public class IServiceImpl implements IService{
 	}
 
 	@Override
-	public boolean blackDeltleMethod(String id, int num) {
-		return db.blackDeltleMethod(id,num);
+	public boolean blackDeltleMethod(String id) {
+		return db.blackDeltleMethod(id);
 	}
 
 	@Override
