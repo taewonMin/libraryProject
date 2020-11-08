@@ -864,15 +864,17 @@ public class Database {
 	 * 블랙리스트 삭제 메서드
 	 * 
 	 */
-	void blackDeltleMethod(BlackListVO bv) {
-		for (int i = 0; i < blackList.size(); i++) {
-			if (blackList.get(i).getMem_id().equals(bv.getMem_id())) {
-				for (int j = 0; j < memberList.size(); j++) {
-					memberList.get(i).setActivate(false);
-					blackList.remove(bv);
+	public boolean blackDeltleMethod(String mem_id, int Num){
+		for(BlackListVO hv : blackList){
+			for(MemberVO mv : memberList){
+				if(blackList.get(Num-1).getMem_id().equals(mem_id)){
+					mv.setActivate(false);
+					blackList.remove(Num-1);
+					return true;
 				}
-			}
-		}
+			}//memberlist
+		}//hopelist
+		return false;
 	}
 	
 
@@ -1298,6 +1300,30 @@ public class Database {
 		re5.setMem_id("nex1032");
 		re5.setBook_id("3");
 		reserveList.add(re5);
+	}
+	//블랙리스트
+	{
+		BlackListVO bv1 = new BlackListVO();
+		bv1.setBlack_id(1);
+		bv1.setMem_id("jia76");
+		bv1.setBlack_day("2020-10-20");
+		bv1.setBlack_end("2020-10-27");
+		blackList.add(bv1);
+		
+		BlackListVO bv2 = new BlackListVO();
+		bv2.setBlack_id(2);
+		bv2.setMem_id("han6666");
+		bv2.setBlack_day("2020-10-20");
+		bv2.setBlack_end("2020-10-27");
+		blackList.add(bv2);
+		
+		BlackListVO bv3 = new BlackListVO();
+		bv3.setBlack_id(3);
+		bv3.setMem_id("sum09054");
+		bv3.setBlack_day("2020-10-20");
+		bv3.setBlack_end("2020-10-27");
+		blackList.add(bv3);
+		
 	}
 }
 //nex1032

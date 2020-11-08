@@ -344,30 +344,29 @@ public class IServiceImpl implements IService{
 	
 
 	@Override
-	public void noiceReadMethod(int num) {
-		// TODO Auto-generated method stub
-	
+	public boolean noticList(int num) {
+		return db.noticList(num);
 	}
 
 	@Override
-	public void noiceAddMethod(NoticeVO nv) {
-	   
+	public boolean noiceAddMethod(Map<String, String> params) {
+	   return noiceAddMethod(params);
 	}
 
 	@Override
-	public boolean noiceDeltleMethod(int num) {
+	public boolean deleteNotice(int num) {
 		return db.deleteNotice(num);
 	}
 
 	@Override
 	public boolean hopeBookAddMethod(int num) {
-		// TODO Auto-generated method stub
-		return false;
+		return db.hopeBookAddMethod(num);
 		
 	}
 
 	@Override
-	public void hopeBookeDeltleMethod(int num) {
+	public boolean hopeBookeDeltleMethod(int num) {
+		return db.hopeBookeDeltleMethod(num);
 	}
 
 	@Override
@@ -392,8 +391,8 @@ public class IServiceImpl implements IService{
 	}
 
 	@Override
-	public boolean readBlack() {
-		return db.blackList();
+	public boolean blackListList() {
+		return db.blackListList();
 	}
 
 	@Override
@@ -403,13 +402,12 @@ public class IServiceImpl implements IService{
 	}
 
 	@Override
-	public void blackDeltleMethod(BlackListVO bv) {
-		// TODO Auto-generated method stub
-		
+	public boolean blackDeltleMethod(String id, int num) {
+		return db.blackDeltleMethod(id,num);
 	}
-	
+
 	@Override
-	public void bookAddMethod() {
-		// TODO Auto-generated method stub
+	public boolean bookAddMethod() {
+		return db.bookListMethod();
 	}
 }

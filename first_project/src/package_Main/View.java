@@ -1232,7 +1232,7 @@ public class View {
 			System.out.println("\t관\t리\t자");
 			System.out.println("======================");
 			System.out.println("[1]\t 게시판 관리");
-			System.out.println("[2]\t 책 등록");
+			System.out.println("[2]\t 도서 관리");
 			System.out.println("[3]\t 회원리스트");
 			System.out.println("[0]\t 로그아웃");
 			System.out.println("======================");
@@ -1340,7 +1340,7 @@ public class View {
 			 */
 			is.noticList();
 
-			System.out.println("[1]\t 공지 조회");
+			System.out.println("[1]\t 공지 상세 조회");
 			System.out.println("[2]\t 공지 추가");
 			System.out.println("[3]\t 공지 삭제");
 			System.out.println("[0]\t 종료");
@@ -1371,14 +1371,14 @@ public class View {
 					System.out.println("잘못입력하였습니다");
 					continue;
 				}
-				is.noiceReadMethod(num2);
+				is.noticList(num2);
 				break;
 			}
 			case 2: {
 				/**
 				 * 공지추가 메소드
 				 */
-				noiceAddMethod();
+				noiceAdd();
 				System.out.println("추가되었습니다.");
 				break;
 			}
@@ -1394,7 +1394,7 @@ public class View {
 					System.out.println("잘못입력하였습니다");
 					continue;
 				}
-				is.noiceDeltleMethod(num3);
+				is.deleteNotice(num3);
 				break;
 			}
 			default:
@@ -1404,70 +1404,62 @@ public class View {
 		}
 	}
 	
-
-	/**
-	 * 공지리스트를 출력
-	 * 
-	 * @author 김태규
-	 * @return
-	 */
-	void noiceListView() {
-		// sql
-		List<NoticeVO> noiceListView = null;
-//		noiceListView = is.noticeList();
-
-		// 공지 리스트 출력
-		for (int i = 0; i < noiceListView.size(); i++) {
-			System.out.println("\t\t\t[" + i + "] "+noiceListView.get(i).getNotice_no() + noiceListView.get(i).getNotice_title()+noiceListView.get(i).getNotice_date());
-		}
-	}
-
-	/**
-	 * 입력 받은 공지리스트를 출력
-	 * 
-	 * @author 김태규
-	 * @return
-	 */
-	void noiceReadMethod(int num) {
-		// sql
-		List<NoticeVO> nv = null;
-		// nv = is.noticeList();
-		// 공지 리스트 출력 num가 카운된 i값과 같은수를 찾아서 그 번호만 출력한다.
-		for (int i = 0; i < nv.size(); i++) {
-			if (num == i) {
-				System.out.println("\t\t\t[" + nv.get(i).getNotice_no() + "] "
-						+ nv.get(i).getNotice_title());
-				System.out.println("\t\t\t[ 내용 ] "
-						+ nv.get(i).getNotice_content());
-				System.out.println("\t\t\t[ 작성날짜 ] "
-						+ nv.get(i).getNotice_date());
-			}
-		}
-	}
 	/**
 	 * 공지를 추가한다.
 	 * 
 	 * @author 김태규
 	 * @return
 	 */
-	void noiceAddMethod() {
+	void noiceAdd() {
+		Map<String, String> params = new HashMap<String, String>();// 공지입력을 위한 map
+
 		NoticeVO nv = new NoticeVO();
 		Date time = new Date(); // 날짜를 구한다.
 		SimpleDateFormat fm = new SimpleDateFormat("yyyy-mm-dd");// 날짜 형식
 		String timeset = fm.format(time);
 
-		System.out.print("공지 제목 : ");
-		String nt = sc.next();
-		System.out.print("공지 내용 : ");
-		String nc = sc.next();
+		String notice_title = notice_title();
+		String notice_content = notice_content();
 
-		nv.setAdmin_id("ad1234");
-		nv.setNotice_no(0);
-		nv.setNotice_title(nt);
-		nv.setNotice_content(nc);
-		nv.setNotice_date(timeset);
+		params.put("notice_title", notice_title);
+		params.put("notice_content", notice_content);
+		params.put("notice_date", "2020-10-09");
 
+		if (is.noiceAddMethod(params)) {
+			System.out.println("공지가 추가되었습니다.");
+		}
+
+		// return;
+		noiceView();
 	}
+
+	/**
+	 * 공지 제목 입력
+	 * 
+	 * @author 김태규
+	 * @return String notice_title
+	 * @since 2020-11-06
+	 */
+	String notice_title() {
+		System.out.println("공지 타이틀을 입력하세요");
+		Scanner input = new Scanner(System.in);
+		String nt = input.next();
+		return nt;
+	};
+
+	/**
+	 * 공지 내용 입력
+	 * 
+	 * @author 김태규
+	 * @return String notice_content
+	 * @since 2020-11-06
+	 */
+	String notice_content() {
+		System.out.println("공지 내용을 입력하세요");
+		Scanner input = new Scanner(System.in);
+		String nc = input.next();
+		return nc;
+	};
 
 	/**
 	 * 희망 도서 목록 관리 뷰
@@ -1476,84 +1468,60 @@ public class View {
 	 * @since 2020.11.04
 	 */
 	public void hopeBookView() {
-		while (true) {
-			/**
-			 * 희망 도서 메소드 번호,책이름,저자,출판사 등을 보여준다
-			 */
-			hopeBookListView();
+		/**
+		 * 희망 도서 메소드 번호,책이름,저자,출판사 등을 보여준다
+		 */
+		is.hopeList();
 
-			System.out.println("[1]\t 희망도서 승인 ");
-			System.out.println("[2]\t 희망도서 부결 ");
-			System.out.println("[0]\t 관리자 화면");
-			System.out.print("번호를 입력하시오 : ");
-			int num = 0;
+		System.out.println("[1]\t 희망도서 승인 ");
+		System.out.println("[2]\t 희망도서 부결 ");
+		System.out.println("[0]\t 관리자 화면");
+		System.out.print("번호를 입력하시오 : ");
+		int num = 0;
+		try {
+			num = sc.nextInt();
+		} catch (Exception e) {
+			System.out.println("잘못입력하였습니다");
+		}
+		switch (num) {
+		case 0: {
+			/**
+			 * 게시판 관리로 되돌아 가기 메소드
+			 */
+			return;
+		}
+		case 1: {
+			/**
+			 * 도서 승인 메소드 승인 도서의 번호 번호를 받아 메소드안에서 추가한다
+			 */
+			System.out.print("승인 도서의 번호 : ");
+			int num2 = 0;
 			try {
-				num = sc.nextInt();
+				num2 = sc.nextInt();
 			} catch (Exception e) {
 				System.out.println("잘못입력하였습니다");
-				continue;
 			}
-			switch (num) {
-			case 0: {
-				/**
-				 * 게시판 관리로 되돌아 가기 메소드
-				 */
-				return;
-			}
-			case 1: {
-				/**
-				 * 도서 승인 메소드 승인 도서의 번호 번호를 받아 메소드안에서 추가한다
-				 */
-				System.out.print("승인 도서의 번호 : ");
-				int num2 = 0;
-				try {
-					num2 = sc.nextInt();
-				} catch (Exception e) {
-					System.out.println("잘못입력하였습니다");
-					continue;
-				}
-				is.hopeBookAddMethod(num2);
-				break;
-			}
-			case 2: {
-				/**
-				 * 도서 부결 메소드 부결 도서의 번호를 받아서 메소드안에서 리스트를삭제
-				 */
-				System.out.print("부결 도서의 번호 : ");
-				int num2 = 0;
-				try {
-					num2 = sc.nextInt();
-				} catch (Exception e) {
-					System.out.println("잘못입력하였습니다");
-					continue;
-				}
-				is.hopeBookeDeltleMethod(num2);
-				break;
-			}
-			default:
+			is.hopeBookAddMethod(num2);
+			break;
+		}
+		case 2: {
+			/**
+			 * 도서 부결 메소드 부결 도서의 번호를 받아서 메소드안에서 리스트를삭제
+			 */
+			System.out.print("부결 도서의 번호 : ");
+			int num2 = 0;
+			try {
+				num2 = sc.nextInt();
+			} catch (Exception e) {
 				System.out.println("잘못입력하였습니다");
-				return;
 			}
+			is.hopeBookeDeltleMethod(num2);
+			break;
 		}
-	}
-
-	/**
-	 * 희망 도서 리스트 뷰
-	 * 
-	 * @author 김태규
-	 * @since 2020.11.04
-	 */
-	public void hopeBookListView() {
-		// sql
-		List<HopeVO> hopeListView = null;
-		// hopeListView = is.hopeList();
-		// 희망 리스트 출력
-		for (int i = 0; i < hopeListView.size(); i++) {
-			System.out.println(hopeListView.get(i).getHope_id());
-			System.out.println(hopeListView.get(i).getHope_name());
-			System.out.println(hopeListView.get(i).getHope_content());
+		default:
+			System.out.println("잘못입력하였습니다");
+			return;
 		}
-
 	}
 
 	/**
@@ -1634,7 +1602,6 @@ public class View {
 			showBanner("희망도서가 정상적으로 등록되었습니다.");
 		}
 	}
-
 
 	// 회원리스트
 	/**
@@ -1743,10 +1710,7 @@ public class View {
 	public void blackListView() {
 		while (true) {
 
-			/**
-			 * 블랙리스트 리스트 출력 메소드
-			 */
-			is.readBlack();
+			is.blackListList();
 
 			System.out.println("[1]\t 블랙리스트 삭제 ");
 			System.out.println("[0]\t 돌아가기");
@@ -1755,7 +1719,6 @@ public class View {
 				num = sc.nextInt();
 			} catch (Exception e) {
 				System.out.println("잘못입력하였습니다");
-				continue;
 			}
 			switch (num) {
 			case 0: {
@@ -1768,6 +1731,16 @@ public class View {
 				/**
 				 * 블랙리스트에 삭제 메소드
 				 */
+
+				System.out.print("삭제할 블랙리스트의 아이디 : ");
+				String id = null;
+				try {
+					id = sc.next();
+
+				} catch (Exception e) {
+					System.out.println("잘못입력하였습니다");
+					continue;
+				}
 				System.out.print("삭제할 블랙리스트의 번호 : ");
 				int num2 = 0;
 				try {
@@ -1777,7 +1750,7 @@ public class View {
 					System.out.println("잘못입력하였습니다");
 					continue;
 				}
-				//is.blackDeltleMethod();
+				is.blackDeltleMethod(id, num2);
 				break;
 			}
 

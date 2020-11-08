@@ -263,15 +263,17 @@ public interface IService {
 	 * 출력할 공지정보
 	 * @author 김태규
 	 */
-	void noiceReadMethod(int num);
+	boolean noticList(int num);
 
 	/**
 	 * 공지 추가 메서드
 	 * @param nv
 	 * 추가할 공지정보
 	 * @author 김태규
+	 * @return 
 	 */
-	void noiceAddMethod(NoticeVO nv);
+	boolean noiceAddMethod(Map<String, String> params);
+	
 
 	/**
 	 * 공지 삭제 메소드 공지
@@ -280,7 +282,7 @@ public interface IService {
 	 * @author 김태규
 	 * @return 
 	 */
-	boolean noiceDeltleMethod(int num);
+	boolean deleteNotice(int num);
 
 	/**
 	 * 도서 승인 메소드
@@ -296,8 +298,9 @@ public interface IService {
 	 * @param nv
 	 * 리스트에 삭제할 희망도서 정보 
 	 * @author 김태규
+	 * @return 
 	 */
-	void hopeBookeDeltleMethod(int num);
+	boolean hopeBookeDeltleMethod(int num);
 
 	/**
 	 * 도서 등록 메소드
@@ -329,7 +332,7 @@ public interface IService {
 	 * 블랙리스트의 전체의 정보  
 	 * @author 김태규
 	 */
-	boolean readBlack();
+	boolean blackListList();
 
 
 	/**
@@ -337,7 +340,7 @@ public interface IService {
 	 * 삭제할 블랙리스트정보 
 	 * @author 김태규
 	 */
-	void blackDeltleMethod(BlackListVO bv);
+	boolean blackDeltleMethod(String id, int num);
 
 	/**
 	 * 도서 리스트 출력 메소드
@@ -351,5 +354,5 @@ public interface IService {
 	 * 삭제할 블랙리스트정보 
 	 * @author 김태규
 	 */
-	void bookAddMethod();
+	boolean bookAddMethod();
 }
