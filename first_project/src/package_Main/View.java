@@ -674,6 +674,10 @@ public class View {
 		String check = sc.next();
 		if("Y".equals(check.toUpperCase())){
 			// 자기가 자기책을 예약하는 건 불가능해
+			if(isMyRental(bv.getBook_id())==1) {
+				System.out.println("이미 내가 대여한 책입니다.");
+				return 0;
+			}
 			//메서드
 			Map<String,String> map = new HashMap<>();
 			map.put("mem_id", nowMember.getMem_id());
@@ -693,6 +697,20 @@ public class View {
 		return 0;
 	}
 	
+	
+	/**
+	 * 도서의 아이디를 이용하여 대여목록에 있는지 체크
+	 * @param book_id 검색할 도서의 아이디
+	 * @return 내가 대여한 도서이면 1, 아니면 0
+	 * @author 민태원
+	 * @since 2020.11.09
+	 */
+	private int isMyRental(String book_id) {
+		if(is.checkRentalVO(book_id)!=null) {
+			return 1;
+		}
+		return 0;
+	}
 /////////////////////////////게시판//////////////////////////////////
 	/**
     * 게시판메서드

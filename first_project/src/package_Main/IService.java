@@ -209,6 +209,16 @@ public interface IService {
 	 * @since 2020.11.07
 	 */
 	String createReserveVO(Map<String, String> map);
+	
+	
+	/**
+	 * 도서의 아이디를 이용하여 대여목록에 있는지 체크
+	 * @param book_id 검색할 도서의 아이디
+	 * @return 검색된 도서의 모든 정보 반환
+	 * @author 민태원
+	 * @since 2020.11.09
+	 */
+	RentalVO checkRentalVO(String book_id);
 ///////////////////마이페이지///////////////////////////
 	
 	/**

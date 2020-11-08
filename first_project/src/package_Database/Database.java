@@ -1194,6 +1194,7 @@ public class Database {
 	   bv1.setBook_LGU("1");
 	   bv1.setBook_publisher("팩토리나인");
 	   bv1.setBook_summary("주문하신 꿈은 매진입니다.");
+	   bv1.setBook_state(false);
 	   bookList.add(bv1);
 	   
 	   BookVO bv2 = new BookVO();
@@ -1203,6 +1204,7 @@ public class Database {
 	   bv2.setBook_LGU("2");
 	   bv2.setBook_publisher("토네이도");
 	   bv2.setBook_summary("하루를 두 배로 사는 단 하나의 습관");
+	   bv2.setBook_state(false);
 	   bookList.add(bv2);
 	   
 	   BookVO bv3 = new BookVO();
@@ -1212,6 +1214,7 @@ public class Database {
 	   bv3.setBook_LGU("3");
 	   bv3.setBook_publisher("김영사");
 	   bv3.setBook_summary("버럭하지 않고 분명하게 알려주는 방법");
+	   bv3.setBook_state(false);
 	   bookList.add(bv3);
 	   
 	   BookVO bv4 = new BookVO();
@@ -1403,42 +1406,21 @@ public class Database {
 		re3.setBook_id("2");
 		rentalList.add(re3);
 		
-	///예약목록 확인용
-//		RentalVO re5 = new RentalVO();
-//		re5.setRental_id(4);
-//		re5.setRental_start("2002-11-11");
-//		re5.setRental_end("2002-12-31");
-//		re5.setMem_id("nex1032");
-//		re5.setBook_id("5");
-//		rentalList.add(re5);
-//		
-//		
-//		RentalVO re7 = new RentalVO();
-//		re7.setRental_id(6);
-//		re7.setRental_start("2002-11-11");
-//		re7.setRental_end("2002-11-11");
-//		re7.setMem_id("nex1032");
-//		re7.setBook_id("7");
-//		rentalList.add(re7);
-		
 	}
 	
 	//예약정보 초기화
 	{
-//		ReserveVO re1 = new ReserveVO();
-//		re1.setRsv_no(1);
-//		re1.setMem_id("abcd01");
-//		re1.setBook_id("5");
-//		reserveList.add(re1);
-//		
-//		ReserveVO re2 = new ReserveVO();
-//		re2.setRsv_no(2);
-//		re2.setMem_id("abcd01");
-//		re2.setBook_id("7");
-//		reserveList.add(re2);
+		ReserveVO re1 = new ReserveVO();
+		re1.setMem_id("nex1032");
+		re1.setBook_id("1");
+		reserveList.add(re1);
+		
+		ReserveVO re2 = new ReserveVO();
+		re2.setMem_id("nex1032");
+		re2.setBook_id("2");
+		reserveList.add(re2);
 		
 		ReserveVO re5 = new ReserveVO();
-		re5.setRsv_no(5);
 		re5.setMem_id("nex1032");
 		re5.setBook_id("3");
 		reserveList.add(re5);

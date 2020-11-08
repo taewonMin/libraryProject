@@ -283,6 +283,11 @@ public class IServiceImpl implements IService{
 		return rv.getRental_end();
 	}
 	
+	@Override
+	public RentalVO checkRentalVO(String book_id) {
+		return db.readRentalVO(book_id);
+	}
+	
 /////////////////////////////마이페이지//////////////////////////
 	
 	@Override
