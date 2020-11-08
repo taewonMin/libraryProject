@@ -418,7 +418,6 @@ public class Database {
    	public int deleteRental(RentalVO rv){
    		BookVO bv = readBook(rv.getBook_id());
  	   if (rentalList.remove(rv)) {
- 		   bv.setBook_state(true);	//대여상태 가능으로 변경
  		   //삭제된 도서를 예약한 사람이 있는지 확인 
  		   ReserveVO rsv = checkReserve(bv.getBook_id());
  		   if(rsv != null){
@@ -440,6 +439,8 @@ public class Database {
  	 		   map.put("mem_id", rsv.getMem_id());
  	 		   map.put("book_id", rsv.getBook_id());
  	 		   deleteReserve(readReserveVO(map));
+ 		   }else {
+ 			  bv.setBook_state(true);	//대여상태 가능으로 변경
  		   }
  		   return 1;
        }
