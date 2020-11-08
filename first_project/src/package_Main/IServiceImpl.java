@@ -284,8 +284,14 @@ public class IServiceImpl implements IService{
 	}
 	
 	@Override
-	public RentalVO checkRentalVO(String book_id) {
-		return db.readRentalVO(book_id);
+	public int checkRentalVO(Map<String,String> map) {
+		List<RentalVO> rvList = db.readRental(map.get("mem_id"));
+		for(RentalVO rv : rvList) {
+			if(rv.getBook_id().equals(map.get("book_id"))) {
+				return 1;
+			}
+		}
+		return 0;
 	}
 	
 /////////////////////////////마이페이지//////////////////////////

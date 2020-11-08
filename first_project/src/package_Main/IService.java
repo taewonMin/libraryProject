@@ -218,7 +218,7 @@ public interface IService {
 	 * @author 민태원
 	 * @since 2020.11.09
 	 */
-	RentalVO checkRentalVO(String book_id);
+	int checkRentalVO(Map<String,String> map);
 ///////////////////마이페이지///////////////////////////
 	
 	/**

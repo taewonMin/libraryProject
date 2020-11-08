@@ -56,11 +56,11 @@ public class View {
     */
    private void showBanner(String str) { 
       System.out.println();
-      System.out.println("========================================================");
+      System.out.println("==================================================================");
       System.out.println("\t\t\t JJUGURI LIBRARY");
-      System.out.println("────────────────────────────────────────────────────────");
+      System.out.println("──────────────────────────────────────────────────────────────────");
       System.out.println("\t\t\t" + str);
-      System.out.println("────────────────────────────────────────────────────────");
+      System.out.println("──────────────────────────────────────────────────────────────────");
    }
 
    /**
@@ -69,7 +69,7 @@ public class View {
     * @since 2020.11.04
     */
    private void endProgram(){
-      showBanner("\n\t프로그램을 종료합니다. 이용해 주셔서 감사합니다.\n");
+      showBanner("\n\t\t프로그램을 종료합니다. 이용해 주셔서 감사합니다.\n");
       System.exit(0);
    }
 	
@@ -706,7 +706,10 @@ public class View {
 	 * @since 2020.11.09
 	 */
 	private int isMyRental(String book_id) {
-		if(is.checkRentalVO(book_id)!=null) {
+		Map<String, String> map = new HashMap<>();
+		map.put("mem_id", nowMember.getMem_id());
+		map.put("book_id", book_id);
+		if(is.checkRentalVO(map)==1) {
 			return 1;
 		}
 		return 0;
