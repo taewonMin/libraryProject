@@ -403,7 +403,7 @@ public class View {
 			showBanner("검색 결과");
 			for (int i = 0; i < bookNameListVer2.size(); i++) {
 				if (bookNameListVer2.get(i).getBook_name().contains(bo_name)) {
-					System.out.println("도서 번호: " + bookNameListVer2.get(i).getBook_id());
+					System.out.println("["+(i+1)+"]");
 					System.out.println("도서명: "+ bookNameListVer2.get(i).getBook_name());
 					System.out.println("작가: "+bookNameListVer2.get(i).getBook_author());
 					System.out.println("출판사: "+ bookNameListVer2.get(i).getBook_publisher());
@@ -411,7 +411,7 @@ public class View {
 				}
 			}
 			try{
-				book_detail1(bo_name);
+				book_detail1(bookNameListVer2);
 				return;
 			}catch(InputMismatchException e){
 				System.out.println("숫자를 입력해주세요.");
@@ -424,14 +424,18 @@ public class View {
 	/**
 	 * 도서 상세 페이지 메서드
 	 * @author 송지은
-	 * @param bo_id 도서ID
+	 * @param list 검색된 도서 목록
 	 * @return BookVO List형 반환
 	 */
-	boolean book_detail1(String bo_name) {
-		String bookID = is.inputBook2();
-		if("0".equals(bookID))
+	boolean book_detail1(List<BookVO> list) {
+		int inputNum = is.inputBook2();
+		if(inputNum == 0)
 			return false;
-		List<BookVO> bookList = is.booklList();
+		else if(inputNum > list.size()) {
+			System.out.println("잘못된 입력입니다.");
+			return false;
+		}
+		String bookID = list.get(inputNum-1).getBook_id();
 		for(BookVO dbSlr : is.booklList(bookID)) {
 			if(dbSlr.getBook_id().equals(bookID)) {
 				showBanner("도서정보");

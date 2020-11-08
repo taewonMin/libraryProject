@@ -165,7 +165,7 @@ public interface IService {
 	 * @author 송지은
 	 * @return bo_name 반환
 	 */
-	String inputBook2();
+	int inputBook2();
 	
 	/**
 	 * 도서 선택 메서드

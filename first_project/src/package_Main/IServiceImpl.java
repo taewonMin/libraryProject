@@ -192,7 +192,7 @@ public class IServiceImpl implements IService{
 	@Override
 	public int scanCID() {
 		Scanner scn = new Scanner(System.in);
-		System.out.println("───────────────────────────────────────────────────────");
+		System.out.println("-------------------------------------------------------");
 		System.out.println("[0]뒤로");
 		System.out.println("선택할 장르의 번호를 입력해주세요.");
 		while (true) {
@@ -236,14 +236,15 @@ public class IServiceImpl implements IService{
 	 * @author 송지은
 	 */
 	@Override
-	public String inputBook2() {
+	public int inputBook2() {
 		Scanner scn = new Scanner(System.in);
+		
 		System.out.println("선택하실 도서 번호를 입력해주세요.");
 		System.out.println("[0]뒤로");
 		while (true) {
 			try {
-				String bo_name = scn.next();
-				return bo_name;	
+				int bo_id = scn.nextInt();
+				return bo_id;	
 			}catch (InputMismatchException e) {
 				System.out.println("숫자만 입력 가능합니다.");
 			}
