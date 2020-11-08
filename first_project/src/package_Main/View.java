@@ -20,7 +20,6 @@ public class View {
 	void startMethod() {
 		//로그인,회원가입
 		while(true) {
-			System.out.println("==============<입장>==============");
 			System.out.println("[1]로그인");
 			System.out.println("[2]회원가입");
 			System.out.println("[3]종료");
@@ -57,12 +56,11 @@ public class View {
     */
    private void showBanner(String str) { 
       System.out.println();
-      System.out.println("===================================");
-      System.out.println("\t JJUGURI LIBRARY");
-      System.out.println("───────────────────────────────────");
-      System.out.println("\t" + str);
-      System.out.println("───────────────────────────────────");
-      System.out.println();
+      System.out.println("========================================================");
+      System.out.println("\t\t\t JJUGURI LIBRARY");
+      System.out.println("────────────────────────────────────────────────────────");
+      System.out.println("\t\t\t" + str);
+      System.out.println("────────────────────────────────────────────────────────");
    }
 
    /**
@@ -93,7 +91,7 @@ public class View {
       
       if(nowMember==null){ //id와 pw값을 db로 넘겨서 회원확인
     	 // nowMember = 해당회원의 MemberVO가져와야함
-    	  showBanner("아이디나 비밀번호가 틀렸습니다.");
+    	  System.out.println("아이디나 비밀번호가 틀렸습니다.");
     	 
       }else{
     		  if(is.adminMatch(params)){//관리자일때
@@ -115,7 +113,7 @@ public class View {
     * @since 2020-11-06
     */
    private void joinMemberView(){
- 	  showBanner("회원가입");
+	  System.out.println("=============<회원가입>=============");
  	  MemberVO params = new MemberVO(); //묶어서 저장할 MemberVO params 생성
  	  
  	  String mem_id = scanID(); //아이디, 패스워드등을 입력받는 메서드들을 통해 변수에넣음
@@ -305,7 +303,7 @@ public class View {
 	 */
 	private void homeView() {
 		while(true) {
-			System.out.println("==============<HOME>==============");
+			showBanner("HOME");
 			System.out.println("[1]도서검색");
 		    System.out.println("[2]게시판");
 		    System.out.println("[3]마이페이지");
@@ -355,7 +353,7 @@ public class View {
 			showBanner("도서검색");
 			System.out.println("[1]도서명 검색");		
 			System.out.println("[2]장르명 검색");
-			System.out.println("───────────────────────────────────────────────────────");
+			System.out.println("[0]뒤로");
 			
 			try{
 				input = in.next();
@@ -364,11 +362,16 @@ public class View {
 					bookSearch(); //도서명 검색
 					break;
 				case 2 :
-					 genreSearchView(); // 장르 검색
+					// 장르 검색
+					if(genreSearchView()==0) {
+						continue;
+					}
 					break;
+				case 0 :
+					return;
 				default : 
 					System.out.println("다시 입력해주세요");
-					break;
+					continue;
 				}
 			}catch(Exception e){
 				System.out.println("숫자를 입력해주세요.");
@@ -388,35 +391,35 @@ public class View {
 		showBanner("도서명 검색");
 		Scanner scn = new Scanner(System.in);
 		List<BookVO> bookNameListVer2 = null;
-		boolean selectBookResult =true;
 		System.out.println("도서명 검색: ");
 		String bo_name = scn.next();
 		bo_name = bo_name.replace(" ", "");
-		
-		System.out.println(bo_name);
-		while (true) {
-				bookNameListVer2 = is.bookNameListVer2(bo_name);
-				for (int i = 0; i < bookNameListVer2.size(); i++) {
-					showBanner("검색 도서");
-					if (bookNameListVer2.get(i).getBook_name().contains(bo_name)) {
-						System.out.println("도서 번호: " + bookNameListVer2.get(i).getBook_id());
-						System.out.println("도서명: "+ bookNameListVer2.get(i).getBook_name());
-						System.out.println("작가: "+bookNameListVer2.get(i).getBook_author());
-						System.out.println("출판사: "+ bookNameListVer2.get(i).getBook_publisher());
-						
-					}
-					try{
-						selectBookResult = book_detail1(bo_name);
-					}catch(InputMismatchException e){
-						System.out.println("숫자를 입력해주세요.");
-					}catch(NumberFormatException ee){
-				
-					}
-				}while (selectBookResult==true); 
-				break;
-			}
-			
+		bookNameListVer2 = is.bookNameListVer2(bo_name);
+		if(bookNameListVer2.size()==0) {
+			System.out.println("검색 결과가 없습니다.");
+			return;
 		}
+		while (true) {
+			showBanner("검색 결과");
+			for (int i = 0; i < bookNameListVer2.size(); i++) {
+				if (bookNameListVer2.get(i).getBook_name().contains(bo_name)) {
+					System.out.println("도서 번호: " + bookNameListVer2.get(i).getBook_id());
+					System.out.println("도서명: "+ bookNameListVer2.get(i).getBook_name());
+					System.out.println("작가: "+bookNameListVer2.get(i).getBook_author());
+					System.out.println("출판사: "+ bookNameListVer2.get(i).getBook_publisher());
+					System.out.println("-------------------------------------------------------");
+				}
+			}
+			try{
+				book_detail1(bo_name);
+				return;
+			}catch(InputMismatchException e){
+				System.out.println("숫자를 입력해주세요.");
+			}catch(NumberFormatException ee){
+		
+			}
+		}
+	}
 	
 	/**
 	 * 도서 상세 페이지 메서드
@@ -426,18 +429,41 @@ public class View {
 	 */
 	boolean book_detail1(String bo_name) {
 		String bookID = is.inputBook2();
-		System.out.println(bookID);
+		if("0".equals(bookID))
+			return false;
 		List<BookVO> bookList = is.booklList();
 		for(BookVO dbSlr : is.booklList(bookID)) {
-			
 			if(dbSlr.getBook_id().equals(bookID)) {
 				showBanner("도서정보");
 				System.out.println("도서번호: "+dbSlr.getBook_id());
 				System.out.println("도서명: "+dbSlr.getBook_name());
 				System.out.println("작가: "+dbSlr.getBook_author());
 				System.out.println("출판사: "+dbSlr.getBook_publisher());
-				System.out.println("줄거리: "+dbSlr.getBook_summary());	
+				System.out.println("줄거리: "+dbSlr.getBook_summary());
+				System.out.print("대여상태 : ");
+				if(dbSlr.isBook_state())
+					System.out.println("대여가능");
+				else
+					System.out.println("대여중");
 				System.out.println("───────────────────────────────────────────────────────");
+				System.out.println("[1]대여/예약하기 [0]뒤로");
+				int input = 0;
+				try {
+					input = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("숫자만 입력하세요");
+					return false;
+				}
+				switch(input) {
+				case 0:
+					return false;
+				case 1:
+					tryRental(String.valueOf(dbSlr.getBook_id()));
+					break;
+				default:
+					System.out.println("잘못된 입력입니다.");
+					return false;
+				}
 				break;
 			}else {
 				System.out.println("도서 상세 페이지가 없습니다.");
@@ -452,35 +478,40 @@ public class View {
 	 * @author 송지은
 	 * 
 	 */
-	void genreSearchView() {
-		showBanner("장르 선택");
-		int bo_id;
-		List<BookVO> bookNameListVer1 = null;
-		boolean selectBookResult = true;
-		bo_id = book_choice();
-		do {	
+	int genreSearchView() {
+		while(true) {
+			showBanner("장르 선택");
+			int bo_id;
+			List<BookVO> bookNameListVer1 = null;
+			bo_id = book_choice();
+			if(bo_id==0)
+				return 0;
 			bookNameListVer1 = is.bookNameListVer1(bo_id);
 			if(bookNameListVer1.size()==0) {
 				System.out.println("해당 장르의 도서가 없습니다.");
-				bo_id=0;
+				return 0;
 			}else{
-				do {
+				while(true) {
 					showBanner("도서 목록");
 					for(int i=0; i < bookNameListVer1.size(); i++) {	
 						System.out.println("["+bookNameListVer1.get(i).getBook_id()+"]"
 								+bookNameListVer1.get(i).getBook_name());
 					}
 					try{
-						selectBookResult = book_detail(bo_id);
+						if(book_detail(bo_id)) {
+							break;
+						}else {
+							return 0;
+						}
 					}catch(InputMismatchException e){
 						System.out.println("숫자를 입력해주세요.");
+						continue;
 					}catch(NumberFormatException ee){
 				
 					}
-				}while (selectBookResult==true); 
+				}
 			}
-		}while(bo_id==0);	
-		
+		}		
 	}
 	/**
 	 * 도서 상세 페이지 메서드
@@ -490,6 +521,8 @@ public class View {
 	 */
 	boolean book_detail(int bo_id) {
 		String bookID = is.inputBook();
+		if("0".equals(bookID))
+			return false;
 		List<BookLGUVO> bookLGUList = is.bookLGUList();
 		String bookName = "";
 		
@@ -505,8 +538,30 @@ public class View {
 				System.out.println("도서명: "+dbSlr.getBook_name());
 				System.out.println("작가: "+dbSlr.getBook_author());
 				System.out.println("출판사: "+dbSlr.getBook_publisher());
-				System.out.println("줄거리: "+dbSlr.getBook_summary());	
-				System.out.println();
+				System.out.println("줄거리: "+dbSlr.getBook_summary());
+				System.out.print("대여상태 : ");
+				if(dbSlr.isBook_state())
+					System.out.println("대여 가능");
+				else 
+					System.out.println("대여중");
+				System.out.println("[1]대여/예약하기 [0]뒤로");
+				int input = 0;
+				try {
+					input = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("숫자만 입력하세요");
+					return false;
+				}
+				switch(input) {
+				case 0:
+					return false;
+				case 1:
+					tryRental(String.valueOf(bo_id));
+					break;
+				default:
+					System.out.println("잘못된 입력입니다.");
+					return false;
+				}
 				break;
 		}else {
 			System.out.println("선택하신 번호의 도서 상세 페이지가 없습니다.");
@@ -549,29 +604,25 @@ public class View {
 	}
 	
 /////////////////////////////검색된 도서 대여/예약하기/////////////////////////
-	//bookVO의 state가 true이면 바로 대여
-	//false이면 예약
-	//대여 또는 예약에 성공하면 1, 아니면 0
+	/**
+	 * 대여 또는 예약하기
+	 * bookVO의 state가 true이면 바로 대여,
+	 * false이면 예약
+	 * @param book_id 도서의 아이디
+	 * @return 대여 또는 예약이 성공하면 1, 아니면 0
+	 * @author 민태원
+	 * @since 2020.11.09
+	 */
 	private int tryRental(String book_id){
 		BookVO bv = is.readBook(book_id);
 		if(bv.isBook_state()){	//true이면(대여가능한 상태이면)
-			System.out.println("해당 도서가 대여가능한 상태입니다.\n대여하시겠습니까? (Y/N)");
-			String check = sc.next();
-			if("Y".equals(check.toUpperCase())){
-				return rentalBook(bv);
-			}else{
-				System.out.println("취소되었습니다.\n");
-			}
+			System.out.println("해당 도서가 대여가능한 상태입니다.");
+			if(rentalBook(bv)==1)
+				return 1;
 		}else{ //대여불가하면 예약
-			System.out.println("해당 도서가 이미 대여중입니다.\n예약하시겠습니까? (Y/N)");
-			String check = sc.next();
-			if("Y".equals(check.toUpperCase())){
-				// 자기가 자기책을 예약하는 건 불가능해
-				//메서드
-				return reserveBook(bv);
-			}else{
-				System.out.println("취소되었습니다.\n");
-			}
+			System.out.println("해당 도서가 이미 대여중입니다.");
+			if(reserveBook(bv)==1)
+				return 1;
 		}
 		return 0;
 	}
@@ -584,19 +635,25 @@ public class View {
 	 * @since 2020.11.07
 	 */
 	private int rentalBook(BookVO bv){
-		Map<String,String> map = new HashMap<>();
-		map.put("mem_id", nowMember.getMem_id());
-		map.put("book_id", bv.getBook_id());
-		RentalVO rv = is.createRentalVO(map);
-		if(rv!=null){
-			System.out.println("대여가 완료되었습니다.");
-			System.out.println("도서명 : " + bv.getBook_name());
-			System.out.println("대여일 : " + rv.getRental_start());
-			System.out.println("반납일 : " + rv.getRental_end());
-			bv.setBook_state(false);
-			return 1;
+		System.out.println("대여하시겠습니까? (Y/N)");
+		String check = sc.next();
+		if("Y".equals(check.toUpperCase())){
+			Map<String,String> map = new HashMap<>();
+			map.put("mem_id", nowMember.getMem_id());
+			map.put("book_id", bv.getBook_id());
+			RentalVO rv = is.createRentalVO(map);
+			if(rv!=null){
+				System.out.println("대여가 완료되었습니다.");
+				System.out.println("도서명 : " + bv.getBook_name());
+				System.out.println("대여일 : " + rv.getRental_start());
+				System.out.println("반납일 : " + rv.getRental_end());
+				bv.setBook_state(false);
+				return 1;
+			}else{
+				System.out.println("대여에 실패하였습니다..");
+			}
 		}else{
-			System.out.println("대여에 실패하였습니다..");
+			System.out.println("취소되었습니다.\n");
 		}
 		return 0;
 	}
@@ -609,17 +666,25 @@ public class View {
 	 * @since 2020.11.07
 	 */
 	private int reserveBook(BookVO bv){
-		Map<String,String> map = new HashMap<>();
-		map.put("mem_id", nowMember.getMem_id());
-		map.put("book_id", bv.getBook_id());
-		String rentalDate = is.createReserveVO(map);
-		if(rentalDate!=null){
-			System.out.println("예약이 완료되었습니다.");
-			System.out.println("예약도서명 : " + bv.getBook_name());
-			System.out.println("대여가능일 : " + rentalDate);
-			return 1;
+		System.out.println("예약하시겠습니까? (Y/N)");
+		String check = sc.next();
+		if("Y".equals(check.toUpperCase())){
+			// 자기가 자기책을 예약하는 건 불가능해
+			//메서드
+			Map<String,String> map = new HashMap<>();
+			map.put("mem_id", nowMember.getMem_id());
+			map.put("book_id", bv.getBook_id());
+			String rentalDate = is.createReserveVO(map);
+			if(rentalDate!=null){
+				System.out.println("예약이 완료되었습니다.");
+				System.out.println("예약도서명 : " + bv.getBook_name());
+				System.out.println("대여가능일 : " + rentalDate);
+				return 1;
+			}else{
+				System.out.println("예약에 실패하였습니다..");
+			}
 		}else{
-			System.out.println("예약에 실패하였습니다..");
+			System.out.println("취소되었습니다.\n");
 		}
 		return 0;
 	}
@@ -633,11 +698,9 @@ public class View {
    private void boardView(){
       while(true){
     	 showBanner("게시판");
-         System.out.println("사용하실 메뉴를 선택해주세요");
          System.out.println("[1] 공지사항");
          System.out.println("[2] 희망도서목록");
          System.out.println("[0] 뒤로");
-         System.out.println("=======================================================");
          
          int input = 0;
          try{
@@ -667,12 +730,10 @@ public class View {
     * @since 2020-11-05
     */
    private void noticeView(){
-	   	showBanner("공지사항");
-	   	is.noticeList();//공지출력
+	   showBanner("공지사항");
+	   is.noticeList();//공지출력
 	   	while(true){
-	   		System.out.println("=======================================================");
 	   		System.out.println("[0] 뒤로");
-	   		System.out.println("=======================================================");
 	   		int input = 0;
 			try{
 			   input = scanNo();
@@ -715,9 +776,7 @@ public class View {
 	   is.hopeList();
 	   
       while(true){
-         System.out.println("=======================================================");
          System.out.println("[0] 뒤로  \t [1] 글등록 [2] 글삭제 [3] 상세보기");
-         System.out.println("=======================================================");
          int input = 0;
          try{
            input = sc.nextInt();
@@ -740,7 +799,7 @@ public class View {
         		//hopeView();
         		return;
         	 }else{
-        		 System.out.println("회원님의 글이 아니기 때문에 삭제할 수 없습니다.");
+        		 System.out.println("회원님의 글이 아니기 때문에 삭제할 수 없습니다.\n");
         		 return;
         	 }
         	// break;
@@ -800,7 +859,7 @@ public class View {
     * @since 2020.11.05
     */
    private void hopeRegiView(){
-	  showBanner("희망도서 등록");
+	   System.out.println("===============<희망도서 등록>================");
 	  Map<String,String> params = new HashMap<String, String>();//희망도서입력을 위한 map
 	  
 	  String hope_name = scanHopeName();
@@ -879,7 +938,7 @@ public class View {
 	 */
 	private void myPageView() {
 		while(true) {
-			System.out.println("=============<MYPAGE>=============");
+			showBanner("마이페이지");
 			System.out.println("[1]정보수정");
 			System.out.println("[2]대출도서목록");
 			System.out.println("[3]예약도서목록");
@@ -921,11 +980,11 @@ public class View {
 	 */
 	private void updateInfoView() {
 		while(true) {
-			System.out.println("==============<내 정보>==============");
+			showBanner("내 정보");
 			//내 정보 출력 메서드
 			MemberVO mv = is.readMember(nowMember.getMem_id());
 			printMyInfo(mv);
-			System.out.println("-----------------------------------");
+			System.out.println("-------------------------------------------------------");
 			System.out.println("바꿀 정보 선택");
 			System.out.println("[1]비밀번호 [2]전화번호 [3]이메일\n[9]탈퇴하기 [0]뒤로가기");
 			
@@ -1061,15 +1120,13 @@ public class View {
 	 */
 	private void rentalListView() {
 		while(true) {
-			System.out.println("======================<나의 대여 목록>======================");
+			showBanner("나의 대여목록");
 			//대출도서리스트 출력 메서드
 			List<Map<String,String>> myList = printRentalList(nowMember.getMem_id());
 			if(myList.size()==0){
 				System.out.println("대여중인 도서가 없습니다.");
-				System.out.println("--------------------------------------------------------");
 				System.out.println("[0]뒤로");
 			}else{
-				System.out.println("--------------------------------------------------------");
 				System.out.println("[0]뒤로");
 				System.out.println("반납할 도서를 선택해 주세요.");
 			}
@@ -1110,6 +1167,7 @@ public class View {
 			System.out.println("(출판사)"+map.get("book_publisher")+"  ");
 			System.out.println("대여일 : " + map.get("start_date"));
 			System.out.println("반납일 : " + map.get("end_date"));
+			System.out.println("--------------------------------------------------------");
 		}
 		return myList;
 	}
@@ -1142,16 +1200,14 @@ public class View {
 	 */
 	private void rsvLsitView() {
 		while(true) {
-			System.out.println("==============<나의 예약 목록>==============");
+			showBanner("나의 예약목록");
 			//예약 도서 목록 출력
 			List<Map<String, String>> rsvList = printBookList(nowMember.getMem_id());
 			
 			if(rsvList.size()==0){
 				System.out.println("예약중인 도서가 없습니다.");
-				System.out.println("----------------------------------------");
 				System.out.println("[0]뒤로");
 			}else{
-				System.out.println("----------------------------------------");
 				System.out.println("[0]뒤로");
 				System.out.println("예약을 취소할 책의 번호를 입력해주세요.");
 			}
@@ -1193,6 +1249,7 @@ public class View {
 			System.out.print("(저자)"+map.get("book_author")+"  ");
 			System.out.println("(출판사)"+map.get("book_publisher")+"  ");
 			System.out.println("대여가능일 : " + map.get("end_date"));
+			System.out.println("--------------------------------------------------------");
 		}
 		return rsvList;
 	}

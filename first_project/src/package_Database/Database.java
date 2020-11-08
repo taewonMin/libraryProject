@@ -255,7 +255,7 @@ public class Database {
 	public List<BookVO> bookNameListVer2(String bo_name) {
 		List<BookVO> result = new ArrayList<>();
 		for (BookVO dbBook : bookList) {
-			if (dbBook.getBook_name().contains(bo_name)) {
+			if (dbBook.getBook_name().replace(" ", "").contains(bo_name)) {
 				result.add(dbBook);
 			}
 
@@ -345,6 +345,7 @@ public class Database {
    	public void readDetailNotice(NoticeVO nv){
    		this.readNotice(nv);
    		System.out.println("내용 : " + nv.getNotice_content()); //추가
+   		System.out.println("-------------------------------------------------------");
    	}
    	
    	/**
@@ -598,12 +599,9 @@ public class Database {
 	 * @since 2020-11-05
 	 */
 	public boolean readDetailHope(HopeVO hv){ 
-		if(hopeList.contains(hv)){      
+		if(hopeList.contains(hv)){
+			System.out.println("");
 			this.readHope(hv);
-			System.out.println("작가 : "+hv.getHope_author());
-			System.out.println("출판사 : "+hv.getHope_publisher());
-			System.out.println("희망하는 이유 : "+ hv.getHope_content());
-			System.out.println("-------------------------------------------------------");
 		}
 		return true;
 	}
@@ -614,7 +612,7 @@ public class Database {
 	 * @return
 	 */
 	public boolean hopeDetailView(int hopeNo){
-		if(hopeNo<=hopeList.size()){
+		if(0< hopeNo && hopeNo<=hopeList.size()){
 			readDetailHope(hopeList.get(hopeNo-1));
 			return true;	
 		}else{
@@ -673,6 +671,8 @@ public class Database {
 	 * @return 본인의 글이라 삭제에 성공하면 true, 본인이 아니면 false
 	 */
 	public boolean hopeRemoveView(String mem_id, int hopeNo){
+		if(hopeNo > hopeList.size())
+			return false;
 		for(HopeVO hv : hopeList){
 			for(MemberVO mv : memberList){
 				if(hopeList.get(hopeNo-1).getMem_id().equals(mem_id)){

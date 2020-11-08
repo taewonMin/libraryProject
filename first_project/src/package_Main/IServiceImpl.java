@@ -193,6 +193,7 @@ public class IServiceImpl implements IService{
 	public int scanCID() {
 		Scanner scn = new Scanner(System.in);
 		System.out.println("───────────────────────────────────────────────────────");
+		System.out.println("[0]뒤로");
 		System.out.println("선택할 장르의 번호를 입력해주세요.");
 		while (true) {
 			try {
@@ -218,6 +219,7 @@ public class IServiceImpl implements IService{
 		Scanner scn = new Scanner(System.in);
 		System.out.println("───────────────────────────────────────────────────────");
 		System.out.println("선택하실 도서 번호를 입력해주세요.");
+		System.out.println("[0]뒤로");
 		while (true) {
 			try {
 				String bo_id = scn.next();
@@ -236,8 +238,8 @@ public class IServiceImpl implements IService{
 	@Override
 	public String inputBook2() {
 		Scanner scn = new Scanner(System.in);
-		System.out.println("───────────────────────────────────────────────────────");
 		System.out.println("선택하실 도서 번호를 입력해주세요.");
+		System.out.println("[0]뒤로");
 		while (true) {
 			try {
 				String bo_name = scn.next();
