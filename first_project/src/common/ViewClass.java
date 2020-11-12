@@ -388,7 +388,7 @@ public class ViewClass {
 			
 			switch(input) {
 			case 1:
-//				bookSearchView();	//도서검색
+				bookSearchView();	//도서검색
 				break;
 			case 2:
 				boardView();	//게시판
@@ -410,269 +410,185 @@ public class ViewClass {
 	}
 	
 //////////////////////////////////////////검색///////////////////////////////////////////////	
-//	/**
-//	* 도서 검색 메뉴
-//	* @author 송지은
-//	*/
-//	public void bookSearchView(){
-//		Scanner in = new Scanner(System.in);
-//		String input;
-//		while(true){
-//			showBanner("도서검색");
-//			System.out.println("[1]도서명 검색");		
-//			System.out.println("[2]장르명 검색");
-//			System.out.println("[0]뒤로");
-//			try{
-//				input = in.next();
-//				switch(Integer.parseInt(input)){
-//				case 1 :
-//					bookSearch(); //도서명 검색
-//					break;
-//				case 2 :
-//					// 장르 검색
-//					if(genreSearchView()==0) {
-//						continue;
-//					}
-//					break;
-//				case 0 :
-//					return;
-//				default : 
-//					System.out.println("다시 입력해주세요");
-//					continue;
-//				}
-//			}catch(Exception e){
-//				System.out.println("숫자를 입력해주세요.");
-//				continue;
-//			}
-//			return;
-//		}
-//	}
-//	
-//	/**
-//	 * 도서명 검색 메서드
-//	 * 검색 조건: 도서명의 한 글자라도 일치하는 것이 있다면 도서 리스트 띄우기
-//	 * @author 송지은
-//	 */
-//	void bookSearch() {
-//		showBanner("도서명 검색");
-//		List<BookVO> bookNameListVer2 = null;
-//		System.out.println("도서명 검색: ");
-//		String bo_name = sc.next();
-//		bo_name = bo_name.replace(" ", "");
-//		bookNameListVer2 = ibs.bookNameListVer2(bo_name);
-//		if(bookNameListVer2.size()==0) {
-//			System.out.println("검색 결과가 없습니다.");
-//			return;
-//		}
-//		while (true) {
-//			showBanner("검색 결과");
-//			for (int i = 0; i < bookNameListVer2.size(); i++) {
-//				if (bookNameListVer2.get(i).getBook_name().contains(bo_name)) {
-//					System.out.println("["+(i+1)+"]");
-//					System.out.println("도서명: "+ bookNameListVer2.get(i).getBook_name());
-//					System.out.println("작가: "+bookNameListVer2.get(i).getBook_author());
-//					System.out.println("출판사: "+ bookNameListVer2.get(i).getBook_publisher());
-//					System.out.println("-------------------------------------------------------");
-//				}
-//			}
-//			try{
-//				book_detail1(bookNameListVer2);
-//				return;
-//			}catch(InputMismatchException e){
-//				System.out.println("숫자를 입력해주세요.");
-//			}catch(NumberFormatException ee){
-//		
-//			}
-//		}
-//	}
-//	
-//	/**
-//	 * 도서 상세 페이지 메서드
-//	 * @author 송지은
-//	 * @param list 검색된 도서 목록
-//	 * @return BookVO List형 반환
-//	 */
-//	boolean book_detail1(List<BookVO> list) {
-//		int inputNum = ibs.inputBook2();
-//		if(inputNum == 0)
-//			return false;
-//		else if(inputNum > list.size()) {
-//			System.out.println("잘못된 입력입니다.");
-//			return false;
-//		}
-//		String bookID = list.get(inputNum-1).getBook_id();
-//		for(BookVO dbSlr : ibs.booklList(bookID)) {
-//			if(dbSlr.getBook_id().equals(bookID)) {
-//				showBanner("도서정보");
-//				System.out.println("도서번호: "+dbSlr.getBook_id());
-//				System.out.println("도서명: "+dbSlr.getBook_name());
-//				System.out.println("작가: "+dbSlr.getBook_author());
-//				System.out.println("출판사: "+dbSlr.getBook_publisher());
-//				System.out.println("줄거리: "+dbSlr.getBook_summary());
-//				System.out.print("대여상태 : ");
-//				if(dbSlr.isBook_state())
-//					System.out.println("대여가능");
-//				else
-//					System.out.println("대여중");
-//				System.out.println("───────────────────────────────────────────────────────");
-//				System.out.println("[1]대여/예약하기 [0]뒤로");
-//				int input = 0;
-//				try {
-//					input = sc.nextInt();
-//				} catch (Exception e) {
-//					System.out.println("숫자만 입력하세요");
-//					return false;
-//				}
-//				switch(input) {
-//				case 0:
-//					return false;
-//				case 1:
-//					tryRental(dbSlr.getBook_id());
-//					break;
-//				default:
-//					System.out.println("잘못된 입력입니다.");
-//					return false;
-//				}
-//				break;
-//			}else {
-//				System.out.println("도서 상세 페이지가 없습니다.");
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-//	
-//	/**
-//	 * 도서 장르 조회 및 해당 도서 목록 리스트 메서드
-//	 * @author 송지은
-//	 * 
-//	 */
-//	int genreSearchView() {
-//		while(true) {
-//			showBanner("장르 선택");
-//			int bo_id;
-//			List<BookVO> bookNameListVer1 = null;
-//			bo_id = book_choice();
-//			if(bo_id==0)
-//				return 0;
-//			bookNameListVer1 = ibs.bookNameListVer1(bo_id);
-//			if(bookNameListVer1.size()==0) {
-//				System.out.println("해당 장르의 도서가 없습니다.");
-//				return 0;
-//			}else{
-//				while(true) {
-//					showBanner("도서 목록");
-//					for(int i=0; i < bookNameListVer1.size(); i++) {	
-//						System.out.println("["+bookNameListVer1.get(i).getBook_id()+"]"
-//								+bookNameListVer1.get(i).getBook_name());
-//					}
-//					try{
-//						if(book_detail(bo_id)) {
-//							break;
-//						}else {
-//							return 0;
-//						}
-//					}catch(InputMismatchException e){
-//						System.out.println("숫자를 입력해주세요.");
-//						continue;
-//					}catch(NumberFormatException ee){
-//				
-//					}
-//				}
-//			}
-//		}		
-//	}
-//	
-//	/**
-//	 * 도서 상세 페이지 메서드
-//	 * @author 송지은
-//	 * @param bo_id 도서ID
-//	 * @return BookVO List형 반환
-//	 */
-//	boolean book_detail(int bo_id) {
-//		String bookID = ibs.inputBook();
-//		if("0".equals(bookID))
-//			return false;
-//		List<BookLGUVO> bookLGUList = iblgus.bookLGUList();
-//		String bookName = "";
-//		
-//		for(BookVO dbSlr : ibs.booklList(bookID)) {
-//			if(dbSlr.getBook_LGU().equals(bookID) && dbSlr.getBook_LGU().equals(String.valueOf(bo_id))) {
-//				for(BookLGUVO bookVO : bookLGUList) {
-//					if(dbSlr.getBook_LGU().equals(bookVO.getBook_LGU())) {
-//						bookName = bookVO.getBook_theme();
-//					}
-//				}
-//				showBanner("도서정보");
-//				System.out.println("도서번호: "+dbSlr.getBook_id());
-//				System.out.println("도서명: "+dbSlr.getBook_name());
-//				System.out.println("작가: "+dbSlr.getBook_author());
-//				System.out.println("출판사: "+dbSlr.getBook_publisher());
-//				System.out.println("줄거리: "+dbSlr.getBook_summary());
-//				System.out.print("대여상태 : ");
-//				if(dbSlr.isBook_state())
-//					System.out.println("대여 가능");
-//				else 
-//					System.out.println("대여중");
-//				System.out.println("[1]대여/예약하기 [0]뒤로");
-//				int input = 0;
-//				try {
-//					input = sc.nextInt();
-//				} catch (Exception e) {
-//					System.out.println("숫자만 입력하세요");
-//					return false;
-//				}
-//				switch(input) {
-//				case 0:
-//					return false;
-//				case 1:
-//					tryRental(String.valueOf(bo_id));
-//					break;
-//				default:
-//					System.out.println("잘못된 입력입니다.");
-//					return false;
-//				}
-//				break;
-//			}else {
-//				System.out.println("선택하신 번호의 도서 상세 페이지가 없습니다.");
-//				return false;
-//			}
-//		}
-//		return true;
-//	}
-//	
-//	/**
-//	 * 장르 카테고리 선택 메서드
-//	 * @author 송지은
-//	 * @return
-//	 */
-//	int book_choice() {
-//		int result =0;
-//		try {
-//			bookcheckView();
-//			result = iblgus.scanCID();
-//			return result;
-//		}catch (Exception e) {
-//			System.out.println("숫자를 입력하세요.");
-//			System.out.println();
-//			genreSearchView();
-//		}
-//		return result;
-//	}
-//	
-//	/**
-//	 * 장르 카테고리 리스트 출력 메서드
-//	 * @author 송지은
-//	 */
-//	void bookcheckView() {
-//		List<BookLGUVO> lguList = null;
-//		lguList = iblgus.bookLGUList();
-//		
-//		String num="";
-//		for(int i=0; i<lguList.size(); i++) {
-//			System.out.println("["+lguList.get(i).getBook_LGU()+"]"+lguList.get(i).getBook_theme());
-//		}
-//	}
+	/**
+	 * @author 송지은
+	 * 도서명과 장르 검색으로 나뉨
+	 */
+	public void bookSearchView() {
+		Scanner scn = new Scanner(System.in);
+		String input;
+		while (true) {
+			showBanner("도서검색");
+			System.out.println("[1]도서명 검색");
+			System.out.println("[2]장르명 검색");
+			System.out.println("[0]뒤로");
+
+			try {
+				input = scn.next();
+				switch (Integer.parseInt(input)) {
+				case 1:
+					bookSearch(); // 도서명 검색
+					break;
+				case 2:
+					genreSearchView(); // 장르 검색
+					
+				case 0:
+					return;
+				default:
+					System.out.println("다시 입력해주세요");
+					continue;
+				}
+			} catch (Exception e) {
+				System.out.println("숫자를 입력해주세요.");
+				continue;
+			}
+			return;
+		}
+
+	}
+
+	/**
+	 * @author 송지은 도서명 입력을 받아서 검색 후, 해당되는 도서 목록을 출력해주는 메서드
+	 */
+	private void bookSearch() {
+
+		Scanner scn = new Scanner(System.in);
+		showBanner("도서명 검색");
+
+		List<BookVO> list = new ArrayList<>();
+		BookVO vo = new BookVO();
+		
+		while (true) {
+			try{			
+				System.out.println("도서명: ");
+				String book_name = scn.nextLine();
+				list = ibs.bookSearch(book_name);		
+				vo.setBook_name(book_name);
+			if (list.size() == 0) {
+				System.out.println("검색된 도서가 없습니다.");
+				continue;
+			} else {
+				showBanner("도서명  검색");
+				System.out.println(list.size() + "권이 검색되었습니다");
+				break;
+			}
+			}catch(Exception e){
+				e.getStackTrace();
+			}
+		}
+		int count=1;
+		for (int name = 0; name < list.size(); name++) {
+			System.out.println("도서 번호:" +count++ + "    "
+					+ list.get(name).getBook_name());
+		}
+		
+		book_detail1(list);
+	}
+	
+	/**
+	 * @author 송지은
+	 * 도서명으로 검색 후, 도서 리스트에서 원하는 번호 선택 하면 도서 상세 리스트를 보여주는 메서드
+	 */
+	private void book_detail1(List<BookVO> list) {
+		
+		Scanner scn = new Scanner(System.in);
+	    System.out.println("──────────────────────────────────────────────────────────────────");
+	      
+	      BookVO vo = new BookVO();
+	      int input =0;                                       
+
+	      System.out.println("선택하실 도서 번호 입력해주세요.");
+	      input = scn.nextInt();
+	      input--;
+	      showBanner("도서 상세 조회");
+		
+			System.out.println("도서번호: " + list.get(input).getBook_id());
+			System.out.println("도서명: " + list.get(input).getBook_name());
+			System.out.println("작가명: " + list.get(input).getBook_author());
+			System.out.println("출판사: " + list.get(input).getBook_publisher());
+			System.out.println("줄거리: " + list.get(input).getBook_summary());
+			System.out.println("대여 가능 여부: " + list.get(input).getBook_state());
+
+	}
+	
+	/**
+	 * @author 송지은
+	 * 도서 분류 리스트 출력 메서드
+	 */
+	private void lguList() {
+
+		List<BookLGUVO> list = new ArrayList<>();
+		list = iblgus.lguList();
+
+		for (int index = 0; index < list.size(); index++) {
+			System.out.print("[" + list.get(index).getBook_LGU() + "] ");
+			System.out.print(list.get(index).getBook_theme());
+			System.out.println();
+		}
+
+	}
+	
+	/**
+	 * @author 송지은
+	 * 장르 리스트에서 선택후, 해당 장르에 해당하는 도서를 출력하는 메서드
+	 */
+	private void genreSearchView() {
+		showBanner("장르 검색");
+		Scanner scn = new Scanner(System.in);
+		lguList();
+		
+		List<BookVO> list = new ArrayList<>();
+		System.out.println("──────────────────────────────────────────────────────────────────");
+		int book_lgu=0;
+		while(true){
+			System.out.println("검색하실 장르 번호를 입력하세요.");
+			book_lgu = scn.nextInt();
+			list = iblgus.themeList(book_lgu);
+			
+			if(list.isEmpty()){														
+				System.out.println("유효한 장르 번호를 입력하세요.");
+				continue;
+			}	
+			break;
+		}
+		
+		showBanner("장르 검색");
+		int count=1;
+		for (int index = 0; index < list.size(); index++) {		
+			
+			System.out.println("도서 번호: " + count++);
+			System.out.println("도서명: " + list.get(index).getBook_name());
+			
+		}
+			book_detail2(list);
+	}
+	
+	/**
+    * @author 송지은
+    * 도서 장르 검색후, 원하는 도서번호를 입력했을 때 상세 내역을 출력하는 메서드
+    */
+   private void book_detail2(List<BookVO> list) {
+      Scanner scn = new Scanner(System.in);
+
+      System.out.println("──────────────────────────────────────────────────────────────────");
+      
+      BookVO vo = new BookVO();
+      int input =0;                                       
+      
+      
+         System.out.println("선택하실 도서 번호 입력해주세요.");
+         input = scn.nextInt();
+         input--;
+         
+         showBanner("도서 상세");
+         System.out.println("도서번호: " + list.get(input).getBook_id());
+         System.out.println("도서명: " + list.get(input).getBook_name());
+         System.out.println("작가명: " + list.get(input).getBook_author());
+         System.out.println("출판사: " + list.get(input).getBook_publisher());
+         System.out.println("줄거리: " + list.get(input).getBook_summary());
+         System.out.println("대여 가능 여부: " + list.get(input).getBook_state());
+
+   }
 	
 /////////////////////////////검색된 도서 대여/예약하기/////////////////////////
 	/**
