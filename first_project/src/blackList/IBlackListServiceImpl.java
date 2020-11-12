@@ -2,8 +2,6 @@ package blackList;
 
 import java.util.List;
 
-import member.MemberVO;
-
 public class IBlackListServiceImpl implements IBlackListService{
 	private static IBlackListService service;
 	private IBlackListDao dao;
@@ -20,8 +18,8 @@ public class IBlackListServiceImpl implements IBlackListService{
 	}
 
 	@Override
-	public List<BlackListVO> blackListList() {
-		return dao.blackListList();
+	public List<BlackListVO> blackList() {
+		return dao.blackList();
 		
 	}
 

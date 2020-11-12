@@ -8,6 +8,6 @@ public interface IBlackListDao {
 
 	boolean blackDeltleMethod(String id);
 
-	List<BlackListVO> blackListList();
+	List<BlackListVO> blackList();
 
 }

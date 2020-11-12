@@ -8,7 +8,7 @@ public interface IBlackListService {
 
 	boolean createBlackList(String id);
 
-	List<BlackListVO> blackListList();
+	List<BlackListVO> blackList();
 
 	boolean blackDeltleMethod(String id);
 

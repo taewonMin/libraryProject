@@ -139,32 +139,6 @@ public class IBlackListDaoImpl implements IBlackListDao {
 		return ms;
 	}
 	
-	
-	/*
-	 * 블랙리스트 출력
-	 * 
-	 * @author 김태규
-	 * @since 2020-11-12
-	 */
-//	@Override
-//	public boolean blackListList() {
-//		for (int i = 0; i < blackList.size(); i++) {
-//			readvBlackList(blackList.get(i));
-//		}
-//		return true;
-//	}
-//	private void readvBlackList(BlackListVO bv) {
-//		if (blackList.contains(bv)) {
-//			System.out.println("[" + bv.getBlack_id() + "]");
-//			System.out.println("회원ID\t[" + bv.getMem_id() + "]");
-//			System.out.println("등록일\t[" + bv.getBlack_day() + "]");
-//			System.out.println("종료일\t[" + bv.getBlack_end() + "]");
-//			System.out.println("==============================");
-//		}
-//		
-//	}
-	
-
 	/**
 	 * 블랙리스트 삭제
 	 * 
@@ -200,11 +174,6 @@ public class IBlackListDaoImpl implements IBlackListDao {
 			}
 		}
 		return mv;
-	}
-
-	@Override
-	public List<BlackListVO> blackListList() {
-		return blackListList();
 	}
 
 }
