@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class IHopeDaoImpl implements IHopeDao{
-	
 	private static IHopeDao dao;
 	
 	private IHopeDaoImpl() {
@@ -43,15 +42,11 @@ public class IHopeDaoImpl implements IHopeDao{
 			//디비한테 가야
 			//1. 드라이버 로딩
 			Class.forName("oracle.jdbc.driver.OracleDriver");
-			
 			//2. 접속
 			String url = "jdbc:oracle:thin:@localhost:1521:xe";
 			String user = "jju";
 			String password = "java";
-			
 			conn = DriverManager.getConnection(url, user, password);
-			
-			
 			//3. 질의
 			stmt = conn.createStatement();
 					String sql = "SELECT *"
@@ -59,7 +54,6 @@ public class IHopeDaoImpl implements IHopeDao{
 			//4. 결과
 			rs = stmt.executeQuery(sql);
 			while(rs.next()){
-				
 				HopeVO hv = new HopeVO();/////////
 								
 				hv.setHope_id(rs.getInt("hope_id"));
@@ -68,23 +62,18 @@ public class IHopeDaoImpl implements IHopeDao{
 				hv.setHope_content(rs.getString("hope_content"));
 				hv.setHope_publisher(rs.getString("hope_publisher"));
 				hv.setMem_id(rs.getString("mem_id"));
-			
+				hv.setThumb(rs.getInt("thumb"));
 				
 				hopeList.add(hv);
-				
-				}
-				
-			//}
-			
+			}
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+
 			System.out.println("드라이버 로드실패");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("접속실패");
 		}
 		//5. 반환
-		
 		finally{
 			try{
 				if(rs!=null){
@@ -100,7 +89,6 @@ public class IHopeDaoImpl implements IHopeDao{
 				e.printStackTrace();
 			}
 		}
-		
 		return hopeList;
 	}
 
@@ -175,7 +163,7 @@ public class IHopeDaoImpl implements IHopeDao{
 	 */
 	@Override
 	public HopeVO hopeDetailView(int hopeNo) {
-		HopeVO hv = new HopeVO();
+		HopeVO hv = null;
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -194,6 +182,7 @@ public class IHopeDaoImpl implements IHopeDao{
 			
 			rs = stmt.executeQuery(sql);
 			while(rs.next()){
+				hv = new HopeVO();
 				hv.setHope_id(rs.getInt("hope_id"));
 				hv.setMem_id(rs.getString("mem_id"));
 				hv.setHope_name(rs.getString("hope_name"));
@@ -221,8 +210,6 @@ public class IHopeDaoImpl implements IHopeDao{
 				e.printStackTrace();
 			}
 		}
-		
-
 		return hv;
 	}
 
@@ -286,5 +273,87 @@ public class IHopeDaoImpl implements IHopeDao{
 		
 		return result;
 	}
-	
+
+	@Override
+	public int deleteHope(int hope_id) {
+		int result = 0;
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			String user = "jju";
+			String password = "java";
+			conn = DriverManager.getConnection(url, user, password);
+			stmt = conn.createStatement();
+			String sql = "DELETE HOPEVO"
+					   + " WHERE HOPE_ID ="+hope_id;
+			
+			result = stmt.executeUpdate(sql);
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("드라이버 로드 실패");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("접속 실패");
+		} finally{
+			try {
+				if(stmt != null){
+					stmt.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int hopeThumb(int hope_id) {
+		Connection conn = null;
+		Statement stmt = null;
+		int result = 0;
+		
+		//접속
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+		//연결?
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			String user = "jju";
+			String password = "java";
+			conn = DriverManager.getConnection(url, user, password);
+		//질의
+			stmt = conn.createStatement();
+			String sql = "UPDATE hopevo " +
+							" SET " +
+							" thumb = thumb + 1 " +
+							" WHERE hope_id = '" +hope_id + "'"; 
+			//결과값반환
+			result = stmt.executeUpdate(sql);
+			
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("드라이버 접속 실패");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("접속실패");
+		}finally{
+			try {
+				if (stmt != null) {
+					stmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return result;
+	}
 }

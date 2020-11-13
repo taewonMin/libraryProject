@@ -1,9 +1,9 @@
 package member;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-
-import book.BookVO;
 
 public class IMemberDaoImpl implements IMemberDao{
 	
@@ -277,10 +277,85 @@ public class IMemberDaoImpl implements IMemberDao{
 		return mv;
 	}
 	
+	/**
+	 * 회원리스트 출력
+	 * @return 
+	 * @author 김태규
+	 */
+	@Override
+	public List<MemberVO> memberList() {
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+
+		List<MemberVO> memberList = new ArrayList<>();// null로 하면 안됨
+
+		// 여기서 database가야함 여기서 쿼리준비
+		try {
+			// 디비한테 가야
+			// 1. 드라이버 로딩
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+
+			// 2. 접속
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			String user = "jju";
+			String password = "java";
+
+			conn = DriverManager.getConnection(url, user, password);
+
+			// 3. 질의
+			stmt = conn.createStatement();
+			String sql = "SELECT *" + " FROM MemberVO";
+			// 4. 결과
+			rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+
+				MemberVO mv = new MemberVO();// ///////
+
+				mv.setMem_id(rs.getString("mem_id"));
+				mv.setMem_name(rs.getString("mem_name"));
+				mv.setMem_pw(rs.getNString("mem_pw"));
+				mv.setMem_bir(rs.getNString("mem_bir"));
+				mv.setMem_email(rs.getString("mem_email"));
+				mv.setMem_tel(rs.getString("mem_tel"));
+				mv.setRent_count(rs.getInt("rent_count"));
+				mv.setIsActivate(rs.getString("isActivate"));
+
+				memberList.add(mv);
+
+			}
+
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("드라이버 로드실패");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("접속실패");
+		}
+		// 5. 반환
+
+		finally {
+			try {
+				if (rs != null) {
+					rs.close();
+				}
+				if (stmt != null) {
+					stmt.close();
+				}
+				if (conn != null) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return memberList;
+	}
+	
 	@Override
 	public int updateMember(Map<String, String> myInfo) {
 		int result = 0;
-		if(myInfo.get("mem_pw")!=null || myInfo.get("mem_tel")!=null || myInfo.get("mem_email")!=null){
+		if(myInfo.get("mem_pw")!=null || myInfo.get("mem_tel")!=null || myInfo.get("mem_email")!=null || myInfo.get("isactivate")!=null){
 			Connection conn = null;
 			Statement stmt = null;
 			ResultSet rs = null;
@@ -302,7 +377,11 @@ public class IMemberDaoImpl implements IMemberDao{
 				else if(myInfo.get("mem_email")!=null){
 					sql += " MEM_EMAIL='"+myInfo.get("mem_email")+"'";
 				}
+				else if(myInfo.get("isactivate")!=null){
+					sql += " isActivate='"+myInfo.get("isactivate")+"'";
+				}
 				sql += " WHERE MEM_ID='"+myInfo.get("mem_id")+"'";
+				
 				result = stmt.executeUpdate(sql);
 				
 			} catch (ClassNotFoundException e) {
@@ -368,70 +447,5 @@ public class IMemberDaoImpl implements IMemberDao{
 		return result;
 	}
 	
-
-	@Override
-	public int adminMatch(Map<String, String> params) {
-		
-		String mem_id = params.get("mem_id");
-		String mem_pw = params.get("mem_pw");
-		
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
-		int result = 0;
-		
-		//여기서 database가야함 여기서 쿼리준비
-		try {
-			//디비한테 가야
-			//1. 드라이버 로딩
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			
-			//2. 접속
-			String url = "jdbc:oracle:thin:@localhost:1521:xe";
-			String user = "jju";
-			String password = "java";
-			
-			conn = DriverManager.getConnection(url, user, password);
-			
-			//3. 질의
-			stmt = conn.createStatement();
-			String sql = "SELECT count(admin_id)"//memvo 받아갈거니까 전체
-					+ " FROM ADMINVO"
-					+ " WHERE ADMIN_ID = '"+mem_id+"'"
-					+ " AND ADMIN_PW = '"+mem_pw+"'";
-			//4. 결과
-			rs = stmt.executeQuery(sql);
-			while(rs.next()){
-				result = rs.getInt("count(admin_id)");
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.out.println("드라이버 로딩실패");
-		} catch (SQLException e) {
-			e.printStackTrace();
-			System.out.println("접속실패");
-		}
-		//5. 반환
-		
-		finally{
-			try{
-				if(rs!=null){
-					rs.close();
-				}
-				if(stmt!=null){
-					stmt.close();
-				}
-				if(conn!=null){
-					conn.close();
-				}	
-			}catch(SQLException e){
-				e.printStackTrace();
-			}
-		}
-		return result;
-	}
-
-	
-
 
 }

@@ -1,5 +1,6 @@
 package member;
 
+import java.util.List;
 import java.util.Map;
 
 public class IMemberServiceImpl implements IMemberService{
@@ -54,6 +55,11 @@ public class IMemberServiceImpl implements IMemberService{
 	}
 	
 	@Override
+	public List<MemberVO> memberList() {
+		return dao.memberList();
+	}
+	
+	@Override
 	public int updateMember(Map<String, String> myInfo) {
 		return dao.updateMember(myInfo);
 	}
@@ -63,15 +69,4 @@ public class IMemberServiceImpl implements IMemberService{
 		return dao.deleteMember(mem_id);
 	}
 	
-	/**
-    * 로그인 입력받은거 AdminVO와 비교
-    * @param params
-    * @return boolean
-    */
-	@Override
-	public int adminMatch(Map<String, String> params) {
-		return dao.adminMatch(params);
-	}
-
-
 }

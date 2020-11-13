@@ -38,8 +38,10 @@ public class INoticeDaoImpl implements INoticeDao{
 			stmt = conn.createStatement();
 			String sql = "INSERT INTO NOTICEVO"
 						+ " VALUES (not_seq.nextval,'"
-						+ nv.getNotice_title() + "','"+ nv.getNotice_content() +"','"+ nv.getNotice_date() +"','"+ nv.getAdmin_id() + "')";
-			
+						+ nv.getNotice_title() + "','"
+						+ nv.getNotice_content() +"','"
+						+ nv.getNotice_date() +"','"
+						+ nv.getAdmin_id() + "')";
 			result = stmt.executeUpdate(sql);
 			
 		} catch (ClassNotFoundException e) {
@@ -154,7 +156,7 @@ public class INoticeDaoImpl implements INoticeDao{
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
-		NoticeVO nv = new NoticeVO();
+		NoticeVO nv = null;
 		
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -170,6 +172,7 @@ public class INoticeDaoImpl implements INoticeDao{
 			
 			rs = stmt.executeQuery(sql);
 			while(rs.next()){
+				nv = new NoticeVO();
 				nv.setAdmin_id(rs.getString("admin_id"));
 				nv.setNotice_no(rs.getInt("notice_no"));
 				nv.setNotice_title(rs.getString("notice_title"));

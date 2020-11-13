@@ -7,6 +7,7 @@ public class HopeVO {
     private String hope_publisher;  //출판사		VARCHAR2(50)
 	private String hope_content;	//희망이유	VARCHAR2(200)
 	private String mem_id;			//회원ID(FK)	
+	private int thumb; //추천수 number
 	
 	
 	//get
@@ -28,6 +29,9 @@ public class HopeVO {
 	public String getMem_id() {
 		return mem_id;
 	}
+	public int getThumb() {
+		return thumb;
+	}
 
 	
 	//set
@@ -48,6 +52,9 @@ public class HopeVO {
 	}
 	public void setMem_id(String mem_id) {
 		this.mem_id = mem_id;
+	}
+	public void setThumb(int thumb) {
+		this.thumb = thumb;
 	}
 
 }

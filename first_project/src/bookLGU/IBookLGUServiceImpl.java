@@ -30,4 +30,9 @@ public class IBookLGUServiceImpl implements IBookLGUService{
 		
 		return dao.themeList(book_lgu);
 	}
+
+	@Override
+	public BookLGUVO readBookLGU(int booklgu_id) {
+		return dao.readBookLGU(booklgu_id);
+	}
 }

@@ -151,5 +151,51 @@ public class IBookLGUDaoImpl implements IBookLGUDao{
 		}
 		return list;
 	}
-	
+
+	@Override
+	public BookLGUVO readBookLGU(int booklgu_id) {
+		BookLGUVO blv = null;
+		Connection conn = null;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try {
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+			String url = "jdbc:oracle:thin:@localhost:1521:xe";
+			String user = "jju";
+			String password = "java";
+			conn = DriverManager.getConnection(url, user, password);
+			stmt = conn.createStatement();
+			String sql = "SELECT *"
+						+ " FROM BOOKLGU_VO"
+						+ " WHERE BOOK_LGU =" + booklgu_id;
+			rs = stmt.executeQuery(sql);
+			if(rs.next()){
+				blv = new BookLGUVO();
+				blv.setBook_LGU(rs.getInt("book_lgu"));
+				blv.setBook_theme(rs.getString("book_theme"));
+				blv.setIsActivate(rs.getString("isactivate"));
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			System.out.println("드라이버 로드 실패");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("접속 실패");
+		} finally{
+			try {
+				if(rs != null){
+					rs.close();
+				}
+				if(stmt != null){
+					stmt.close();
+				}
+				if(conn != null){
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return blv;
+	}
 }

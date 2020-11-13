@@ -27,6 +27,7 @@ public class ViewClass {
 	private IReserveService irsvs = IReserveServiceImpl.getInstance();
 	
 	private MemberVO nowMember = null;
+	private AdminVO adMember = null;
 	Scanner sc = new Scanner(System.in);
 	
 	/**
@@ -96,6 +97,7 @@ public class ViewClass {
 	void startMethod() {
 		//로그인,회원가입
 		while(true) {
+			showBanner("쭈구리 도서관 입장");
 			System.out.println("[1]로그인");
 			System.out.println("[2]회원가입");
 			System.out.println("[3]종료");
@@ -144,7 +146,9 @@ public class ViewClass {
 
 		if (nowMember.getMem_id() == null) { // id와 pw값을 db로 넘겨서 회원확인
 			// nowMember = 해당회원의 MemberVO가져와야함
-			if (ims.adminMatch(params) > 0) {// 관리자일때
+			if (ias.adminMatch(params) != null) {// 관리자일때
+				adMember = ias.adminMatch(params);
+			//	System.out.println(adMember.getadmin_id() + "님 환영합니다");
 				showBanner("관리자계정으로 접속하였습니다.");
 				adminView();
 			} else {
@@ -161,21 +165,18 @@ public class ViewClass {
 
 	/**
 	 * 회원가입 메서드(ex1) ->MemberVO
-	 * 
 	 * @author 조애슬
-	 * @param 스캐너로
-	 *            MemberVO정보 입력
-	 * @return boolean
 	 * @since 2020-11-06
 	 */
 	private void joinMemberView() {
 		showBanner("회원가입");
-		member.MemberVO params = new member.MemberVO(); // 묶어서 저장할 MemberVO
+		MemberVO params = new MemberVO(); // 묶어서 저장할 MemberVO
 														// params 생성
 
 		String mem_id = scanID(); // 아이디, 패스워드등을 입력받는 메서드들을 통해 변수에넣음
+		AdminVO av = ias.readAdmin(mem_id);
 		int isUnique = ims.idUniqCheck(mem_id); // 아이디 중복체크
-		if (isUnique == 0) {// 중복아니면 나머지 값 입력받고
+		if (isUnique == 0 && av == null) {// 중복아니면 나머지 값 입력받고
 
 			String mem_pw = scanPW();
 			String mem_name = scanNM();
@@ -191,7 +192,7 @@ public class ViewClass {
 			params.setMem_email(mem_email);
 
 			if (ims.createMember(params) > 0) { // db에 정상적으로 들어가면
-				showBanner("성공적으로 가입되었습니다.\n\t\t\t로그인 해 주세요.");
+				showBanner("성공적으로 가입되었습니다.\n\t\t\t로그인해 주세요.");
 			}// 입력한 한회원의모든정보(MemberVO)DB로넘겨줌
 
 		} else {// 아이디값이 중복이면
@@ -202,7 +203,6 @@ public class ViewClass {
 
 	/**
 	 * 아이디입력
-	 * 
 	 * @author 조애슬
 	 * @return String mem_id
 	 * @since 2020.11.06
@@ -271,12 +271,12 @@ public class ViewClass {
 				if (RegExClass.checkMem_name(mem_name)) {
 					return mem_name;
 				} else {
-					System.out.println("2~5자 한글만 사용가능합니다.  (특수기호, 공백 사용 불가)");
+					System.out.println("2~5자 한글만 사용가능합니다. (특수기호, 공백 사용 불가)");
 					continue;
 				}
 
 			} catch (Exception e) {
-				System.out.println("2~5자 한글만 사용가능합니다.  (특수기호, 공백 사용 불가)");
+				System.out.println("2~5자 한글만 사용가능합니다. (특수기호, 공백 사용 불가)");
 				continue;
 			}
 		}
@@ -344,7 +344,7 @@ public class ViewClass {
 	 * @since 2020.11.06
 	 */
 	String scanBIR() {
-		System.out.println("생일을 입력하세요");
+		System.out.println("생년월일을 입력하세요. (예-1990-01-01)");
 		while (true) {
 			try {
 				String mem_bir = sc.next();
@@ -431,7 +431,7 @@ public class ViewClass {
 					break;
 				case 2:
 					genreSearchView(); // 장르 검색
-					
+					break;
 				case 0:
 					return;
 				default:
@@ -442,7 +442,6 @@ public class ViewClass {
 				System.out.println("숫자를 입력해주세요.");
 				continue;
 			}
-			return;
 		}
 
 	}
@@ -459,27 +458,32 @@ public class ViewClass {
 		BookVO vo = new BookVO();
 		
 		while (true) {
-			try{			
-				System.out.println("도서명: ");
-				String book_name = scn.nextLine();
-				list = ibs.bookSearch(book_name);		
-				vo.setBook_name(book_name);
+			System.out.println("[0] 뒤로");
+			System.out.println("도서명: ");
+			
+			String book_name = scn.nextLine();
+			
+			list = ibs.bookSearch(book_name);
+			
+			vo.setBook_name(book_name);
+			
+			if(book_name.equals("0")){
+				return;
+			}
 			if (list.size() == 0) {
 				System.out.println("검색된 도서가 없습니다.");
 				continue;
 			} else {
 				showBanner("도서명  검색");
 				System.out.println(list.size() + "권이 검색되었습니다");
+				System.out.println("--------------------------------------------------");
 				break;
-			}
-			}catch(Exception e){
-				e.getStackTrace();
 			}
 		}
 		int count=1;
 		for (int name = 0; name < list.size(); name++) {
-			System.out.println("도서 번호:" +count++ + "    "
-					+ list.get(name).getBook_name());
+			System.out.println("[" +count++ + "] 도서명 : " + list.get(name).getBook_name());
+			System.out.println("--------------------------------------------------");
 		}
 		
 		book_detail1(list);
@@ -490,32 +494,58 @@ public class ViewClass {
 	 * 도서명으로 검색 후, 도서 리스트에서 원하는 번호 선택 하면 도서 상세 리스트를 보여주는 메서드
 	 */
 	private void book_detail1(List<BookVO> list) {
-		
 		Scanner scn = new Scanner(System.in);
-	    System.out.println("──────────────────────────────────────────────────────────────────");
-	      
-	      BookVO vo = new BookVO();
-	      int input =0;                                       
+		int input = 0;
 
-	      System.out.println("선택하실 도서 번호 입력해주세요.");
-	      input = scn.nextInt();
-	      input--;
-	      showBanner("도서 상세 조회");
+		System.out.println("선택하실 도서 번호 입력해주세요.");
+		try {
+			input = scn.nextInt();
+		} catch (Exception e) {
+			System.out.println("숫자만 입력하세요.");
+			return;
+		}
+		input--;
 		
-			System.out.println("도서번호: " + list.get(input).getBook_id());
-			System.out.println("도서명: " + list.get(input).getBook_name());
-			System.out.println("작가명: " + list.get(input).getBook_author());
-			System.out.println("출판사: " + list.get(input).getBook_publisher());
-			System.out.println("줄거리: " + list.get(input).getBook_summary());
-			System.out.println("대여 가능 여부: " + list.get(input).getBook_state());
-
+		while(true){
+			showBanner("도서 상세 조회");
+			System.out.println("도서번호 : " + list.get(input).getBook_id());
+			System.out.println("도서명 : " + list.get(input).getBook_name());
+			System.out.println("작가명 : " + list.get(input).getBook_author());
+			System.out.println("출판사 : " + list.get(input).getBook_publisher());
+			System.out.println("줄거리 : " + list.get(input).getBook_summary());
+			System.out.print("대여상태 : ");
+			if (list.get(input).getBook_state().equals("T")) {
+				System.out.println("대여 가능");
+			} else {
+				System.out.println("대여중");
+			}
+			System.out.println("--------------------------------------------------");
+			System.out.println("[1] 대여/예약하기  [0] 뒤로");
+			int input2 = 0;
+			try {
+				input2 = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력하세요.");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch(input2){
+			case 0 :
+				return;
+			case 1:
+				tryRental(list.get(input).getBook_id());
+				return;
+			default:
+				System.out.println("잘못된 입력입니다.");
+			}
+		}
 	}
 	
 	/**
 	 * @author 송지은
 	 * 도서 분류 리스트 출력 메서드
 	 */
-	private void lguList() {
+	private List<BookLGUVO> lguList() {
 
 		List<BookLGUVO> list = new ArrayList<>();
 		list = iblgus.lguList();
@@ -526,6 +556,7 @@ public class ViewClass {
 			System.out.println();
 		}
 
+		return list;
 	}
 	
 	/**
@@ -549,45 +580,76 @@ public class ViewClass {
 				System.out.println("유효한 장르 번호를 입력하세요.");
 				continue;
 			}	
+			showBanner("장르 검색");
+			int count=1;
+			for (int index = 0; index < list.size(); index++) {		
+				System.out.println("[" + count++ +"] 도서명 : "+ list.get(index).getBook_name());
+				System.out.println("--------------------------------------------------");
+			}
+			
+			int input =0;                                  
+			while(true){
+				System.out.println("[0] 뒤로");
+				System.out.println("선택하실 도서 번호 입력해주세요.");
+				try {
+					input = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("숫자만 입력하세요.");
+					sc = new Scanner(System.in);
+					continue;
+				}
+				if(input == 0){
+					return;
+				}
+				if(input > list.size()){
+					System.out.println("잘못된 입력입니다.");
+					continue;
+				}
+				input--;
+				break;
+			}
+			book_detail2(list, input);
 			break;
 		}
-		
-		showBanner("장르 검색");
-		int count=1;
-		for (int index = 0; index < list.size(); index++) {		
-			
-			System.out.println("도서 번호: " + count++);
-			System.out.println("도서명: " + list.get(index).getBook_name());
-			
-		}
-			book_detail2(list);
 	}
 	
 	/**
     * @author 송지은
     * 도서 장르 검색후, 원하는 도서번호를 입력했을 때 상세 내역을 출력하는 메서드
     */
-   private void book_detail2(List<BookVO> list) {
-      Scanner scn = new Scanner(System.in);
-
-      System.out.println("──────────────────────────────────────────────────────────────────");
-      
-      BookVO vo = new BookVO();
-      int input =0;                                       
-      
-      
-         System.out.println("선택하실 도서 번호 입력해주세요.");
-         input = scn.nextInt();
-         input--;
-         
-         showBanner("도서 상세");
-         System.out.println("도서번호: " + list.get(input).getBook_id());
-         System.out.println("도서명: " + list.get(input).getBook_name());
-         System.out.println("작가명: " + list.get(input).getBook_author());
-         System.out.println("출판사: " + list.get(input).getBook_publisher());
-         System.out.println("줄거리: " + list.get(input).getBook_summary());
-         System.out.println("대여 가능 여부: " + list.get(input).getBook_state());
-
+   private void book_detail2(List<BookVO> list, int input) {
+		showBanner("도서 상세");
+		System.out.println("도서번호: " + list.get(input).getBook_id());
+		System.out.println("도서명: " + list.get(input).getBook_name());
+		System.out.println("작가명: " + list.get(input).getBook_author());
+		System.out.println("출판사: " + list.get(input).getBook_publisher());
+		System.out.println("줄거리: " + list.get(input).getBook_summary());
+		System.out.print("대여 가능 여부: ");
+		if(list.get(input).getBook_state().equals("T")){
+			System.out.println("대여 가능");
+		}else{
+			System.out.println("대여중");
+		}
+		System.out.println("--------------------------------------------------");
+		System.out.println("[1] 대여/예약하기  [0] 뒤로");
+		while(true){
+			int input2 = 0;
+			try {
+				input2 = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력하세요");
+				sc = new Scanner(System.in);
+			}
+			switch (input2) {
+			case 0:
+				return;
+			case 1:
+				tryRental(list.get(input).getBook_id());
+				return;
+			default:
+				System.out.println("잘못된 입력입니다.");
+			}
+		}
    }
 	
 /////////////////////////////검색된 도서 대여/예약하기/////////////////////////
@@ -698,6 +760,7 @@ public class ViewClass {
 				input = sc.nextInt();
 			} catch (Exception e) {
 				System.out.println("숫자를 입력해주세요.");
+				sc = new Scanner(System.in);
 				continue;
 			}
 			switch (input) {
@@ -716,46 +779,49 @@ public class ViewClass {
 	}
 
 	/**
-	 * 공지사항 메서드
-	 * 
-	 * @author 조애슬
-	 * @since 2020-11-05
-	 */
-	private void noticeView() {
-		showBanner("공지사항");
-		List<NoticeVO> nl = ins.noticeList();// 공지출력 리스트 받아와서 여기서출력
-		
-			for (int i = 0; i < nl.size(); i++) {
-				System.out.println("글번호 : "+nl.get(i).getNotice_no());
-				System.out.println("작성자 : "+nl.get(i).getAdmin_id());
-				System.out.println("작성일 : "+nl.get(i).getNotice_date());
-				System.out.println("제목 : "+nl.get(i).getNotice_title());
-				System.out.println("내용 : "+nl.get(i).getNotice_content());
-				System.out.println("------------------------------------");
-			}
-		
-		while (true) {
-			System.out.println("[0] 뒤로");
-			int input = 0;
-			try {
-				input = scanNo();
-			} catch (Exception e) {
-				System.out.println("숫자를 입력해주세요."); // 숫자아닌거 거르고
-				continue;
-			}
-			switch (input) {
-			// 숫자긴 한데 공지사항외의 글번호를 누르는건 open에서 걸러야할듯..?
-			case 0:
-				return;
-			default:
-				NoticeVO nv = ins.openNoDetail(input); // 공지사항의 글번호를 누르면 그값을 가지고 공지상세보기 메서드로 int?
-				if(nv.getNotice_no()>0){
-					noticeDetail(nv);}
-				else{System.out.println("유효한 번호를 입력하세요");}
-				break;
-			}
-		}
-	}
+    * 공지사항 메서드
+    * 
+    * @author 조애슬
+    * @since 2020-11-05
+    */
+   private void noticeView() {
+      showBanner("공지사항");
+      List<NoticeVO> nl = ins.noticeList();// 공지출력 리스트 받아와서 여기서출력
+      
+      for (int i = 0; i < nl.size(); i++) {
+         System.out.println("글번호 : " + nl.get(i).getNotice_no());
+         System.out.println("작성자 : " + nl.get(i).getAdmin_id());
+         System.out.println("작성일 : " + nl.get(i).getNotice_date());
+         System.out.println("제목 : " + nl.get(i).getNotice_title());
+         System.out.println("내용 : " + nl.get(i).getNotice_content());
+         System.out.println("------------------------------------");
+      }
+      
+      while (true) {
+         System.out.println("[0] 뒤로");
+         int input = 0;
+         try {
+            input = scanNo();
+         } catch (Exception e) {
+            System.out.println("숫자를 입력해주세요."); // 숫자아닌거 거르고
+            sc = new Scanner(System.in);
+            continue;
+         }
+         switch (input) {
+         // 숫자긴 한데 공지사항외의 글번호를 누르는건 open에서 걸러야할듯..?
+         case 0:
+            return;
+         default:
+            NoticeVO nv = ins.openNoDetail(input); // 공지사항의 글번호를 누르면 그값을 가지고 공지상세보기 메서드로 int?
+            if(nv==null){
+               System.out.println("유효한 글 번호를 입력하세요");
+               break;}
+            else{noticeDetail(nv);
+            }
+            break;
+         }
+      }
+   }
 
 	/**
 	 * 공지사항 자세히 볼 글번호 입력
@@ -771,13 +837,11 @@ public class ViewClass {
 			int no = 0;
 			try {
 				no = input.nextInt();
-
 			} catch (Exception e) {
-				System.out.println("숫자를 입력해주세요");
+				System.out.println("숫자만 입력해주세요");
 				continue;
 			} 
 			return no;
-
 		}
 	}
 	
@@ -805,12 +869,11 @@ public class ViewClass {
 		showBanner("희망도서 목록");
 		List<HopeVO> hl = ihs.hopeList(); //희망도서출력.. list로 받아야
 		for (int i = 0; i < hl.size(); i++) {
-			System.out.println("글번호 : " + hl.get(i).getHope_id());
+			System.out.println("글번호 : " + hl.get(i).getHope_id()+"\t추천수 : "+hl.get(i).getThumb());
 			System.out.println("작성자 : " + hl.get(i).getMem_id());
 			System.out.println("책제목 : " + hl.get(i).getHope_name());
 			System.out.println("작가 : " + hl.get(i).getHope_author());
 			System.out.println("출판사 : " + hl.get(i).getHope_publisher());
-			System.out.println("희망하는 이유 : " + hl.get(i).getHope_content());
 			System.out.println("-----------------------------------------------");
 		}
 
@@ -821,6 +884,7 @@ public class ViewClass {
 				input = sc.nextInt();
 			} catch (Exception e) {
 				System.out.println("숫자를 입력해주세요.");
+				sc = new Scanner(System.in);
 				continue;
 			}
 			switch (input) {
@@ -842,15 +906,93 @@ public class ViewClass {
 				}
 				// break;
 			case 3:
-				int hopeNo = hopeDetailNum();// 글상세보기 번호받아서
-				HopeVO hv = ihs.hopeDetailView(hopeNo);// 글번호가지고 희망상세가지고오기
-				if(hv.getHope_id()>0){
-					hopeDetailView(hv);}
-				else{System.out.println("유효한 번호를 입력하세요");}
-				break;
+				hopeDetailView(hl);//희망상세보기 뷰
+				return;
 			default:
 				System.out.println("다시 입력해주세요");
 			}
+		}
+	}
+	
+	/**
+	    * 희망도서 상세볼 view
+	    * @author 조애슬
+	    * @since 2020-11-13
+	    */
+	   void hopeDetailView(List<HopeVO> hl){
+	      int hopeNo = hopeDetailNum();// 글상세보기 번호받아서
+	      HopeVO hv = ihs.hopeDetailView(hopeNo);// 글번호가지고 희망상세가지고오기
+	      while(true){
+	      if(hv==null){
+	         System.out.println("유효한 번호를 입력하세요");
+	         sc = new Scanner(System.in);
+	         return;
+	         }
+	      else{hopeDetailView(hv);
+	         break;}
+	      }
+	      
+	      while (true) {
+	         System.out.println("[0] 뒤로  \t [1] 추천하기 ");
+	         int input = 0;
+	         try {
+	            input = sc.nextInt();
+	         } catch (Exception e) {
+	            System.out.println("숫자를 입력해주세요.");
+	            sc = new Scanner(System.in);
+	            continue;
+	         }
+	         switch (input) {
+	         case 0:
+	            return;
+	         case 1:
+	            hopeThumb(hv.getHope_id());
+	            return;
+	         default:
+	            System.out.println("다시 입력해주세요");
+	         }
+	      }
+	      
+	   }
+	
+//	/**
+//	 * 희망글수정
+//	 * @author 조애슬
+//	 */
+//	void hopeUpdate(){
+//		while(true){
+//			System.out.println("글 제목을 입력하세요");
+//			
+//		}
+//	}
+	
+	/**
+	 * 희망글추천
+	 * @author 조애슬
+	 */
+	void hopeThumb(int hope_id){
+		System.out.println("이 글을 추천하시겠습니까?(y/n)");
+		String input =null;
+		try {
+			input = sc.next();
+			
+		} catch (Exception e) {
+			System.out.println("유효한 문자를 입력하세요");
+			sc = new Scanner(System.in);
+		}
+		switch (input) {
+		case "y": case "Y":
+			if(ihs.hopeThumb(hope_id)>0){
+				System.out.println("추천되었습니다.");
+			}else{
+				System.out.println("추천에 실패하였습니다.");
+			};
+			return;
+		case "n": case "N":
+			System.err.println("추천하지 않으셨습니다.");
+			return;
+		default:
+			break;
 		}
 	}
 
@@ -869,6 +1011,7 @@ public class ViewClass {
 				hopeNo = sc.nextInt();
 			} catch (Exception e) {
 				System.out.println("숫자만 입력하세요.");
+				sc = new Scanner(System.in);
 				continue;
 			}
 			return hopeNo;
@@ -904,6 +1047,7 @@ public class ViewClass {
 
 			} catch (Exception e) {
 				System.out.println("숫자만 입력하세요.");
+				sc = new Scanner(System.in);
 				continue;
 			}
 			return hopeNo;
@@ -956,6 +1100,7 @@ public class ViewClass {
 				return hope_name;
 			} else {
 				System.out.println("10글자 이내로 입력하세요");
+				
 				continue;
 			}
 		}
@@ -998,6 +1143,7 @@ public class ViewClass {
 				return hope_publisher;
 			} else {
 				System.out.println("15글자 이내로 입력하세요");
+				
 				continue;
 			}
 
@@ -1111,6 +1257,7 @@ public class ViewClass {
 				//탈퇴 메서드
 				if(withdrawal(nowMember.getMem_id())==1){
 					System.out.println("\n탈퇴되었습니다.\n");
+					nowMember = null;
 					return;
 				}
 				break;
@@ -1136,7 +1283,7 @@ public class ViewClass {
 	private void printMyInfo(MemberVO mv){
 		System.out.println("성명 : "+mv.getMem_name());
 		System.out.println("ID : "+mv.getMem_id());
-		System.out.println("생년월일 : "+mv.getMem_bir());
+		System.out.println("생년월일 : "+mv.getMem_bir().substring(0,10));
 		System.out.println("전화번호 : "+mv.getMem_tel());
 		System.out.println("이메일 : "+mv.getMem_email());
 	}
@@ -1322,8 +1469,9 @@ public class ViewClass {
 		   		bv.setBook_state("T");
 		   		ibs.updateBook(bv);
 		   	}
+		}else{
+			System.out.println("반납 취소");
 		}
-		System.out.println("반납 취소");
 	}
 	
 ///예약	
@@ -1410,7 +1558,7 @@ public class ViewClass {
 		System.out.println("취소를 취소한다.\n");
 	}
 	
-/////////////////////////////////////////////관리자 페이지//////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////관리자 페이지//////////////////////////////////////////////////
 	/**
 	 * 관리자메인 메서드
 	 * 
@@ -1445,11 +1593,11 @@ public class ViewClass {
 				break;
 			case 2:
 				//책 관리 view을 보여주는 메소드
-//				bookView();
+				bookView();
 				break;
 			case 3:
 				//회원관리view을 보여주는 메소드
-//				memberView();
+				memberView();
 				break;
 			default:
 				System.out.println("잘못입력하였습니다");
@@ -1488,7 +1636,7 @@ public class ViewClass {
 				break;
 			case 2:
 				//희망도서목록view을 보여주는 메소드
-//				hopeBookView();
+				hopeBookView();
 				break;
 			default:
 				System.out.println("잘못입력하였습니다");
@@ -1506,7 +1654,7 @@ public class ViewClass {
 		while (true) {
 			showBanner("공지사항");
 			//공지리스트 띄워주는 메소드
-			List<NoticeVO> noticeList = noticeList();
+			noticeList();
 
 			System.out.println("[1] 공지 상세 조회");
 			System.out.println("[2] 공지 추가");
@@ -1536,13 +1684,13 @@ public class ViewClass {
 					sc = new Scanner(System.in);
 					continue;
 				}
-				if(num2 >= noticeList.size() || num2 < 1){
-					System.out.println("해당 번호의 공지글이 없습니다.");
-					break;
-				}else{
+				NoticeVO nv = ins.openNoDetail(num2);
+				if(nv != null){
 					printNoticeDeatil(num2);
-					break;
+				}else{
+					System.out.println("해당 번호의 공지글이 없습니다.");
 				}
+				break;
 			case 2: 
 				//공지추가 메소드
 				noticeAdd();
@@ -1623,14 +1771,14 @@ public class ViewClass {
 	void noticeAdd() {
 		NoticeVO nv = new NoticeVO();
 		System.out.println("공지 타이틀을 입력하세요");
-		String nt = sc.next();
+		String nt = sc.nextLine();
 		System.out.println("공지 내용을 입력하세요");
-		String nc = sc.next();
+		String nc = sc.nextLine();
 		
 		nv.setNotice_title(nt);
 		nv.setNotice_content(nc);
 		nv.setNotice_date(getDate());
-		nv.setAdmin_id(nowMember.getMem_id());
+		nv.setAdmin_id(adMember.getadmin_id());
 		
 		if(ins.createNotice(nv)==1){
 			System.out.println("공지가 추가되었습니다.");
@@ -1638,352 +1786,560 @@ public class ViewClass {
 			System.out.println("공지 추가 실패");
 		}
 	}
-//
-//	/**
-//	 * 희망 도서 목록 관리 뷰
-//	 * 
-//	 * @author 김태규
-//	 * @since 2020.11.04
-//	 */
-//	public void hopeBookView() {
-//		while (true) {
-//			/**
-//			 * 희망 도서 메소드 번호,책이름,저자,출판사 등을 보여준다
-//			 */
-//			showBanner("희망도서 목록");
-//			ihs.hopeList();
-//
-//			System.out.println("[1] 희망도서 승인 ");
-//			System.out.println("[2] 희망도서 부결 ");
-//			System.out.println("[0] 뒤로가기");
-//			System.out.print("번호를 입력하시오 : ");
-//			int num = 0;
-//			try {
-//				num = sc.nextInt();
-//			} catch (Exception e) {
-//				System.out.println("잘못입력하였습니다");
-//				continue;
-//			}
-//			switch (num) {
-//			case 0: {
-//				/**
-//				 * 게시판 관리로 되돌아 가기 메소드
-//				 */
-//				return;
-//			}
-//			case 1: {
-//				/**
-//				 * 도서 승인 메소드 승인 도서의 번호 번호를 받아 메소드안에서 추가한다
-//				 */
-//				System.out.print("승인 도서의 번호 : ");
-//				int num2 = 0;
-//				try {
-//					num2 = sc.nextInt();
-//				} catch (Exception e) {
-//					System.out.println("잘못입력하였습니다");
-//					continue;
-//				}
-//				if (ihs.hopeBookAddMethod(num2))
-//					if (ihs.hopeBookeDeltleMethod(num2))
-//						System.out.println("희망도서가 승인되었습니다.");
-//				break;
-//			}
-//			case 2: {
-//				/**
-//				 * 도서 부결 메소드 부결 도서의 번호를 받아서 메소드안에서 리스트를삭제
-//				 */
-//				System.out.print("부결 도서의 번호 : ");
-//				int num2 = 0;
-//				try {
-//					num2 = sc.nextInt();
-//				} catch (Exception e) {
-//					System.out.println("잘못입력하였습니다");
-//					continue;
-//				}
-//				if (ihs.hopeBookeDeltleMethod(num2))
-//					break;
-//			}
-//			default:
-//				System.out.println("잘못입력하였습니다");
-//				return;
-//			}
-//		}
-//	}
-//
-//	/**
-//	 * 도서 관리 뷰
-//	 * 
-//	 * @author 김태규
-//	 * @since 2020.11.04
-//	 */
-//	public void bookView() {
-//		while (true) {
-//			showBanner("도서 관리");
-//			System.out.println("[1] 전체 도서리스트 확인");
-//			System.out.println("[2] 도서 등록");
-//			System.out.println("[0] 뒤로가기");
-//			System.out.print("번호를 입력하시오 : ");
-//			int num = 0;
-//			try {
-//				num = sc.nextInt();
-//			} catch (Exception e) {
-//				System.out.println("잘못입력하였습니다");
-//				continue;
-//			}
-//			switch (num) {
-//
-//			case 0: {
-//				/**
-//				 * 관리자 메인 화면 메소드 관리자 메인 화면 메소드 돌아가기
-//				 */
-//				return;
-//			}
-//			case 1: {
-//				/**
-//				 * 전체 도서리스트 출력 메소드
-//				 */
-//				showBanner("도서 목록");
-//				ibs.bookListMethod();
-//				break;
-//			}
-//			case 2: {
-//				/**
-//				 * 도서 등록 메소드
-//				 */
-//				bookAddMethod();
-//				System.out.println("책이 등록되었습니다");
-//				break;
-//			}
-//			default:
-//				System.out.println("잘못입력하였습니다");
-//			}
-//		}
-//	}
-//
-//	/**
-//	 * 도서 등록
-//	 * 
-//	 * @author 김태규
-//	 * @since 2020.11.05
-//	 */
-//	private void bookAddMethod() {
-//		Map<String, Object> params = new HashMap<String, Object>();// 희망도서입력을 위한
-//																	// map
-//
-//		System.out.print("도서 제목 : ");
-//		String bn = sc.next();
-//		System.out.print("도서 작가 : ");
-//		String ba = sc.next();
-//		System.out.print("도서 분류 : ");
-//		String bl = sc.next();
-//		System.out.print("도서 출판사 : ");
-//		String bp = sc.next();
-//		System.out.print("도서 내용 : ");
-//		String bs = sc.next();
-//
-//		params.put("book_name", bn);
-//		params.put("book_author", ba);
-//		params.put("book_LGU", bl);
-//		params.put("book_publisher", bp);
-//		params.put("book_summary", bs);
-//
-//		if (ibs.bookAdd(params)) {
-//			System.out.println("희망도서가 정상적으로 등록되었습니다.");
-//		}
-//	}
-//
-//	// 회원리스트
-//	/**
-//	 * 회원 관리 뷰
-//	 * 
-//	 * @author 김태규
-//	 * @since 2020.11.04
-//	 */
-//	public void memberView() {
-//		while (true) {
-//			showBanner("회원 관리");
-//			System.out.println("[1] 회원리스트 확인");
-//			System.out.println("[2] 블랙리스트 확인");
-//			System.out.println("[0] 뒤로가기");
-//			System.out.print("번호를 입력하시오 : ");
-//			int num = 0;
-//			try {
-//				num = sc.nextInt();
-//			} catch (Exception e) {
-//				System.out.println("잘못입력하였습니다");
-//				continue;
-//			}
-//			switch (num) {
-//			case 0: {
-//				/**
-//				 * 관리자 메인 화면 메소드 관리자 메인 화면 메소드 돌아가기
-//				 */
-//				return;
-//			}
-//			case 1: {
-//				/**
-//				 * 전체 회원리스트 뷰 메소드
-//				 */
-//				memberListView();
-//				break;
-//			}
-//			case 2: {
-//				/**
-//				 * 전체 블랙리스트 뷰 메소드
-//				 */
-//				blackListView();
-//				break;
-//			}
-//			default:
-//				System.out.println("잘못입력하였습니다");
-//			}
-//		}
-//
-//	}
-//
-//	/**
-//	 * 회원 리스트 뷰
-//	 * 
-//	 * @author 김태규
-//	 * @since 2020.11.04
-//	 */
-//	public void memberListView() {
-//		while (true) {
-//			/**
-//			 * 전체 회원리스트 출력 메소드
-//			 */
-//			showBanner("전체 회원 목록");
-//			memList();
-//
-//			System.out.println("[1] 블랙리스트 등록 ");
-//			System.out.println("[0] 뒤로가기");
-//			System.out.print("번호를 입력하시오 : ");
-//			int num = 0;
-//			try {
-//				num = sc.nextInt();
-//			} catch (Exception e) {
-//				System.out.println("잘못입력하였습니다");
-//				continue;
-//			}
-//			switch (num) {
-//			case 0: {
-//				/**
-//				 * 회원 관리 화면 돌아가기
-//				 */
-//				return;
-//			}
-//			case 1: {
-//				/**
-//				 * 블랙리스트에 추가 메소드
-//				 */
-//				System.out.print("블랙 리스트에 추가될 회원 아이디 : ");
-//				String id = null;
-//				try {
-//
-//					id = sc.next();
-//				} catch (Exception e) {
-//					System.out.println("잘못입력하였습니다");
-//					continue;
-//				}
-//				if (ibls.createBlackList(id)) {
-//					System.out.println("블랙리스트에 추가되였습니다");
-//					break;
-//				} else {
-//					System.out.println("잘못입력하였습니다");
-//					break;
-//				}
-//			}
-//			default:
-//				System.out.println("잘못입력하였습니다");
-//				break;
-//			}
-//		}
-//	}
-//
-//	private void memList() {
-//		List<MemberVO> mv =ims.MemberList();
-//		for (int i = 0; i < mv.size(); i++) {
-//			System.out.println("회원ID\t[" + mv.get(i).getMem_id() + "]");
-//			System.out.println("이름\t[" + mv.get(i).getMem_name() + "]");
-//			System.out.println("비밀번호\t[" + mv.get(i).getMem_pw() + "]");
-//			System.out.println("생년월일\t[" + mv.get(i).getMem_bir() + "]");
-//			System.out.println("이메일\t[" + mv.get(i).getMem_email() + "]");
-//			System.out.println("전화번호\t[" + mv.get(i).getMem_tel() + "]");
-//			System.out.println("대출횟수\t[" + mv.get(i).getRent_count() + "]");
-//			System.out.println("==============================");
-//		}
-//	
-//	}
-//
-//	/**
-//	 * 블랙 리스트 뷰
-//	 * 
-//	 * @author 김태규
-//	 * @since 2020.11.04
-//	 */
-//	public void blackListView() {
-//		while (true) {
-//			showBanner("블랙리스트 목록");
-//			blackListList();
-//
-//			System.out.println("[1] 블랙리스트 삭제 ");
-//			System.out.println("[0] 뒤로가기");
-//			int num = 0;
-//			try {
-//				num = sc.nextInt();
-//			} catch (Exception e) {
-//				System.out.println("잘못입력하였습니다");
-//			}
-//			switch (num) {
-//			case 0: {
-//				/**
-//				 * 회원 관리 화면 돌아가기
-//				 */
-//				return;
-//			}
-//			case 1: {
-//				/**
-//				 * 블랙리스트에 삭제 메소드
-//				 */
-//
-//				System.out.print("삭제할 블랙리스트의 아이디 : ");
-//				String id = null;
-//				try {
-//					id = sc.next();
-//
-//				} catch (Exception e) {
-//					System.out.println("잘못입력하였습니다");
-//					continue;
-//				}
-//
-//				if (ibls.blackDeltleMethod(id)) {
-//					System.out.println("블랙리스트에서 삭제되었습니다.");
-//				} else {
-//					System.out.println("아이디를 찾을 수 없습니다.");
-//				}
-//				break;
-//			}
-//			default:
-//				System.out.println("잘못입력하였습니다");
-//			}
-//		}
-//	}
-//
-//	private void blackListList() {
-//		while (true) {
-//
-//			List<BlackListVO> list = ibls.blackListList();
-//			for (int i = 0; i < list.size(); i++) {
-//				System.out.print(list.get(i).getBlack_id() + "\t");
-//				System.out.print(list.get(i).getMem_id() + "\t");
-//				System.out.print(list.get(i).getBlack_day() + "\t");
-//				System.out.print(list.get(i).getBlack_end() + "\t");
-//				
-//				System.out.println();
-//			}
-//
-//			break;
-//		}
-//		
-//	}
+
+	/**
+	 * 희망 도서 목록 관리 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
+	 */
+	public void hopeBookView() {
+		while (true) {
+			//희망 도서 메소드 번호,책이름,저자,출판사 등을 보여준다
+			showBanner("희망도서 목록");
+			adminHopeView();
+
+			System.out.println("[1] 희망도서 승인 ");
+			System.out.println("[2] 희망도서 부결 ");
+			System.out.println("[0] 뒤로가기");
+			System.out.print("번호를 입력하시오 : ");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (num) {
+			case 0:
+				//게시판 관리로 되돌아 가기 메소드
+				return;
+			case 1:
+				hopeBookAdd();
+				break;
+			case 2:
+				hopeBookDelete();
+				break;
+			default:
+				System.out.println("잘못입력하였습니다");
+			}
+		}
+	}
+	
+	/**
+	 * 희망도서 목록 출력 메서드
+	 * @author 민태원
+	 * @since 2020.11.13
+	 */
+	void adminHopeView(){
+		List<HopeVO> hl = ihs.hopeList(); //희망도서출력.. list로 받아야
+		if(hl.size()==0){
+			System.out.println("글이 없습니다.");
+			System.out.println("-----------------------------------------------");
+		}else{
+			for (int i = 0; i < hl.size(); i++) {
+				System.out.println("글번호 : " + hl.get(i).getHope_id());
+				System.out.println("작성자 : " + hl.get(i).getMem_id());
+				System.out.println("책제목 : " + hl.get(i).getHope_name());
+				System.out.println("작가 : " + hl.get(i).getHope_author());
+				System.out.println("출판사 : " + hl.get(i).getHope_publisher());
+				System.out.println("희망하는 이유 : " + hl.get(i).getHope_content());
+				System.out.println("-----------------------------------------------");
+			}
+		}
+	}
+	
+	/**
+	 * @author 김태규
+	 */
+	private void hopeBookAdd() {
+		//도서 승인 메소드 승인 도서의 번호 번호를 받아 메소드안에서 추가한다
+		System.out.print("승인 도서의 번호 : ");
+		int num2 = 0;
+		try {
+			num2 = sc.nextInt();
+		} catch (Exception e) {
+			System.out.println("잘못입력하였습니다");
+			return;
+		}
+		if(num2!=0){
+			approveHope(num2);
+		}
+	}
+	
+	/**
+	 * 희망도서 승인 메서드
+	 * @param hope_id 승인할 희망도서 아이디
+	 * @author 민태원
+	 * @since 2020.11.13
+	 */
+	void approveHope(int hope_id){
+		// 입력한 번호의 희망도서 번호가 존재하는지 체크
+		HopeVO hv = ihs.hopeDetailView(hope_id);
+		if(hv != null){
+			System.out.println("글이존재함");
+			// BookVO 생성후 추가
+			BookVO bv = new BookVO();
+			bv.setBook_name(hv.getHope_name());
+			bv.setBook_author(hv.getHope_author());
+			bv.setBook_publisher(hv.getHope_publisher());
+			bv.setBook_LGU(1);	// 분류코드 처리해야함
+			bv.setBook_summary("줄거리"); // 줄거리 처리해야함
+			
+			if(ibs.createBook(bv)==1){
+				// HopeVO에서 삭제한다 / 성공하면 승인되었습니다 출력
+				if (ihs.deleteHope(hope_id)==1){
+					System.out.println("희망도서가 승인되었습니다.");
+				}else{
+					System.out.println("승인 실패(희망도서 삭제 실패)");
+				}
+			}else{
+				System.out.println("승인 실패(도서 추가 실패)");
+			}
+		}else{
+			System.out.println("해당 번호의 도서가 존재하지 않습니다.");
+		}
+	}
+	
+	/**
+	 * 희망도서 부결 메서드
+	 * @author 민태원
+	 * @since 2020.11.13
+	 */
+	void hopeBookDelete(){
+		//도서 부결 메소드 부결 도서의 번호를 받아서 메소드안에서 리스트를삭제
+		System.out.print("부결 도서의 번호 : ");
+		int num3 = 0;
+		try {
+			num3 = sc.nextInt();
+		} catch (Exception e1) {
+			System.out.println("잘못입력하였습니다");
+			return;
+		}
+		if (ihs.deleteHope(num3) == 1) {
+			System.out.println("희망도서가 부결되었습니다.");
+		} else {
+			System.out.println("삭제 실패..");
+		}
+	}
+	
+	
+	/**
+	 * 도서 관리 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
+	 */
+	public void bookView() {
+		while (true) {
+			showBanner("도서 관리");
+			//전체 도서리스트 출력 메소드
+			bookList();
+			System.out.println("[1] 도서 상세 정보");
+			System.out.println("[2] 도서 등록");
+			System.out.println("[0] 뒤로가기");
+			System.out.print("번호를 입력하시오 : ");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (num) {
+			case 0:
+				//관리자 메인 화면 메소드 관리자 메인 화면 메소드 돌아가기
+				return;
+			case 1:
+				//도서상세 출력 
+				System.out.print("도서 번호 : ");
+				int book_no = 0;
+				try {
+					book_no = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("잘못입력하였습니다.");
+					sc = new Scanner(System.in);
+					continue;
+				}
+				BookVO bv = ibs.readBook(book_no);
+				if (bv == null) {
+					System.out.println("해당 번호가 없습니다");
+				} else {
+					bookRead(book_no);
+				}
+				break;
+			case 2:
+				//도서 등록 메소드
+				bookAddMethod();
+				break;
+			default:
+				System.out.println("잘못입력하였습니다");
+			}
+		}
+	}
+
+	/**
+	 * 도서리스트 출력
+	 * 
+	 * @author 김태규
+	 * @return
+	 */
+	private List<BookVO> bookList() {
+		while(true){
+			List<BookVO> list = ibs.bookList();
+			for (int i = 0; i < list.size(); i++) {
+				System.out.println("["+list.get(i).getBook_id()+"]");
+				System.out.println("제목 : " + list.get(i).getBook_name());
+				System.out.println("작가 : " + list.get(i).getBook_author());
+				System.out.println("-----------------------------------------------");
+			}
+			return list;
+		}
+	}
+	
+	/**
+	 * 도서 상세 출력
+	 * 
+	 * @author 김태규
+	 */
+	private void bookRead(int book_id) {
+		while (true) {
+			showBanner("도서 상세 상세보기");
+			BookVO bv = ibs.readBook(book_id);
+			if (bv != null) {
+				bookDetail(bv);
+				System.out.println("[1] 도서 삭제  [0] 뒤로가기");
+				int input = 0;
+				try {
+					input = sc.nextInt();
+				} catch (Exception e) {
+					System.out.println("숫자만 입력하세요");
+					sc = new Scanner(System.in);
+					continue;
+				}
+				switch(input){
+				case 0:
+					return;
+				case 1:
+					bookDelete(book_id);
+					return;
+				default:
+					System.out.println("잘못된 입력입니다.");
+				}
+			} else {
+				System.out.println("해당 도서가 없습니다.");
+				return;
+			}
+		}
+
+	}
+	
+	/**
+	 * 도서 상세 출력
+	 * 
+	 * @author 김태규
+	 */
+	private void bookDetail(BookVO bv) {
+		System.out.println("도서번호 : " + bv.getBook_id());
+		System.out.println("도서명 : " + bv.getBook_name());
+		System.out.println("작가 : " + bv.getBook_author());
+		System.out.println("내용 : " + bv.getBook_summary());
+		System.out.println("출판사: " + bv.getBook_publisher());
+		System.out.println("분류 : " + iblgus.readBookLGU(bv.getBook_LGU()).getBook_theme());
+		System.out.println("-----------------------------------------------");
+	}
+	
+	/**
+	 * 도서 등록
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.05
+	 */
+	private void bookAddMethod() {
+		BookVO bv = new BookVO();
+		System.out.print("도서 제목 : ");
+		String bn = sc.next();
+		System.out.print("도서 작가 : ");
+		String ba = sc.next();
+		List<BookLGUVO> list = lguList();
+		System.out.print("도서 분류 : ");
+		int bl = 0;
+		while(true){
+			try {
+				bl = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력하세요.");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			if(0< bl && bl <= list.size()){
+				break;
+			}else{
+				System.out.println("잘못된 입력입니다.");
+			}
+		}
+		System.out.print("도서 출판사 : ");
+		String bp = sc.next();
+		System.out.println("도서 내용 : ");
+		String bs = sc.next();
+
+		bv.setBook_name(bn);
+		bv.setBook_author(ba);
+		bv.setBook_summary(bs);
+		bv.setBook_publisher(bp);
+		bv.setBook_LGU(bl);
+
+		if (ibs.createBook(bv) == 1) {
+			System.out.println("도서가 정상적으로 등록되었습니다.");
+		} else {
+			System.out.println("도서가 등록실패 되었습니다.");
+		}
+	}
+	
+	/**
+	 * 도서 삭제 메서드
+	 * @param book_id 삭제할 도서의 아이디
+	 * @author 김태규
+	 */
+	private void bookDelete(int book_id) {
+		//삭제할 도서를 대여중인 사람이 있을 경우
+		if(irts.readRentalVO(book_id)!=null){
+			System.out.println("대여중인 도서입니다.");
+			return;
+		}else{
+			System.out.println("정말 삭제하시겠습니까? (Y/N)");
+			String input = sc.next();
+			if(input.toUpperCase().equals("Y")){
+				if (ibs.deleteBook(book_id) == 1) {
+					System.out.println("도서가 삭제되었습니다.");
+				} else {
+					System.out.println("삭제 실패..");
+				}
+			}else{
+				System.out.println("삭제 취소");
+			}
+		}
+	}
+
+	// 회원리스트
+	/**
+	 * 회원 관리 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
+	 */
+	public void memberView() {
+		while (true) {
+			showBanner("회원 관리");
+			System.out.println("[1] 회원리스트 확인");
+			System.out.println("[2] 블랙리스트 확인");
+			System.out.println("[0] 뒤로가기");
+			System.out.print("번호를 입력하시오 : ");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (num) {
+			case 0:
+				//관리자 메인 화면 메소드 관리자 메인 화면 메소드 돌아가기
+				return;
+			case 1:
+				//전체 회원리스트 뷰 메소드
+				memberListView();
+				break;
+			case 2:
+				//전체 블랙리스트 뷰 메소드
+				blackListView();
+				break;
+			default:
+				System.out.println("잘못입력하였습니다");
+			}
+		}
+
+	}
+
+	/**
+	 * 회원 리스트 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
+	 */
+	public void memberListView() {
+		while (true) {
+			//전체 회원리스트 출력 메소드
+			showBanner("전체 회원 목록");
+			memberList();
+
+			System.out.println("[1] 블랙리스트 등록 ");
+			System.out.println("[0] 뒤로가기");
+			System.out.print("번호를 입력하시오 : ");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (num) {
+			case 0:
+				//회원 관리 화면 돌아가기
+				return;
+			case 1: 
+				//블랙리스트에 추가 메소드
+				createBlackList();
+				break;
+			default:
+				System.out.println("잘못입력하였습니다");
+				break;
+			}
+		}
+	}
+	
+	/**
+	 * 회원 리스트 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
+	 */
+	private void memberList() {
+		List<MemberVO> mv = ims.memberList();
+		for (int i = 0; i < mv.size(); i++) {
+			System.out.println("회원ID\t[" + mv.get(i).getMem_id() + "]");
+			System.out.println("이름\t[" + mv.get(i).getMem_name() + "]");
+			System.out.println("비밀번호\t[" + mv.get(i).getMem_pw() + "]");
+			System.out.println("생년월일\t[" + mv.get(i).getMem_bir().substring(0,10) + "]");
+			System.out.println("이메일\t[" + mv.get(i).getMem_email() + "]");
+			System.out.println("전화번호\t[" + mv.get(i).getMem_tel() + "]");
+			System.out.println("대출횟수\t[" + mv.get(i).getRent_count() + "]");
+			System.out.println("==============================");
+		}
+	}
+
+	/**
+	 * 블랙리스트 추가
+	 * @param num2
+	 * @return
+	 * @author 김태규
+	 */
+	private void createBlackList() {
+		System.out.print("블랙 리스트에 추가될 회원 아이디 : ");
+		String id = null;
+		try {
+			id = sc.next();
+		} catch (Exception e) {
+			System.out.println("잘못입력하였습니다");
+			sc = new Scanner(System.in);
+			return;
+		}
+		if (ibls.idcheack(id)!=1) {
+			BlackListVO bv = new BlackListVO();
+
+			bv.setMem_id(id);
+			bv.setBlack_day(getDate());
+			Map<String, Object> day = new HashMap<>();
+			day.put("day", getDate());
+			day.put("addDay", 7);
+			bv.setBlack_end(getEndDate(day));
+			bv.setAdmin_id(adMember.getadmin_id());
+
+			if (ibls.createBlackList(bv) == 1) {
+				System.out.println("블랙리스트에 추가되었습니다.");
+				Map<String,String> myInfo = new HashMap<>();
+				myInfo.put("mem_id", id);
+				myInfo.put("isactivate", "F");
+				ims.updateMember(myInfo);
+			} else {
+				System.out.println("블랙리스트 추가 실패..");
+			}
+		}else{
+			System.out.println("이미 블랙리스트에 등록되었거나 없는 아이디입니다.");
+		}
+	}
+
+	/**
+	 * 블랙 리스트 뷰
+	 * 
+	 * @author 김태규
+	 * @since 2020.11.04
+	 */
+	public void blackListView() {
+		while (true) {
+			showBanner("블랙리스트 목록");
+			blackListList();
+
+			System.out.println("[1] 블랙리스트 삭제 ");
+			System.out.println("[0] 뒤로가기");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (num) {
+			case 0:
+				//회원 관리 화면 돌아가기
+				return;
+			case 1:
+				//블랙리스트에서 삭제 메소드
+				deleteBlackList();
+				break;
+			default:
+				System.out.println("잘못입력하였습니다");
+			}
+		}
+	}
+
+	/**
+	 * 블랙리스트 목록 조회 메서드
+	 * @return
+	 * @author 김태규
+	 */
+	private void blackListList() {
+		List<BlackListVO> list = ibls.blackList();
+		for (int i = 0; i < list.size(); i++) {
+			System.out.println("[" + list.get(i).getBlack_id() + "]");
+			System.out.println("회원 아이디 : " + list.get(i).getMem_id());
+			System.out.println("등록일 : " + list.get(i).getBlack_day().substring(0,10));
+			System.out.println("종료일 : " + list.get(i).getBlack_end().substring(0,10));
+			System.out.println("==============================");
+		}
+	}
+	
+	/**
+	 * 블랙리스트에서 삭제 메서드
+	 * @author 김태규
+	 * @since 2020.11.13
+	 */
+	private void deleteBlackList(){
+		System.out.print("삭제할 블랙리스트의 번호 : ");
+		int black_id = 0;
+		try {
+			black_id = sc.nextInt();
+		} catch (Exception e) {
+			System.out.println("숫자만 입력하세요.");
+			sc = new Scanner(System.in);
+			return;
+		}
+		BlackListVO blv = ibls.readBlackList(black_id);
+		if(blv!=null){
+			Map<String,String> myInfo = new HashMap<>();
+			myInfo.put("mem_id", blv.getMem_id());
+			myInfo.put("isactivate", "T");
+			if (ibls.blackDeltle(black_id) == 1) {
+				System.out.println("블랙리스트에서 삭제되었습니다.");
+				ims.updateMember(myInfo);
+			}
+		}else {
+			System.out.println("아이디를 찾을 수 없습니다.");
+		}
+	}
 }

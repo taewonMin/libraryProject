@@ -1,5 +1,6 @@
 package member;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -36,6 +37,13 @@ public interface IMemberService {
 	MemberVO readMember(String mem_id);
 	
 	/**
+	 * 회원 리스트 출력
+	 * 
+	 * @author 김태규
+	 */
+	List<MemberVO> memberList();
+	
+	/**
     * 회원정보 갱신 메서드
     * @param myInfo 수정할 내 정보를 Map으로 받아 업데이트
     * @return 갱신 성공하면 1, 아니면 0
@@ -62,15 +70,5 @@ public interface IMemberService {
 	 */
 	MemberVO loginMatch(Map<String, String> params); // 반환타입 MemberVO, String
 	
-	
-	/**
-	 * 로그인 입력받은거 AdminVO와 비교
-	 * 
-	 * @param params
-	 * @return boolean
-	 */
-	int adminMatch(Map<String, String> params);
-
-
 	
 }

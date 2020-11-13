@@ -20,8 +20,10 @@ public class IHopeServiceImpl implements IHopeService{
 	
 	
 	/**
-	 * 희망도서출력메서드
+	 * 희망도서 리스트 출력
 	 * @author 조애슬
+	 * @since 2020-11-12
+	 * @return List
 	 */
 	@Override
 	public List<HopeVO> hopeList() {
@@ -38,8 +40,10 @@ public class IHopeServiceImpl implements IHopeService{
 //	}
 
 	/**
-	 * 희망도서 등록
+	 * 희망도서 글 등록 등록되면 양수리턴
+	 * @return int
 	 * @author 조애슬
+	 * @since 2020-11-12
 	 */
 	@Override
 	public int hopeListAdd(Map<String,String> params) {
@@ -56,8 +60,10 @@ public class IHopeServiceImpl implements IHopeService{
 //	}
 	
 	/**
-	 * 희망도서 상세보기 
+	 * 희망도서 상세보기
+	 * @return hopeno가 일치하는 hopeVO 글 하나를 반환
 	 * @author 조애슬
+	 * @since 2020-11-12
 	 */
 	@Override
 	public HopeVO hopeDetailView(int hopeNo) {
@@ -66,11 +72,25 @@ public class IHopeServiceImpl implements IHopeService{
 	}
 	
 	/**
-	 * 희망도서 삭제하기
+	 * 희망도서 삭제
+	 * @return 삭제에 성공하면 1반환
+	 * @param 삭제를 시도하는 멤버의 아이디와 삭제하고자 하는 글 번호
+	 * @since 2020-11-12
+	 * @author 조애슬
 	 */
 	@Override
 	public int hopeRemoveView(String mem_id,int hopeNo) {
 		
 		return dao.hopeRemoveView(mem_id,hopeNo);
+	}
+
+	@Override
+	public int deleteHope(int hope_id) {
+		return dao.deleteHope(hope_id);
+	}
+
+	@Override
+	public int hopeThumb(int hope_id) {
+		return dao.hopeThumb(hope_id);
 	}
 }

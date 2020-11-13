@@ -13,8 +13,21 @@ public interface INoticeService {
 	 */
 	int createNotice(NoticeVO nv);
 	
+	/**
+	 * 공지리스트출력 메서드
+	 * @author 조애슬
+	 * @return 공지list전체를 반환
+	 * @since 2020-11-13
+	 */
 	List<NoticeVO> noticeList();
 
+	/**
+	 * 공지상세출력 메서드
+	 * @param 보고싶은 공지번호 int input
+	 * @return 보고싶은 공지글 noticeVO
+	 * @author 조애슬
+	 * @since 2020-11-13
+	 */
 	NoticeVO openNoDetail(int input);
 
 	/**

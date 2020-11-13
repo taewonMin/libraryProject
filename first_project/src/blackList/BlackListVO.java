@@ -5,8 +5,11 @@ public class BlackListVO {
     private String mem_id;		//회원ID(FK)			VARCHAR2(30)
     private String black_day;	//블랙리스트 등록일		DATE
     private String black_end;	//블랙리스트 종료일		DATE
+    private String admin_id;	//관리자 아이디(FK)
     
-    //get
+    
+	
+	//get
     public int getBlack_id() {
 		return black_id;
 	}
@@ -19,6 +22,9 @@ public class BlackListVO {
     public String getBlack_end() {
     	return black_end;
     }
+    public String getAdmin_id() {
+		return admin_id;
+	}
  
     //set
    	public void setBlack_id(int black_id) {
@@ -33,4 +39,7 @@ public class BlackListVO {
    	public void setBlack_end(String black_end) {
         this.black_end = black_end;
     }
+   	public void setAdmin_id(String admin_id) {
+		this.admin_id = admin_id;
+	}
 }

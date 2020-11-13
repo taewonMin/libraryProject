@@ -18,8 +18,18 @@ public class IBookServiceImpl implements IBookService{
 	}
 
 	@Override
+	public int createBook(BookVO bv) {
+		return dao.createBook(bv);
+	}
+	
+	@Override
 	public BookVO readBook(int book_id) {
 		return dao.readBook(book_id);
+	}
+	
+	@Override
+	public List<BookVO> bookList() {
+		return dao.bookList();
 	}
 
 	@Override
@@ -31,4 +41,10 @@ public class IBookServiceImpl implements IBookService{
 	public int updateBook(BookVO bv) {
 		return dao.updateBook(bv);
 	}
+
+	@Override
+	public int deleteBook(int book_no) {
+		return dao.deleteBook(book_no);
+	}
+
 }

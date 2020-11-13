@@ -16,20 +16,29 @@ public class IBlackListServiceImpl implements IBlackListService{
 		}
 		return service;
 	}
+	
+	@Override
+	public int createBlackList(BlackListVO bv) {
+		return dao.createBlackList(bv);
+	}
 
 	@Override
 	public List<BlackListVO> blackList() {
 		return dao.blackList();
-		
+	}
+	
+	@Override
+	public BlackListVO readBlackList(int black_no) {
+		return dao.readBlackList(black_no);
+	}
+	
+	@Override
+	public int blackDeltle(int black_no) {
+		return dao.blackDeltle(black_no);
 	}
 
 	@Override
-	public boolean createBlackList(String id) {
-		return createBlackList(id);
-	}
-
-	@Override
-	public boolean blackDeltleMethod(String id) {
-		return dao.blackDeltleMethod(id);
+	public int idcheack(String id) {
+		return dao.idcheack(id);
 	}
 }
