@@ -4,9 +4,10 @@ import java.util.Map;
 
 public interface IAdminService {
 
-	/** 로그인 입력받은거 AdminVO와 비교
+	/**
+    * 로그인 입력받은거 AdminVO와 비교
     * @param params
-    * @return boolean
+    * @return adminVO
     * @author 조애슬
     */
 	AdminVO adminMatch(Map<String, String> params);

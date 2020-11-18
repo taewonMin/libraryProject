@@ -19,7 +19,7 @@ public interface IHopeDao {
 	 * @author 조애슬
 	 * @since 2020-11-12
 	 */
-	int hopeListAdd(Map<String, String> params);
+	public int hopeListAdd(Map<String, String> params);
 
 	/**
 	 * 희망도서 상세보기

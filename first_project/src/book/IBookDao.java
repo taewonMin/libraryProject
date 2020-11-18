@@ -1,6 +1,7 @@
 package book;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IBookDao {
 
@@ -54,5 +55,18 @@ public interface IBookDao {
 	 * @since 2020.11.13
 	 */
 	int deleteBook(int book_no);
+	
+	/**
+	 * 엑셀파일로 읽어낸 북리스트를 데이터베이스에 넣는 메서드
+	 * @param list
+	 * @author 조애슬
+	 */
+	int bookExcelAdd(List<Map<Integer,String>> list);
+	
+	/**
+	 * 도서목록 db에서 가져오는 메서드
+	 * @return list (도서전체목록)
+	 */
+	List<BookVO> bookExcelout();
 
 }

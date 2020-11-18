@@ -17,13 +17,6 @@ public class IAdminServiceImpl implements IAdminService{
 		return service;
 	}
 	
-	
-	/**
-    * 로그인 입력받은거 AdminVO와 비교
-    * @param params
-    * @return adminVO
-    * @author 조애슬
-    */
 	@Override
 	public AdminVO adminMatch(Map<String, String> params) {
 		return dao.adminMatch(params);

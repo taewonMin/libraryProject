@@ -40,4 +40,19 @@ public interface IRentalService {
 	 * @since 2020.11.06
 	 */
 	int deleteRental(int book_id);
+	
+	/**
+	 * 대여목록 엑셀로 내보내는 메서드
+	 * @param params
+	 * @author 조애슬
+	 * @since 2020.11.16
+	 */
+	void rentalExcelout(Map<String, String> params);
+
+	/**
+	 * 대여목록 pdf로 내보내는 메서드
+	 * @author 김태규
+	 * @since 2020.11.17
+	 */
+	void createRentalPdf(Map<String, String> params);
 }

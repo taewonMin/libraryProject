@@ -70,5 +70,18 @@ public interface IMemberService {
 	 */
 	MemberVO loginMatch(Map<String, String> params); // 반환타입 MemberVO, String
 	
-	
+	/**
+	 * 회원리스트 엑셀파일로 내보내는 메서드
+	 * @param mname
+	 * @author 조애슬
+	 */
+	void memberExcelout(String mname);
+
+	/**
+	 * 회원리스트 pdf파일로 내보내는 메서드
+	 * @param mname 회원의 아이디
+	 * @author 민태원
+	 * @since 2020.11.17
+	 */
+	void memberPdfOut(String fname);
 }

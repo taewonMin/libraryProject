@@ -1,7 +1,18 @@
 package member;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import pdf.MemberPdf;
 
 public class IMemberServiceImpl implements IMemberService{
 	private static IMemberService service;
@@ -69,4 +80,76 @@ public class IMemberServiceImpl implements IMemberService{
 		return dao.deleteMember(mem_id);
 	}
 	
+	
+	@Override
+	public void memberExcelout(String mname) {
+		List<MemberVO> ml = dao.memberList();
+		
+		XSSFWorkbook workbook = new XSSFWorkbook();
+		XSSFSheet sheet = workbook.createSheet("MemberList");
+		
+		XSSFRow row = sheet.createRow(0);//첫번째 행
+		
+		XSSFCell cell = row.createCell(0);
+		cell.setCellValue("mem_id");
+		cell = row.createCell(1);
+		cell.setCellValue("mem_pw");
+		cell = row.createCell(2);
+		cell.setCellValue("mem_name");
+		cell = row.createCell(3);
+		cell.setCellValue("mem_bir");
+		cell = row.createCell(4);
+		cell.setCellValue("mem_email");
+		cell = row.createCell(5);
+		cell.setCellValue("mem_tel");		
+		cell = row.createCell(6);
+		cell.setCellValue("rent_count");
+		
+		XSSFRow zeroRow = sheet.getRow(0);// 0번째 행
+		zeroRow.getPhysicalNumberOfCells();//0번째 행의 열의수
+		
+		for (int i = 0; i < ml.size(); i++) {//가져온 리스트의 행의 수만큼
+//			for (int j = 0; j <= cellCount; j++) {
+				row = sheet.createRow(i+1);//첫번째 행
+				cell = row.createCell(0);
+				cell.setCellValue(ml.get(i).getMem_id());
+				cell = row.createCell(1);
+				cell.setCellValue(ml.get(i).getMem_pw());
+				cell = row.createCell(2);
+				cell.setCellValue(ml.get(i).getMem_name());
+				cell = row.createCell(3);
+				cell.setCellValue(ml.get(i).getMem_bir());
+				cell = row.createCell(4);
+				cell.setCellValue(ml.get(i).getMem_email());
+				cell = row.createCell(5);
+				cell.setCellValue(ml.get(i).getMem_tel());
+				cell = row.createCell(6);
+				cell.setCellValue(ml.get(i).getRent_count());
+//			}
+		}
+		try {
+			FileOutputStream fos = new FileOutputStream(".\\file\\"+mname+".xlsx");
+			workbook.write(fos);
+			fos.close();
+		
+			System.out.println("엑셀 생성 성공");
+		} catch (FileNotFoundException e) {
+			System.out.println("엑셀 생성 실패");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("엑셀 생성 실패");
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void memberPdfOut(String fname) {
+		List<MemberVO> memList = dao.memberList();
+		
+		Map<String, Object> params = new HashMap<>();
+		params.put("fname", fname);
+		params.put("memList", memList);
+		
+		MemberPdf.pdfRun(params);
+	}
 }

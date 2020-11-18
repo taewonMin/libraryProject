@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JDBC"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/first_project_AES256"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/first_project_ITEXT"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/first_project_JDBC"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/first_project_JUNIT"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/first_project_MAIL"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/first_project_POI"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

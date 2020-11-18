@@ -10,6 +10,7 @@ public interface IHopeService {
 	 * @since 2020-11-12
 	 * @return List
 	 */
+	
 	List<HopeVO> hopeList();
 
 	/**

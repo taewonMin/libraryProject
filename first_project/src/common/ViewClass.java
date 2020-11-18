@@ -14,6 +14,7 @@ import blackList.*;
 import book.*;
 import bookLGU.*;
 import admin.*;
+import game.*;
 
 public class ViewClass {
 	private IAdminService ias = IAdminServiceImpl.getInstance();
@@ -29,6 +30,14 @@ public class ViewClass {
 	private MemberVO nowMember = null;
 	private AdminVO adMember = null;
 	Scanner sc = new Scanner(System.in);
+	
+	/**
+	 * AES256 암호화
+	 * @author 민태원
+	 * @since 2020.11.16
+	 */
+	private String secretKey = "asdfasdfasdfasdf";	// 비밀키
+	private AES256 aes = new AES256(secretKey);
 	
 	/**
     * 시작배너
@@ -147,8 +156,8 @@ public class ViewClass {
 		if (nowMember.getMem_id() == null) { // id와 pw값을 db로 넘겨서 회원확인
 			// nowMember = 해당회원의 MemberVO가져와야함
 			if (ias.adminMatch(params) != null) {// 관리자일때
-				adMember = ias.adminMatch(params);
-			//	System.out.println(adMember.getadmin_id() + "님 환영합니다");
+				adMember = ias.readAdmin(mem_id);
+//				 System.out.println(adMember.getadmin_id() + "님 환영합니다");
 				showBanner("관리자계정으로 접속하였습니다.");
 				adminView();
 			} else {
@@ -164,7 +173,7 @@ public class ViewClass {
 	}
 
 	/**
-	 * 회원가입 메서드(ex1) ->MemberVO
+	 * 회원가입 메서드(ex1) -> MemberVO
 	 * @author 조애슬
 	 * @since 2020-11-06
 	 */
@@ -192,6 +201,18 @@ public class ViewClass {
 			params.setMem_email(mem_email);
 
 			if (ims.createMember(params) > 0) { // db에 정상적으로 들어가면
+				//이메일 보내기
+				String title = mem_name + "님 안녕하세요! JJUGURI 도서관에 오신 것을 환영합니다!";
+				String content = "저희 JJUGURI 도서관에 가입을 해주셔서 감사합니다."
+					+ "\n 현재 코로나19 사태로 하루 2회 오전 8시-9시, 오후 12시-1시에 방역을 실시 중입니다.  "
+					+ "\n 방역 중에는 도서관을 이용할 수 없음을 알려드리고, 입출입시에는 반드시 발열 체크 및"
+					+ "\n 마스크를 꼭! 착용해주시기 바랍니다."
+					+ "\n 또한, 희망도서 신청시 구체적인 사유를 남겨주시면 감사하겠습니다."
+					+ "\n 오늘도 즐거운 하루 되세요.";
+				String email = mem_email;
+				String filePath = null;
+				Email mail = new Email(title, content, email, filePath);
+				mail.sendNaver();
 				showBanner("성공적으로 가입되었습니다.\n\t\t\t로그인해 주세요.");
 			}// 입력한 한회원의모든정보(MemberVO)DB로넘겨줌
 
@@ -242,7 +263,7 @@ public class ViewClass {
 			try {
 				String mem_pw = sc.next();// 이걸 여기에넣어야됨
 				if (RegExClass.checkMem_pw(mem_pw)) {
-					return mem_pw;
+					return aes.encrypt(mem_pw);
 				} else {
 					System.out.println("8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.");
 					continue;
@@ -375,6 +396,7 @@ public class ViewClass {
 		    System.out.println("[2]게시판");
 		    System.out.println("[3]마이페이지");
 		    System.out.println("[4]반납");
+		    System.out.println("[5]게임하러가기");
 		    System.out.println("[0]로그아웃");
 		    
 		    int input = 0;
@@ -401,6 +423,9 @@ public class ViewClass {
 			case 4:
 				rentalListView();	//반납 - 대출목록
 				break;
+			case 5:
+				gameView();
+				break;
 			case 0:
 				return;
 			default:
@@ -415,7 +440,6 @@ public class ViewClass {
 	 * 도서명과 장르 검색으로 나뉨
 	 */
 	public void bookSearchView() {
-		Scanner scn = new Scanner(System.in);
 		String input;
 		while (true) {
 			showBanner("도서검색");
@@ -424,7 +448,7 @@ public class ViewClass {
 			System.out.println("[0]뒤로");
 
 			try {
-				input = scn.next();
+				input = sc.next();
 				switch (Integer.parseInt(input)) {
 				case 1:
 					bookSearch(); // 도서명 검색
@@ -443,21 +467,19 @@ public class ViewClass {
 				continue;
 			}
 		}
-
 	}
 
 	/**
 	 * @author 송지은 도서명 입력을 받아서 검색 후, 해당되는 도서 목록을 출력해주는 메서드
 	 */
 	private void bookSearch() {
-
-		Scanner scn = new Scanner(System.in);
 		showBanner("도서명 검색");
 
 		List<BookVO> list = new ArrayList<>();
 		BookVO vo = new BookVO();
 		
 		while (true) {
+			Scanner scn = new Scanner(System.in);
 			System.out.println("[0] 뒤로");
 			System.out.println("도서명: ");
 			
@@ -494,14 +516,14 @@ public class ViewClass {
 	 * 도서명으로 검색 후, 도서 리스트에서 원하는 번호 선택 하면 도서 상세 리스트를 보여주는 메서드
 	 */
 	private void book_detail1(List<BookVO> list) {
-		Scanner scn = new Scanner(System.in);
 		int input = 0;
 
 		System.out.println("선택하실 도서 번호 입력해주세요.");
 		try {
-			input = scn.nextInt();
+			input = sc.nextInt();
 		} catch (Exception e) {
 			System.out.println("숫자만 입력하세요.");
+			sc = new Scanner(System.in);
 			return;
 		}
 		input--;
@@ -565,7 +587,6 @@ public class ViewClass {
 	 */
 	private void genreSearchView() {
 		showBanner("장르 검색");
-		Scanner scn = new Scanner(System.in);
 		lguList();
 		
 		List<BookVO> list = new ArrayList<>();
@@ -573,7 +594,12 @@ public class ViewClass {
 		int book_lgu=0;
 		while(true){
 			System.out.println("검색하실 장르 번호를 입력하세요.");
-			book_lgu = scn.nextInt();
+			try {
+				book_lgu = sc.nextInt();
+			} catch (Exception e) {
+				sc = new Scanner(System.in);
+				continue;
+			}
 			list = iblgus.themeList(book_lgu);
 			
 			if(list.isEmpty()){														
@@ -679,6 +705,7 @@ public class ViewClass {
 	 */
 	private void rentalBook(BookVO bv){
 		System.out.println("대여하시겠습니까? (Y/N)");
+		sc = new Scanner(System.in);
 		String check = sc.next();
 		if("Y".equals(check.toUpperCase())){
 			Map<String,Object> map = new HashMap<>();
@@ -701,6 +728,12 @@ public class ViewClass {
 				System.out.println("반납일 : " + rv.getRental_end());
 				bv.setBook_state("F");
 				ibs.updateBook(bv);
+				
+				//회원 대여 횟수 갱신
+				Map<String, String> myInfo = new HashMap<>();
+				myInfo.put("mem_id", nowMember.getMem_id());
+				myInfo.put("rent_cnt", String.valueOf(nowMember.getRent_count()+1));
+				ims.updateMember(myInfo);
 			}else{
 				System.out.println("대여에 실패하였습니다..");
 			}
@@ -717,6 +750,7 @@ public class ViewClass {
 	 */
 	private void reserveBook(BookVO bv){
 		System.out.println("예약하시겠습니까? (Y/N)");
+		sc = new Scanner(System.in);
 		String check = sc.next();
 		if("Y".equals(check.toUpperCase())){
 			// 자기가 자기책을 예약하는 건 불가능해
@@ -779,49 +813,48 @@ public class ViewClass {
 	}
 
 	/**
-    * 공지사항 메서드
-    * 
-    * @author 조애슬
-    * @since 2020-11-05
-    */
-   private void noticeView() {
-      showBanner("공지사항");
-      List<NoticeVO> nl = ins.noticeList();// 공지출력 리스트 받아와서 여기서출력
-      
-      for (int i = 0; i < nl.size(); i++) {
-         System.out.println("글번호 : " + nl.get(i).getNotice_no());
-         System.out.println("작성자 : " + nl.get(i).getAdmin_id());
-         System.out.println("작성일 : " + nl.get(i).getNotice_date());
-         System.out.println("제목 : " + nl.get(i).getNotice_title());
-         System.out.println("내용 : " + nl.get(i).getNotice_content());
-         System.out.println("------------------------------------");
-      }
-      
-      while (true) {
-         System.out.println("[0] 뒤로");
-         int input = 0;
-         try {
-            input = scanNo();
-         } catch (Exception e) {
-            System.out.println("숫자를 입력해주세요."); // 숫자아닌거 거르고
-            sc = new Scanner(System.in);
-            continue;
-         }
-         switch (input) {
-         // 숫자긴 한데 공지사항외의 글번호를 누르는건 open에서 걸러야할듯..?
-         case 0:
-            return;
-         default:
-            NoticeVO nv = ins.openNoDetail(input); // 공지사항의 글번호를 누르면 그값을 가지고 공지상세보기 메서드로 int?
-            if(nv==null){
-               System.out.println("유효한 글 번호를 입력하세요");
-               break;}
-            else{noticeDetail(nv);
-            }
-            break;
-         }
-      }
-   }
+	 * 공지사항 메서드
+	 * 
+	 * @author 조애슬
+	 * @since 2020-11-05
+	 */
+	private void noticeView() {
+		showBanner("공지사항");
+		List<NoticeVO> nl = ins.noticeList();// 공지출력 리스트 받아와서 여기서출력
+
+		for (int i = 0; i < nl.size(); i++) {
+			System.out.print("글번호 : " + nl.get(i).getNotice_no());
+			System.out.println("\t제목 : " + nl.get(i).getNotice_title());
+			System.out
+					.println("──────────────────────────────────────────────────────────────────");
+		}
+
+		while (true) {
+			System.out.println("[0] 뒤로");
+			int input = 0;
+			try {
+				input = scanNo();
+			} catch (Exception e) {
+				System.out.println("숫자를 입력해주세요."); // 숫자아닌거 거르고
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (input) {
+			// 숫자긴 한데 공지사항외의 글번호를 누르는건 open에서 걸러야할듯..?
+			case 0:
+				return;
+			default:
+				NoticeVO nv = ins.openNoDetail(input); // 공지사항의 글번호를 누르면 그값을 가지고
+														// 공지상세보기 메서드로 int?
+				if (nv == null) {
+					System.out.println("유효한 글 번호를 입력하세요");
+				} else {
+					noticeDetail(nv);
+				}
+				break;
+			}
+		}
+	}
 
 	/**
 	 * 공지사항 자세히 볼 글번호 입력
@@ -833,14 +866,14 @@ public class ViewClass {
 	int scanNo() {
 		while (true) {
 			System.out.println("열람할 글번호를 입력하세요");
-			Scanner input = new Scanner(System.in);
 			int no = 0;
 			try {
-				no = input.nextInt();
+				no = sc.nextInt();
 			} catch (Exception e) {
 				System.out.println("숫자만 입력해주세요");
+				sc = new Scanner(System.in);
 				continue;
-			} 
+			}
 			return no;
 		}
 	}
@@ -850,13 +883,13 @@ public class ViewClass {
 	 * @author 조애슬
 	 */
 	void noticeDetail(NoticeVO nv){
-		System.out.println("--------------------------------");
+		System.out.println("──────────────────────────────────────────────────────────────────");
 		System.out.println("글번호 : "+nv.getNotice_no());
 		System.out.println("작성자 : "+nv.getAdmin_id());
 		System.out.println("작성일 : "+nv.getNotice_date().substring(0,10));
 		System.out.println("제목 : "+nv.getNotice_title());
 		System.out.println("내용 : "+nv.getNotice_content());
-		System.out.println("--------------------------------");
+		System.out.println("──────────────────────────────────────────────────────────────────");
 	}
 
 	/**
@@ -878,7 +911,7 @@ public class ViewClass {
 		}
 
 		while (true) {
-			System.out.println("[0] 뒤로  \t [1] 글등록 [2] 글삭제 [3] 상세보기");
+			System.out.println("[1] 글등록 [2] 글삭제 [3] 상세보기 [0] 뒤로");
 			int input = 0;
 			try {
 				input = sc.nextInt();
@@ -901,10 +934,9 @@ public class ViewClass {
 					// hopeView();
 					return;
 				} else {
-					System.out.println("회원님의 글이 아니기 때문에 삭제할 수 없습니다.\n");
-					return;
+					System.out.println("회원님의 글이 아니거나 유효한 번호가 아닙니다.\n");
+					continue;//츄가
 				}
-				// break;
 			case 3:
 				hopeDetailView(hl);//희망상세보기 뷰
 				return;
@@ -915,45 +947,49 @@ public class ViewClass {
 	}
 	
 	/**
-	    * 희망도서 상세볼 view
-	    * @author 조애슬
-	    * @since 2020-11-13
-	    */
-	   void hopeDetailView(List<HopeVO> hl){
-	      int hopeNo = hopeDetailNum();// 글상세보기 번호받아서
-	      HopeVO hv = ihs.hopeDetailView(hopeNo);// 글번호가지고 희망상세가지고오기
-	      while(true){
-	      if(hv==null){
-	         System.out.println("유효한 번호를 입력하세요");
-	         sc = new Scanner(System.in);
-	         return;
-	         }
-	      else{hopeDetailView(hv);
-	         break;}
-	      }
-	      
-	      while (true) {
-	         System.out.println("[0] 뒤로  \t [1] 추천하기 ");
-	         int input = 0;
-	         try {
-	            input = sc.nextInt();
-	         } catch (Exception e) {
-	            System.out.println("숫자를 입력해주세요.");
-	            sc = new Scanner(System.in);
-	            continue;
-	         }
-	         switch (input) {
-	         case 0:
-	            return;
-	         case 1:
-	            hopeThumb(hv.getHope_id());
-	            return;
-	         default:
-	            System.out.println("다시 입력해주세요");
-	         }
-	      }
-	      
-	   }
+    * 희망도서 상세볼 view
+    * @author 조애슬
+    * @since 2020-11-13
+    */
+   void hopeDetailView(List<HopeVO> hl){
+	   int hopeNo = hopeDetailNum();// 글상세보기 번호받아서
+	   HopeVO hv = ihs.hopeDetailView(hopeNo);// 글번호가지고 희망상세가지고오기
+      while(true){
+      if(hv==null){
+         System.out.println("유효한 번호를 입력하세요");
+         sc = new Scanner(System.in);
+         hopeNo = hopeDetailNum();// 글상세보기 번호받아서
+         hv = ihs.hopeDetailView(hopeNo);
+         continue;
+         }
+      //else{hopeDetailView(hv);
+         break;
+         //}
+      }
+      hopeDetailView(hv); 
+      
+      while (true) {
+         System.out.println("[0] 뒤로  \t [1] 추천하기 ");
+         int input = 0;
+         try {
+            input = sc.nextInt();
+         } catch (Exception e) {
+            System.out.println("숫자를 입력해주세요.");
+            sc = new Scanner(System.in);
+            continue;
+         }
+         switch (input) {
+         case 0:
+            return;
+         case 1:
+            hopeThumb(hv.getHope_id());
+            return;
+         default:
+            System.out.println("다시 입력해주세요");
+         }
+      }
+      
+   }
 	
 //	/**
 //	 * 희망글수정
@@ -966,11 +1002,12 @@ public class ViewClass {
 //		}
 //	}
 	
-	/**
+   /**
 	 * 희망글추천
 	 * @author 조애슬
 	 */
 	void hopeThumb(int hope_id){
+		while(true){
 		System.out.println("이 글을 추천하시겠습니까?(y/n)");
 		String input =null;
 		try {
@@ -979,21 +1016,26 @@ public class ViewClass {
 		} catch (Exception e) {
 			System.out.println("유효한 문자를 입력하세요");
 			sc = new Scanner(System.in);
+			continue;// 츄가
 		}
 		switch (input) {
 		case "y": case "Y":
 			if(ihs.hopeThumb(hope_id)>0){
 				System.out.println("추천되었습니다.");
+				return;
 			}else{
 				System.out.println("추천에 실패하였습니다.");
 			};
-			return;
+			break;
 		case "n": case "N":
 			System.err.println("추천하지 않으셨습니다.");
 			return;
 		default:
+			System.out.println("유효한 문자를 입력하세요");
+			
 			break;
 		}
+		}//while
 	}
 
 	/**
@@ -1100,7 +1142,6 @@ public class ViewClass {
 				return hope_name;
 			} else {
 				System.out.println("10글자 이내로 입력하세요");
-				
 				continue;
 			}
 		}
@@ -1115,9 +1156,9 @@ public class ViewClass {
 	 */
 	String scanHopeAuthor() {
 		while (true) {
+			Scanner sc = new Scanner(System.in);
 			System.out.println("작가를 입력하세요");
-			Scanner input = new Scanner(System.in);
-			String hope_author = input.nextLine();
+			String hope_author = sc.nextLine();
 			if (hope_author.length() < 16) {
 				return hope_author;
 			} else {
@@ -1146,7 +1187,6 @@ public class ViewClass {
 				
 				continue;
 			}
-
 		}
 	}
 
@@ -1168,7 +1208,6 @@ public class ViewClass {
 				System.out.println("100글자 이내로 입력하세요");
 				continue;
 			}
-
 		}
 	}
    
@@ -1295,21 +1334,21 @@ public class ViewClass {
 	 * @since 2020.11.06
 	 */
 	private String updatePW(){
-		String pw1 = null;
+		String result = null;
 		System.out.print("새로운 비밀번호를 입력하세요 : ");
-		pw1 = sc.next();
+		String pw1 = sc.next();
 		if(RegExClass.checkMem_pw(pw1)){
 			System.out.print("한번더 입력하세요 : ");
 			String pw2 = sc.next();
-			if(!pw1.equals(pw2)){
-				pw1 = null;
+			if(pw1.equals(pw2)){
+				result = aes.encrypt(pw1);
+			}else{
 				System.out.println("\n비밀번호가 다릅니다.\n");
 			}
 		}else{
-			pw1 = null;
 			System.out.println("올바른 형식의 비밀번호가 아닙니다. (8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.)");
 		}
-		return pw1;
+		return result;
 	}
 	
 	/**
@@ -1359,6 +1398,20 @@ public class ViewClass {
 		System.out.println("정말 탈퇴하시겠습니까? (Y/N)");
 		String check = sc.next();
 		if("Y".equals(check.toUpperCase())){
+			List<RentalVO> myList = irts.readRentalList(nowMember.getMem_id());
+			if(myList.size() > 0){
+				System.out.println("대여중인 도서가 있습니다. 도서를 모두 반납해야 탈퇴가 가능합니다.");
+				int myBook = myList.size();
+				for(RentalVO rv : myList){
+					BookVO bv = ibs.readBook(rv.getBook_id());
+					System.out.println("대여중인 도서의 수 : " + myBook--);
+					System.out.println("도서명 : " + bv.getBook_name());
+					if(!returnBook(rv.getBook_id())){
+						System.out.println("탈퇴가 취소되었습니다.");
+						return result;
+					}
+				}
+			}
 			result = ims.deleteMember(mem_id);
 		}
 		return result;
@@ -1379,8 +1432,8 @@ public class ViewClass {
 				System.out.println("대여중인 도서가 없습니다.");
 				System.out.println("[0]뒤로");
 			}else{
-				System.out.println("[0]뒤로");
-				System.out.println("반납할 도서를 선택해 주세요.");
+				rentalListDetailView(myList);
+				return;
 			}
 			
 			int input = 0;
@@ -1391,17 +1444,44 @@ public class ViewClass {
 				sc = new Scanner(System.in);
 				continue;
 			}
-			
+
 			if(input==0){
 				return;
-			}else if(0<input && input<=myList.size()){
-				//도서번호입력받아 반납 메서드
-				returnBook(myList.get(input-1).getBook_id());
 			}else{
 				System.out.println("다시 입력해주세요");
 			}
 		}
 	}
+	
+	/**
+    * 대출목록 내보내기 뷰
+    * @author 조애슬
+    * @since 2020-11-16
+    */
+   public void rentalListDetailView(List<RentalVO> myList){
+		System.out.println("[1]반납하기 [2]대여목록 전송하기 [0]뒤로");
+		int input = 0;
+		try {
+			input = sc.nextInt();
+		} catch (Exception e) {
+			System.out.println("숫자만 입력해주세요.");
+			sc = new Scanner(System.in);
+			return;
+		}
+
+		switch (input) {
+		case 1:
+			bookReturnView(myList);
+			break;
+		case 2:
+			fileExport();
+			break;
+		case 0:
+			return;
+		default:
+			break;
+		}
+   }
 	
 	/**
 	 * 나의 대출도서목록 출력 메서드
@@ -1425,6 +1505,110 @@ public class ViewClass {
 		return myList;
 	}
 	
+	/**
+	 * 도서반납 뷰
+	 * @author 민태원
+	 * @param List<RentalVO>
+	 **/
+	public void bookReturnView(List<RentalVO> myList){
+		while (true) {
+			System.out.println("반납할 도서를 선택해 주세요.");
+			int input = 0;
+			try {
+				input = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력해주세요.");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			if (input == 0) {
+				return;
+			} else if (0 < input && input <= myList.size()) {
+				// 도서번호입력받아 반납 메서드
+				returnBook(myList.get(input - 1).getBook_id());
+				return;
+			} else {
+				System.out.println("다시 입력해주세요");
+			}
+		} 	
+	}
+	
+	/**
+	 * 대출목록 파일 내보내기 메서드
+	 * @author 민태원
+	 * @since 2020.11.17
+	 */
+	void fileExport(){
+		while(true){
+			System.out.println("[1]엑셀파일로 보내기(.xlsx) [2]PDF파일로 보내기(.pdf) [0]뒤로");
+			int input = 0;
+			try {
+				input = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력하세요.");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (input) {
+			case 1:
+				rentalExcelOut();
+				return;
+			case 2:
+				rentalPdfOut();
+				return;
+			case 0:
+				return;
+			default:
+				System.out.println("잘못된 입력입니다.");
+			}
+		}
+	}
+	
+	/**
+	 * 대여목록 출력하는 뷰
+	 * @author 조애슬
+	 * @since 2020-11-16
+	 */
+	void rentalExcelOut() {
+		System.out.println("원하는 파일명을 입력하세요");
+		String rPath = sc.next();
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("mem_id", nowMember.getMem_id());
+		params.put("rPath", rPath);
+		irts.rentalExcelout(params);
+		
+		//이메일 보내기
+		String title = "나의 대여 목록(엑셀)";
+		String content = "나의 모든 대여 도서 목록입니다.";
+		String email = nowMember.getMem_email();
+		String filePath = ".\\file\\"+rPath+".xlsx";
+		Email mail = new Email(title, content, email, filePath);
+		mail.sendNaver();
+	}
+	
+	/**
+	 * 대여목록 pdf파일로 전송하기
+	 * @author 민태원
+	 * @since 2020.11.17
+	 */
+	void rentalPdfOut(){
+		System.out.println("원하는 파일명을 입력하세요");
+		String rPath = sc.next();
+		Map<String, String> params = new HashMap<>();
+		params.put("mem_id", nowMember.getMem_id());
+		params.put("rPath", rPath);
+		irts.createRentalPdf(params);
+		System.out.println("파일변환 성공!");
+		
+		//이메일 보내기
+		String title = "나의 대여 목록(PDF)";
+		String content = "나의 모든 대여 도서 목록입니다.";
+		String email = nowMember.getMem_email();
+		String filePath = ".\\file\\"+rPath+".pdf";
+		Email mail = new Email(title, content, email, filePath);
+		mail.sendNaver();
+	}
+	
 ///반납	
 	/**
 	 * 도서의 아이디를 입력받아 반납하는 메서드
@@ -1433,7 +1617,8 @@ public class ViewClass {
 	 * @author 민태원
 	 * @since 2020.11.06
 	 */
-	void returnBook(int book_id){
+	boolean returnBook(int book_id){
+		boolean result = false;
 		//rentalList에서 book을 찾고 list에서 삭제
 		System.out.println("반납하시겠습니까? (Y/N)");
 		String check = sc.next();
@@ -1441,6 +1626,7 @@ public class ViewClass {
 			//대여테이블에서 삭제
 			if(irts.deleteRental(book_id)==1){
 				System.out.println("\n도서가 반납되었습니다.\n");
+				result = true;
 			}else{
 				System.out.println("반납 실패..");
 			}
@@ -1472,6 +1658,7 @@ public class ViewClass {
 		}else{
 			System.out.println("반납 취소");
 		}
+		return result;
 	}
 	
 ///예약	
@@ -1770,6 +1957,7 @@ public class ViewClass {
 	 */
 	void noticeAdd() {
 		NoticeVO nv = new NoticeVO();
+		sc = new Scanner(System.in);
 		System.out.println("공지 타이틀을 입력하세요");
 		String nt = sc.nextLine();
 		System.out.println("공지 내용을 입력하세요");
@@ -1938,6 +2126,7 @@ public class ViewClass {
 			bookList();
 			System.out.println("[1] 도서 상세 정보");
 			System.out.println("[2] 도서 등록");
+			System.out.println("[3] 도서목록 전송하기");
 			System.out.println("[0] 뒤로가기");
 			System.out.print("번호를 입력하시오 : ");
 			int num = 0;
@@ -1971,8 +2160,12 @@ public class ViewClass {
 				}
 				break;
 			case 2:
-				//도서 등록 메소드
-				bookAddMethod();
+				//도서 등록 뷰
+				bookAddView();
+				break;
+			case 3:
+				//도서목록 전송 메소드
+				bookOut();
 				break;
 			default:
 				System.out.println("잘못입력하였습니다");
@@ -2122,8 +2315,142 @@ public class ViewClass {
 			}
 		}
 	}
+	
+	/**
+	 * 도서목록 전송 메서드
+	 * @author 민태원
+	 * @since 2020.11.17
+	 */
+	void bookOut(){
+		while(true){
+			System.out.println("[1]엑셀파일로 전송하기(.xlsx) [2]PDF파일로 전송하기(.pdf) [0]뒤로");
+			int input = 0;
+			try {
+				input = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력하세요.");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (input) {
+			case 1:
+				bookExcelout();
+				return;
+			case 2:
+				bookPdfOut();
+				return;
+			case 0:
+				return;
+			default:
+				System.out.println("잘못된 입력입니다.");
+			}
+		}
+	}
+	
+	/**
+	 * 도서리스트 엑셀출력 메서드
+	 * @author 조애슬
+	 * @since 2020-11-16
+	 */
+	void bookExcelout(){
+		System.out.println("원하는 파일명을 입력하세요");
+		String fname = sc.next();
+		ibs.bookExcelout(fname);
+		
+		//이메일로 전송
+		String title = "전체 도서 목록(엑셀 파일)";
+		String content = "전체 도서 목록을 첨부합니다.";
+		String email = adMember.getAdmin_email();
+		String filePath = ".\\file\\"+fname+".xlsx";
+		Email mail = new Email(title, content, email, filePath);
+		mail.sendNaver();
+	}
+	
+	/**
+	 * 도서리스트 pdf출력 메서드
+	 * @author 민태원
+	 * @since 2020.11.17
+	 */
+	void bookPdfOut(){
+		System.out.println("원하는 파일명을 입력하세요");
+		String fname = sc.next();
+		ibs.bookPdfOut(fname);
+		
+		//이메일로 전송
+		String title = "전체 도서 목록(엑셀 파일)";
+		String content = "전체 도서 목록을 첨부합니다.";
+		String email = adMember.getAdmin_email();
+		String filePath = ".\\file\\"+fname+".pdf";
+		Email mail = new Email(title, content, email, filePath);
+		mail.sendNaver();
+	}
+	
+	/**도서등록뷰
+	 * 
+	 * @author 조애슬
+	 */
+	void bookAddView(){
+		while (true) {
+			System.out.println("[1] 도서 등록 [2] 도서 한번에 등록 (.xlsx) [0] 뒤로");
+			int input = 0;
+			try {
+				input = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력하세요");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch(input){
+			case 0:
+				return;
+			case 1:
+				bookAddMethod();
+				return;
+			case 2:
+				bookExcelAdd();
+				return;
+			default:
+				System.out.println("잘못된 입력입니다.");
+			}
+		}
+	}
+	
+	/**
+    * 도서목록 엑셀파일로 한번에 추가하기
+    */
+   void bookExcelAdd(){
+		while (true) {
+			showBanner("도서목록 불러오기");
+			// 전체 도서리스트 출력 메소드
+			bookList();
+			System.out.println("[1] 도서목록 불러오기(.xlsx)");
+			System.out.println("[0] 뒤로가기");
+			System.out.print("번호를 입력하시오 : ");
+			int num = 0;
+			try {
+				num = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("잘못입력하였습니다");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (num) {
+			case 0:
+				//
+				return;
+			case 1:
+				// 도서목록 출력
+				System.out.println("불러올 경로를 입력하세요 ('\\'는 '\\\'로 입력해주세요)");
+				String bPath = sc.next();
+				ibs.bookExcelAdd(bPath);
+				break;
+			default:
+				System.out.println("잘못입력하였습니다");
+			}
+		}
+   }
 
-	// 회원리스트
+//////////// 회원리스트
 	/**
 	 * 회원 관리 뷰
 	 * 
@@ -2135,6 +2462,7 @@ public class ViewClass {
 			showBanner("회원 관리");
 			System.out.println("[1] 회원리스트 확인");
 			System.out.println("[2] 블랙리스트 확인");
+			System.out.println("[3] 회원리스트 전송하기");			
 			System.out.println("[0] 뒤로가기");
 			System.out.print("번호를 입력하시오 : ");
 			int num = 0;
@@ -2157,11 +2485,14 @@ public class ViewClass {
 				//전체 블랙리스트 뷰 메소드
 				blackListView();
 				break;
+			case 3:
+				//회원리스트 출력메서드
+				memberOut();
+				break;
 			default:
 				System.out.println("잘못입력하였습니다");
 			}
 		}
-
 	}
 
 	/**
@@ -2220,6 +2551,74 @@ public class ViewClass {
 			System.out.println("대출횟수\t[" + mv.get(i).getRent_count() + "]");
 			System.out.println("==============================");
 		}
+	}
+	
+	/**
+	 * 회원리스트 출력
+	 * @author 민태원
+	 * @since 2020.11.17
+	 */
+	void memberOut(){
+		while(true){
+			System.out.println("[1]엑셀파일로 전송하기(.xlsx) [2]PDF파일로 전송하기(.pdf) [0]뒤로");
+			int input = 0;
+			try {
+				input = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력하세요.");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (input) {
+			case 1:
+				memberExcelOut();
+				return;
+			case 2:
+				memberPdfOut();
+				return;
+			case 0:
+				return;
+			default:
+				System.out.println("잘못된 입력입니다.");
+			}
+		}
+	}
+	
+	/**
+	 * 회원리스트 엑셀출력
+	 * @author 조애슬
+	 */
+	void memberExcelOut(){
+		System.out.println("원하는 파일명을 입력하세요");
+		String mname = sc.next();
+		ims.memberExcelout(mname);
+
+		// 이메일 보내기
+		String title = "모든 회원 목록(엑셀)";
+		String content = "전체 도서 목록 첨부합니다.";
+		String email = adMember.getAdmin_email();
+		String filePath = ".\\file\\" + mname + ".xlsx";
+		Email mail = new Email(title, content, email, filePath);
+		mail.sendNaver();
+	}
+	
+	/**
+	 * 회원리스트 pdf출력
+	 * @author 민태원
+	 * @since 2020.11.17
+	 */
+	void memberPdfOut(){
+		System.out.println("원하는 파일명을 입력하세요");
+		String fname = sc.next();
+		ims.memberPdfOut(fname);
+
+		// 이메일 보내기
+		String title = "모든 회원 목록(PDF)";
+		String content = "전체 도서 목록 첨부합니다.";
+		String email = adMember.getAdmin_email();
+		String filePath = ".\\file\\" + fname + ".pdf";
+		Email mail = new Email(title, content, email, filePath);
+		mail.sendNaver();
 	}
 
 	/**
@@ -2342,4 +2741,49 @@ public class ViewClass {
 			System.out.println("아이디를 찾을 수 없습니다.");
 		}
 	}
+	
+	
+	
+/////////////////////////////////////////////////////게임///////////////////////////////////////	
+	private void gameView(){
+		while(true){
+			showBanner("게임 선택");
+			System.out.println("[1]JJuruButton");
+			System.out.println("[2]BlackJJu");
+			System.out.println("[3]JJURUMABLE");
+			System.out.println("[4]JJutNori");
+			System.out.println("[0]뒤로");
+			int input = 0;
+			try {
+				input = sc.nextInt();
+			} catch (Exception e) {
+				System.out.println("숫자만 입력하세요.");
+				sc = new Scanner(System.in);
+				continue;
+			}
+			switch (input) {
+			case 1:
+				MiniGame.startGame();
+				break;
+			case 2:
+				BlackJack bj = BlackJack.getInstance();
+				bj.GameStart();
+				break;
+			case 3:
+				JJurumable.startGame();
+				break;
+			case 4:
+				break;
+			case 0:
+				return;
+			default:
+				System.out.println("잘못된 입력입니다.");
+			}
+		}
+	}
+	
+	
+	
+	
+	
 }

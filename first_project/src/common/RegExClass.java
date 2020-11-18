@@ -17,7 +17,7 @@ public class RegExClass {
 
 	// 2~5자 한글만 사용가능합니다. (특수기호, 공백 사용 불가)
 	public static boolean checkMem_name(String mem_name) {
-		String patternMName = "[가-힣]{2,4}";
+		String patternMName = "[가-힣]{2,5}";
 		return Pattern.matches(patternMName, mem_name);
 	}
 

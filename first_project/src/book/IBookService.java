@@ -55,5 +55,25 @@ public interface IBookService {
 	 */
 	int deleteBook(int book_no);
 
+	/**
+	 * 도서목록 엑셀파일로 불러들여 한번에 추가하기 //츄가
+	 * @param bPath
+	 * @author 조애슬
+	 */
+	void bookExcelAdd(String bPath);
 	
+	/**
+	 * 도서목록 엑셀파일로 내보내는 메서드 //츄가
+	 * @author 조애슬
+	 * @param fname 
+	 */
+	void bookExcelout(String fname);
+
+	/**
+	 * 도서목록 pdf로 내보내는 메서드
+	 * @param fname 파일 이름
+	 * @author 민태원
+	 * @since 2020.11.17
+	 */
+	void bookPdfOut(String fname);
 }
