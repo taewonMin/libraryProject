@@ -38,8 +38,8 @@ public class Email {
 	
 	public void sendNaver(){
 		String host = "smtp.naver.com";
-        final String user = "index0327@naver.com"; //계정메일
-        final String password  = "hisutia0542"; // 계정비번
+        final String user = "asdf1234@naver.com"; //계정메일
+        final String password  = "******"; // 계정비번
 
        /**
        * Property에 SMTP 서버를 설정한다.

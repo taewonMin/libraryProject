@@ -1138,7 +1138,10 @@ public class ViewClass {
 			System.out.println("희망하는 도서명을 입력하세요");
 			Scanner input = new Scanner(System.in);
 			String hope_name = input.nextLine();
-			if (hope_name.length() < 11) {
+			if(hope_name.length()==0){
+				System.out.println("1글자 이상 입력하세요.\n");
+				continue;
+			} else if (hope_name.length() < 11) {
 				return hope_name;
 			} else {
 				System.out.println("10글자 이내로 입력하세요");
@@ -1159,7 +1162,10 @@ public class ViewClass {
 			Scanner sc = new Scanner(System.in);
 			System.out.println("작가를 입력하세요");
 			String hope_author = sc.nextLine();
-			if (hope_author.length() < 16) {
+			if(hope_author.length()==0){
+				System.out.println("1글자 이상 입력하세요.\n");
+				continue;
+			} else if (hope_author.length() < 16) {
 				return hope_author;
 			} else {
 				System.out.println("15글자 이내로 입력하세요");
@@ -1180,7 +1186,10 @@ public class ViewClass {
 			System.out.println("도서의 출판사를 입력하세요");
 			Scanner input = new Scanner(System.in);
 			String hope_publisher = input.nextLine();
-			if (hope_publisher.length() < 16) {
+			if(hope_publisher.length()==0){
+				System.out.println("1글자 이상 입력하세요.\n");
+				continue;
+			} else if (hope_publisher.length() < 16) {
 				return hope_publisher;
 			} else {
 				System.out.println("15글자 이내로 입력하세요");
@@ -1202,7 +1211,10 @@ public class ViewClass {
 			System.out.println("희망하는 이유를 입력하세요");
 			Scanner input = new Scanner(System.in);
 			String hope_content = input.nextLine();
-			if (hope_content.length() < 101) {
+			if(hope_content.length()==0){
+				System.out.println("1글자 이상 입력하세요.\n");
+				continue;
+			} else if (hope_content.length() < 101) {
 				return hope_content;
 			} else {
 				System.out.println("100글자 이내로 입력하세요");
@@ -2773,6 +2785,8 @@ public class ViewClass {
 				JJurumable.startGame();
 				break;
 			case 4:
+				Yutnori nori = Yutnori.getInstance();
+				nori.startGame();
 				break;
 			case 0:
 				return;
