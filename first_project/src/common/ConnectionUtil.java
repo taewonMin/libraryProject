@@ -1,16 +1,44 @@
 package common;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 
 public class ConnectionUtil {
 	private Connection conn = null;
 	private Statement stmt = null;
 	private ResultSet rs = null;
+	private static Properties prop = null;
 	
+	static {
+		prop = new Properties();
+		
+		File file = new File("res/db.properties");
+		
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			
+			prop.load(fis);
+			
+			Class.forName(prop.getProperty("driver"));
+			
+		} catch (FileNotFoundException e) {
+			System.out.println("파일을 찾을 수 없습니다.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			System.out.println("드라이버 접속 실패..");
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * DB연결
 	 * @author 민태원
@@ -18,15 +46,11 @@ public class ConnectionUtil {
 	 */
 	private void init(){
 		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			String url = "jdbc:oracle:thin:@localhost:1521:xe";
-			String user = "jju";
-			String password = "java";
-			conn = DriverManager.getConnection(url, user, password);
+			conn = DriverManager.getConnection(
+					prop.getProperty("url"),
+					prop.getProperty("user"),
+					prop.getProperty("pass"));
 			stmt = conn.createStatement();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.out.println("드라이버 로딩실패");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			System.out.println("접속실패");
